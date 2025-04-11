@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MoaBackApplication {
 
 	public static void main(String[] args) {
-		// 깃 테스트 테스트 //테스트 
+		// 깃 테스트 테스트 //테스트 // 테스트
 		SpringApplication.run(MoaBackApplication.class, args);
 	}
 
