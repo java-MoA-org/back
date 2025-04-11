@@ -7,8 +7,10 @@ import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.SignInResponseDto;
 
 public interface AuthService {
     ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto requestDto);
@@ -16,4 +18,5 @@ public interface AuthService {
     ResponseEntity<ResponseDto> emailCheck(EmailCheckRequestDto requestDto);
     ResponseEntity<ResponseDto> phoneNumberCheck(PhoneNumberCheckRequestDto requestDto);
     ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto);
+    ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto requestDto);
 }

@@ -7,8 +7,10 @@ import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.SignInResponseDto;
 import com.MoA.moa_back.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     
@@ -60,6 +62,10 @@ public class AuthController {
         return response;
     }
     
-
+    @PostMapping("/sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody) {
+        ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
+        return response;
+    }
     
 }
