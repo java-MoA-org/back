@@ -54,6 +54,21 @@ public class ResponseDto {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
   }
 
+  public static ResponseEntity<ResponseDto> noExistBoard() {
+    ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_BOARD, ResponseMessage.NO_EXIST_BOARD);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  public static ResponseEntity<ResponseDto> noExistDaily() {
+    ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_DAILY, ResponseMessage.NO_EXIST_DAILY);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  public static ResponseEntity<ResponseDto> noExistUsedTrade() {
+    ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_USED_TRADE, ResponseMessage.NO_EXIST_USED_TRADE);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
   public static ResponseEntity<ResponseDto> noPermission() {
     ResponseDto body = new ResponseDto(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION);
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);

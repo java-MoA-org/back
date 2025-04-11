@@ -31,7 +31,15 @@ public class WebSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+<<<<<<< HEAD
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
+=======
+                .requestMatchers( HttpMethod.POST,"/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/board/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/board/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/board/**").permitAll()
+>>>>>>> 7a4248bb3c7b92d10b4538d12b29e083684f5297
                 .anyRequest().authenticated()
             );
 
