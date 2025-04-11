@@ -31,15 +31,12 @@ public class WebSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-<<<<<<< HEAD
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
-=======
                 .requestMatchers( HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/board/**").permitAll()
->>>>>>> 7a4248bb3c7b92d10b4538d12b29e083684f5297
                 .anyRequest().authenticated()
             );
 
@@ -48,11 +45,12 @@ public class WebSecurityConfig {
 
     @Bean
     protected CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);                    // 인증 허용
-        configuration.addAllowedOriginPattern("*");                // ⭐ 중요: OriginPattern을 써야 setAllowCredentials(true)와 같이 사용 가능
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.addAllowedHeader("*");
+    configuration.addAllowedMethod("*");
+    configuration.addAllowedOrigin("*");
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
