@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.MoA.moa_back.common.entity.UserEntity;
 
+
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
     boolean existsByUserId(String userId);
@@ -12,4 +13,5 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
     boolean existsByUserEmail(String userEmail);
     boolean existsByUserPhoneNumber(String userPhoneNumber);
     
+    UserEntity findByUserId(String userId);
 }

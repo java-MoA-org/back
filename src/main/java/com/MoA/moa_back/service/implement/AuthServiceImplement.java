@@ -10,9 +10,12 @@ import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.SignInResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.MoA.moa_back.provider.*;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.AuthService;
 
@@ -21,9 +24,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImplement implements AuthService{
-    
+
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtProvider jwtProvider;
 
     @Override
     public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto requestDto) {
@@ -84,12 +88,21 @@ public class AuthServiceImplement implements AuthService{
     @Override
 public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
     
+    boolean existsUserId = userRepository.existsById(requestDto.getUserId());
+    if(existsUserId) return ResponseDto.existUserId();
+    boolean existsUserNickname = userRepository.existsByUserNickname(requestDto.getUserNickname());
+    if(existsUserNickname) return ResponseDto.existUserNickname();
+    boolean existsUserEmail = userRepository.existsByUserEmail(requestDto.getUserEmail());
+    if(existsUserEmail) return ResponseDto.existUserEmail();
+    boolean existsUserPhoneNumber = userRepository.existsByUserPhoneNumber(requestDto.getUserPhoneNumber());
+    if(existsUserPhoneNumber) return ResponseDto.existUserPhoneNumber();
+    
+
     try {
         String password = requestDto.getUserPassword();
         String encodedPassword = passwordEncoder.encode(password);
         requestDto.setUserPassword(encodedPassword);
 
-        // Null-safe 처리
         if (requestDto.getUserIntroduce() == null) {
             requestDto.setUserIntroduce("");
         }
@@ -99,10 +112,37 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
 
         return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
-        e.printStackTrace(); // 콘솔에서 꼭 확인!
-        return ResponseDto.databaseError(); // 500
+        e.printStackTrace();
+        return ResponseDto.databaseError();
     }
 }
+
+    @Override
+    public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto requestDto) {
+
+        String accessToken = null;
+
+        try {
+            String userId = requestDto.getUserId();
+            
+            UserEntity userEntity = userRepository.findByUserId(userId);
+            if(userEntity == null) return ResponseDto.signInFail();
+            
+            String userPassword = requestDto.getUserPassword();
+
+            String encodedUserPassword = userEntity.getUserPassword();
+            boolean isMatch = passwordEncoder.matches(userPassword, encodedUserPassword);
+            if(!isMatch) return ResponseDto.signInFail();
+
+            accessToken = jwtProvider.create(userId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return SignInResponseDto.success(accessToken);
+        
+    }
 
 
 }
