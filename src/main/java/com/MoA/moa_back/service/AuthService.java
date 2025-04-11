@@ -3,6 +3,7 @@ package com.MoA.moa_back.service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+// 주석 추가
 import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
