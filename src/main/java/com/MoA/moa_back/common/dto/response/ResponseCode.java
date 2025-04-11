@@ -5,8 +5,11 @@ public interface ResponseCode {
   
     String VALIDATION_FAIL = "VF";
     String EXIST_USER = "EU";
-    String NO_EXIST_DIARY = "ND";
-  
+
+    String NO_EXIST_BOARD = "NB";
+    String NO_EXIST_DAILY = "ND.";
+    String NO_EXIST_USED_TRADE = "NU.";
+
     String SIGN_IN_FAIL = "SF";
   
     String NO_PERMISSION = "NP";
