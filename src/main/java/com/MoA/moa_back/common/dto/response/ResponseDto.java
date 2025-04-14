@@ -69,6 +69,16 @@ public class ResponseDto {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
   }
 
+  public static ResponseEntity<ResponseDto> invalidTag() {
+    ResponseDto body = new ResponseDto(ResponseCode.INVALID_TAG, ResponseMessage.INVALID_TAG);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
+  public static ResponseEntity<ResponseDto> invalidPageNumber() {
+    ResponseDto body = new ResponseDto(ResponseCode.INVALID_PAGE_NUMBER, ResponseMessage.INVALID_PAGE_NUMBER);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
   public static ResponseEntity<ResponseDto> noPermission() {
     ResponseDto body = new ResponseDto(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION);
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);

@@ -46,8 +46,9 @@ public class BoardEntity {
     private List<String> images = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 10)
+    @Column(length=4)
     private TagType tag = TagType.자유;
+    @Column(nullable = false)
     private Integer views = 0;
 
     public BoardEntity(PostBoardRequestDto dto, String userId) {

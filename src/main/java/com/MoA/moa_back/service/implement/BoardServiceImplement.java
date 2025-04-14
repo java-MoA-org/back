@@ -1,14 +1,29 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
+import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.board.BoardCommentSummaryResponseDto;
+import com.MoA.moa_back.common.dto.response.board.BoardSummaryResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import com.MoA.moa_back.common.entity.BoardEntity;
+import com.MoA.moa_back.common.entity.BoardLikeEntity;
+import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.repository.BoardCommentRepository;
+import com.MoA.moa_back.repository.BoardLikeRepository;
 import com.MoA.moa_back.repository.BoardRepository;
 import com.MoA.moa_back.service.BoardService;
 
@@ -19,97 +34,181 @@ import lombok.RequiredArgsConstructor;
 public class BoardServiceImplement implements BoardService {
 
   private final BoardRepository boardRepository;
+  private final BoardLikeRepository boardLikeRepository;
+  private final BoardCommentRepository boardCommentRepository;
 
   // method: 게시글 등록 //
   @Override
   public ResponseEntity<ResponseDto> postBoard(PostBoardRequestDto dto, String userId) {
-
     try {
-
       BoardEntity boardEntity = new BoardEntity(dto, userId);
       boardRepository.save(boardEntity);
-
-    } catch(Exception exception) {
-      exception.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
     return ResponseDto.success(HttpStatus.CREATED);
-
   }
 
-  // method: 게시글 상세 조회 //
+  // method: 게시판(태그) 별 게시글 목록 조회 //
   @Override
-  public ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardSequence) {
-
-    BoardEntity boardEntity = null;
-    
+  public ResponseEntity<? extends ResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, Integer pageSize) {
+    TagType tagType;
     try {
-
-      boardEntity = boardRepository.findByBoardSequence(boardSequence);
-
-      if (boardEntity == null) return ResponseDto.noExistBoard();
-      
-    } catch (Exception exception) {
-      exception.printStackTrace();
-      return ResponseDto.databaseError();
+      tagType = TagType.valueOf(tag);
+    } catch (IllegalArgumentException e) {
+      return ResponseDto.invalidTag();
     }
 
-    return GetBoardResponseDto.success(boardEntity);
+    try {
+      pageSize = (pageSize == null || pageSize <= 0) ? 10 : pageSize;
+      int pageIndex = pageNumber - 1;
 
+      if (pageIndex < 0) return ResponseDto.invalidPageNumber();
+
+      Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("boardSequence").descending());
+      Page<BoardEntity> boardPage = boardRepository.findByTag(tagType, pageable);
+
+      if (pageIndex >= boardPage.getTotalPages()) return ResponseDto.invalidPageNumber();
+
+      List<BoardSummaryResponseDto> boardList = boardPage.stream()
+        .map(entity -> {
+          int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+          return new BoardSummaryResponseDto(
+            entity.getBoardSequence(),
+            entity.getTitle(),
+            entity.getCreationDate(),
+            entity.getTag(),
+            entity.getViews(),
+            likeCount
+          );
+        })
+        .toList();
+
+      GetBoardListResponseDto responseBody = new GetBoardListResponseDto(boardList, boardPage.getTotalPages());
+      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+  }
+
+  // method: 게시글 상세 조회 + 조회수 증가 + 댓글 포함 //
+  @Override
+  public ResponseEntity<ResponseDto> getBoardDetail(Integer boardSequence) {
+    try {
+      BoardEntity boardEntity = boardRepository.findById(boardSequence).orElse(null);
+      if (boardEntity == null) return ResponseDto.noExistBoard();  
+
+      boardEntity.setViews(boardEntity.getViews() + 1);
+      boardRepository.save(boardEntity);
+
+      int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
+
+      List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
+      List<BoardCommentSummaryResponseDto> commentList = commentEntities.stream()
+        .map(comment -> new BoardCommentSummaryResponseDto(
+          comment.getUserId(),        
+          comment.getBoardComment(),
+          comment.getCreationDate()
+        ))
+        .toList();
+
+      GetBoardResponseDto responseDto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
+      return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError(); 
+    }
   }
 
   // method: 게시글 수정 (작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardSequence, String userId) {
-    
     try {
-
       BoardEntity boardEntity = boardRepository.findByBoardSequence(boardSequence);
       if (boardEntity == null) return ResponseDto.noExistBoard();
 
       String writerId = boardEntity.getUserId();
-      boolean isWriter = writerId.equals(userId);
-      if (!isWriter) return ResponseDto.noPermission();
+      if (!writerId.equals(userId)) return ResponseDto.noPermission();
 
       boardEntity.patch(dto);
       boardRepository.save(boardEntity);
-      
-    } catch (Exception exception) {
-      exception.printStackTrace();
+
+    } catch (Exception e) {
+      e.printStackTrace();
       return ResponseDto.databaseError();
     }
 
     return ResponseDto.success(HttpStatus.OK);
-
   }
 
   // method: 게시글 삭제 (작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> deleteBoard(Integer boardSequence, String userId) {
-
     try {
-      
       BoardEntity boardEntity = boardRepository.findByBoardSequence(boardSequence);
       if (boardEntity == null) return ResponseDto.noExistBoard();
 
       String writerId = boardEntity.getUserId();
-      boolean isWriter = writerId.equals(userId);
-      if (!isWriter) return ResponseDto.noPermission();
+      if (!writerId.equals(userId)) return ResponseDto.noPermission();
 
-      // 좋아요도 같이 삭제 ( 후에 구현 )//
-      // BoardLikeRepository.deleteByboardSequence(boardEntity);
-      // 댓글도 같이 삭제 ( 후에 구현 ) //
-      // BoardCommentRepository.deleteByboardSequence(boardEntity);
+      boardLikeRepository.deleteByBoardSequence(boardSequence);
+      boardCommentRepository.deleteByBoardSequence(boardSequence);
       boardRepository.delete(boardEntity);
 
-    } catch (Exception exception) {
-      exception.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
       return ResponseDto.databaseError();
     }
 
     return ResponseDto.success(HttpStatus.OK);
+  }
 
+  // method: 게시글에 좋아요를 누르거나 취소 //
+  @Override
+  public ResponseEntity<ResponseDto> putBoardLikeCount(Integer boardSequence, String userId) {
+    try {
+      boolean existBoard = boardRepository.existsByBoardSequence(boardSequence);
+      if (!existBoard) return ResponseDto.noExistBoard();
+
+      boolean hasLiked = boardLikeRepository.existsByBoardSequenceAndUserId(boardSequence, userId);
+      if (!hasLiked) {
+        BoardLikeEntity boardLikeEntity = new BoardLikeEntity();
+        boardLikeEntity.setBoardSequence(boardSequence);
+        boardLikeEntity.setUserId(userId);
+        boardLikeRepository.save(boardLikeEntity);
+      } else {
+        boardLikeRepository.deleteByBoardSequenceAndUserId(boardSequence, userId);
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return ResponseDto.success(HttpStatus.OK);
+  }
+
+  // method: 게시글에 댓글 작성 //
+  @Override
+  public ResponseEntity<ResponseDto> postBoardComment(PostBoardCommentRequestDto dto, Integer boardSequence, String userId) {
+    try {
+      boolean existBoard = boardRepository.existsByBoardSequence(boardSequence);
+      if (!existBoard) return ResponseDto.noExistBoard();
+
+      BoardCommentEntity boardCommentEntity = new BoardCommentEntity(dto, boardSequence, userId);
+      boardCommentRepository.save(boardCommentEntity);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return ResponseDto.success(HttpStatus.CREATED);
   }
 
 }
+

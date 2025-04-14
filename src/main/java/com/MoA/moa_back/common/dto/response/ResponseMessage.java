@@ -9,6 +9,9 @@ public interface ResponseMessage {
     String NO_EXIST_BOARD = "No Exist Board.";
     String NO_EXIST_DAILY = "No Exist Daily.";
     String NO_EXIST_USED_TRADE = "No Exist Used Trade.";
+    
+    String INVALID_TAG = "Invalid Tag.";
+    String INVALID_PAGE_NUMBER = "Invalid Page Number.";
   
     String SIGN_IN_FAIL = "Sign in Fail.";
   
