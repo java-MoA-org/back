@@ -20,27 +20,27 @@ import lombok.ToString;
 @Table(name="user")
 @ToString
 public class UserEntity {
-    @Id
-    private String userId;
-    private String userPassword;
-    private String joinType;
-    private String snsId;
-    private String userNickname;
-    private String profileImage;
-    private String userIntroduce;
-    private String userEmail;
-    private String userPhoneNumber;
+  @Id
+  private String userId;
+  private String userPassword;
+  private String joinType;
+  private String snsId;
+  private String userNickname;
+  private String profileImage;
+  private String userIntroduce;
+  private String userEmail;
+  private String userPhoneNumber;
 
-    public UserEntity(SignUpRequestDto dto){
-        this.userId = dto.getUserId();
-        this.userPassword = dto.getUserPassword();
-        this.joinType = dto.getJoinType();
-        this.snsId = dto.getSnsId();
-        this.userNickname = dto.getUserNickname();
-        this.profileImage = dto.getProfileImage();
-        this.userEmail = dto.getUserEmail();
-        this.userPhoneNumber = dto.getUserPhoneNumber();
-        this.userIntroduce = dto.getUserIntroduce();
-    }
+  public UserEntity(SignUpRequestDto dto){
+    this.userId = dto.getUserId();
+    this.userPassword = dto.getUserPassword();
+    this.joinType = dto.getJoinType();
+    this.snsId = dto.getSnsId();
+    this.userNickname = dto.getUserNickname();
+    this.profileImage = dto.getProfileImage();
+    this.userEmail = dto.getUserEmail();
+    this.userPhoneNumber = dto.getUserPhoneNumber();
+    this.userIntroduce = dto.getUserIntroduce();
+  }
 
 }

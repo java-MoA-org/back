@@ -13,29 +13,32 @@ import lombok.Getter;
 
 @Getter
 public class GetBoardResponseDto extends ResponseDto {
-  
+
   private String creationDate;
   private String title;
   private String content;
   private TagType tag;
   private Integer views;
   private Integer likeCount;
-  private List<String> images;  
+  private List<String> images;
   private String writerId;
-  
-  private GetBoardResponseDto(BoardEntity boardEntity) {
+  private List<BoardCommentSummaryResponseDto> commentList;
+
+  public GetBoardResponseDto(BoardEntity boardEntity, int likeCount, List<BoardCommentSummaryResponseDto> commentList) {
     this.creationDate = boardEntity.getCreationDate();
     this.title = boardEntity.getTitle();
     this.content = boardEntity.getContent();
     this.tag = boardEntity.getTag();
     this.views = boardEntity.getViews();
-    this.likeCount = 0;  
-    this.images = boardEntity.getImages();  
+    this.likeCount = likeCount;
+    this.images = boardEntity.getImages();
     this.writerId = boardEntity.getUserId();
+    this.commentList = commentList;
   }
+  
 
-  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity) {
-    GetBoardResponseDto body = new GetBoardResponseDto(boardEntity);
-    return ResponseEntity.status(HttpStatus.OK).body(body);
+  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity, int likeCount, List<BoardCommentSummaryResponseDto> commentList) {
+    GetBoardResponseDto dto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
+    return ResponseEntity.status(HttpStatus.OK).body(dto);
   }
 }

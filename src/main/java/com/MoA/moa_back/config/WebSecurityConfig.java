@@ -35,6 +35,7 @@ public class WebSecurityConfig {
                 .requestMatchers( HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/board/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/board/**").permitAll()
                 .anyRequest().authenticated()

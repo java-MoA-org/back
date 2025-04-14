@@ -2,8 +2,6 @@ package com.MoA.moa_back.common.dto.request.board;
 
 import java.util.List;
 
-import com.MoA.moa_back.common.entity.TagType;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -29,8 +27,5 @@ public class PatchBoardRequestDto {
   private String detailLocation;
 
   private List<String> imageList;
-
-  private TagType tag;
-
   
 }

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity(name="boardLike")
-@Table(name="board-like")
+@Table(name="board_like")
 @IdClass(BoardLikeCountPk.class)
 @Getter
 @Setter

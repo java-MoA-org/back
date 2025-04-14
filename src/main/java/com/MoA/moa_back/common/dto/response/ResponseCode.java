@@ -10,6 +10,9 @@ public interface ResponseCode {
     String NO_EXIST_DAILY = "ND.";
     String NO_EXIST_USED_TRADE = "NU.";
 
+    String INVALID_TAG = "IT";
+    String INVALID_PAGE_NUMBER = "IP.";
+    
     String SIGN_IN_FAIL = "SF";
   
     String NO_PERMISSION = "NP";

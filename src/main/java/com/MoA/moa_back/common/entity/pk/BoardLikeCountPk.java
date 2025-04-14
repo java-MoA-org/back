@@ -15,6 +15,7 @@ import lombok.Setter;
 public class BoardLikeCountPk implements Serializable {
 
   private Integer boardSequence;
+  
   private String userId;
 
   @Override
