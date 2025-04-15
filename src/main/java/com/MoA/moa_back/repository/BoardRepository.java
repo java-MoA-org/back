@@ -27,4 +27,5 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
   
   // method: 태그에 해당하는 게시글 목록을 페이징하여 조회 //
   Page<BoardEntity> findByTag(TagType tag, Pageable pageable);
+  
 }

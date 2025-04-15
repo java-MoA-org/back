@@ -17,12 +17,12 @@ public class GetBoardDetailWithCommentsResponseDto {
   private TagType tag;
   private Integer views;
   private Integer likeCount;
-  private List<BoardCommentSummaryResponseDto> comments;
+  private List<BoardCommentResponseDto> comments;
 
   public static GetBoardDetailWithCommentsResponseDto of(
     BoardEntity board,
     int likeCount,
-    List<BoardCommentSummaryResponseDto> commentList
+    List<BoardCommentResponseDto> commentList
   ) {
     return new GetBoardDetailWithCommentsResponseDto(
       board.getBoardSequence(),

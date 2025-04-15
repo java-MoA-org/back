@@ -1,18 +1,16 @@
-package com.MoA.moa_back.common.dto.response.board;
-
-import com.MoA.moa_back.common.entity.TagType;
+package com.MoA.moa_back.common.dto.response.daily;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class BoardSummaryResponseDto {
-  private Integer boardSequence;
+public class DailySummaryResponseDto {
+  private Integer dailySequence;
   private String title;
   private String content;
   private String creationDate;
-  private TagType tag;
+  private String profileImage;
   private Integer views;
   private Integer likeCount; 
 }

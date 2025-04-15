@@ -9,6 +9,7 @@ public interface ResponseCode {
     String NO_EXIST_BOARD = "NB";
     String NO_EXIST_DAILY = "ND.";
     String NO_EXIST_USED_TRADE = "NU.";
+    String NO_EXIST_COMMENT = "NC";
 
     String INVALID_TAG = "IT";
     String INVALID_PAGE_NUMBER = "IP.";

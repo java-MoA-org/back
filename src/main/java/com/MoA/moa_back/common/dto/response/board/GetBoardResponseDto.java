@@ -22,9 +22,9 @@ public class GetBoardResponseDto extends ResponseDto {
   private Integer likeCount;
   private List<String> images;
   private String writerId;
-  private List<BoardCommentSummaryResponseDto> commentList;
+  private List<BoardCommentResponseDto> commentList;
 
-  public GetBoardResponseDto(BoardEntity boardEntity, int likeCount, List<BoardCommentSummaryResponseDto> commentList) {
+  public GetBoardResponseDto(BoardEntity boardEntity, int likeCount, List<BoardCommentResponseDto> commentList) {
     this.creationDate = boardEntity.getCreationDate();
     this.title = boardEntity.getTitle();
     this.content = boardEntity.getContent();
@@ -37,7 +37,7 @@ public class GetBoardResponseDto extends ResponseDto {
   }
   
 
-  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity, int likeCount, List<BoardCommentSummaryResponseDto> commentList) {
+  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity, int likeCount, List<BoardCommentResponseDto> commentList) {
     GetBoardResponseDto dto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
     return ResponseEntity.status(HttpStatus.OK).body(dto);
   }

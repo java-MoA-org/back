@@ -13,5 +13,6 @@ public class LikedUserDto {
 
   private String userId;
   private String profileImage;
+  private String userNickname;
 
 }
