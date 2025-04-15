@@ -67,7 +67,7 @@ public class BoardServiceImplement implements BoardService {
       return ResponseDto.databaseError();
     }
 
-    return GetMyBoardResponseDto.success(boardEntities);
+    return GetMyBoardResponseDto.success(boardEntities, boardLikeRepository, boardCommentRepository);
 
   }
 

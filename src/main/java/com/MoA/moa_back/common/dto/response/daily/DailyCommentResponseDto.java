@@ -1,8 +1,5 @@
 package com.MoA.moa_back.common.dto.response.daily;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 
@@ -18,7 +15,7 @@ public class DailyCommentResponseDto {
   private String profileImage;
   private String writerNickname;
 
-  private DailyCommentResponseDto(DailyCommentEntity dailyCommentEntity, UserEntity userEntity) {
+  public DailyCommentResponseDto(DailyCommentEntity dailyCommentEntity, UserEntity userEntity) {
     this.commentSequence = dailyCommentEntity.getCommentSequence();
     this.commentWriterId = dailyCommentEntity.getUserId();
     this.commentWriteDate = dailyCommentEntity.getCreationDate();

@@ -2,9 +2,6 @@ package com.MoA.moa_back.common.dto.response.daily;
 
 import java.util.List;
 
-import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetBoardDetailWithCommentsResponseDto;
-import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 

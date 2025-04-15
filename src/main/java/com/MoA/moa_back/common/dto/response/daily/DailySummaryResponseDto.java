@@ -13,4 +13,5 @@ public class DailySummaryResponseDto {
   private String profileImage;
   private Integer views;
   private Integer likeCount; 
+  private Integer commentCount;
 }
