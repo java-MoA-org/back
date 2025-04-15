@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
+import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.vo.BoardSummaryVO;
 
 import lombok.AllArgsConstructor;
@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetUserBoardResponseDto {
+public class GetUserBoardResponseDto extends ResponseDto {
   private List<BoardSummaryVO> boards;
 
       public static ResponseEntity<GetUserBoardResponseDto> success(List<BoardSummaryVO> boards) {
-        GetUserBoardResponseDto dto = new GetUserBoardResponseDto();
-    return ResponseEntity.status(HttpStatus.OK).body(dto);
+        GetUserBoardResponseDto body = new GetUserBoardResponseDto(boards);
+    return ResponseEntity.status(HttpStatus.OK).body(body);
   }
 }
