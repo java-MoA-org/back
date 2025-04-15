@@ -1,6 +1,7 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,7 @@ import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetMyBoardResponseDto;
 import com.MoA.moa_back.service.BoardService;
 
 import jakarta.validation.Valid;
@@ -37,6 +39,16 @@ public class BoardController {
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.postBoard(requestBody, userId);
+    return response;
+  }
+
+  // API: 나의 게시글 조회 //
+  @GetMapping("/my")
+  public ResponseEntity<? super GetMyBoardResponseDto> getMyBoard(
+    // @AuthenticationPrincipal String userId
+  ) {
+    String userId = "testuser"; // 테스트용 유저아이디
+    ResponseEntity<? super GetMyBoardResponseDto> response = boardService.getMyBoard(userId);
     return response;
   }
 
@@ -107,4 +119,13 @@ public class BoardController {
     return response;
   }
 
+  // API: 게시글 댓글 삭제 //
+  @DeleteMapping("/{commentSequence}/comments")
+  public ResponseEntity<ResponseDto> deleteDailyComment(
+    @PathVariable("commentSequence") Integer commentSequence
+    // @AuthenticationPrincipal String userId
+  ) {
+    String userId = "testuser"; // 테스트용 유저아이디
+    return boardService.deleteBoardComment(commentSequence, userId);
+  }
 }

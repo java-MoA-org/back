@@ -6,9 +6,12 @@ import java.time.format.DateTimeFormatter;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DailyCommentEntity {
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer commentSequence;
@@ -32,7 +35,10 @@ public class DailyCommentEntity {
 
   private String dailyComment;
   private String creationDate;
-  private String profileImage;
+
+  @ManyToOne(fetch=FetchType.LAZY)
+  @JoinColumn(name="userId", referencedColumnName="userId", insertable = false, updatable = false)
+  private UserEntity user;
 
   public DailyCommentEntity(PostDailyCommentRequestDto dto, Integer dailySequence, String userId) {
     LocalDateTime now = LocalDateTime.now();
@@ -40,9 +46,8 @@ public class DailyCommentEntity {
 
     this.userId = userId;
     this.dailySequence = dailySequence;
-    this.profileImage = 
     this.creationDate = now.format(dateTimeFormatter);
     this.dailyComment = dto.getDailyComment();
   }
-
 }
+

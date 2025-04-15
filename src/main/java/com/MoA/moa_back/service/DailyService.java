@@ -6,14 +6,11 @@ import com.MoA.moa_back.common.dto.request.daily.PatchDailyRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.daily.GetMyDailyResponseDto;
 
 public interface DailyService {
   
   // method: 일상 게시글 작성 //
   ResponseEntity<ResponseDto> postDailyBoard(PostDailyRequestDto dto, String userId);
-  // method: 나의 일상 게시글 목록 조회 //
-  ResponseEntity<? super GetMyDailyResponseDto> getMyDaily(String userId);
   // method: 일상게시판 게시글 목록 조회 (페이징)//
   ResponseEntity<? extends ResponseDto> getDailyBoardList(Integer pageNumber, Integer pageSize);
   // method: 일상 게시글 상세 조회 및 조회수 증가 //
@@ -26,7 +23,7 @@ public interface DailyService {
   // method: 특정 게시글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putDailyBoardLikeCount(Integer dailySequence, String userId);
   // method: 특정 게시글 좋아요 누른 유저 목록 조회 //
-  ResponseEntity<ResponseDto> getDailyBoardLikedUsers(Integer dailySequence);
+  ResponseEntity<? extends ResponseDto> getDailyBoardLikedUsers(Integer dailySequence);
 
   // method: 특정 게시글 댓글 작성 //
   ResponseEntity<ResponseDto> postDailyBoardComment(PostDailyCommentRequestDto dto, Integer dailySequence, String userId);
