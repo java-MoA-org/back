@@ -3,16 +3,19 @@ package com.MoA.moa_back.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.PhoneNumberCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.SignInRequestDto;
-import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.SignInResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.service.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -63,9 +66,16 @@ public class AuthController {
     }
     
     @PostMapping("/sign-in")
-    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody) {
-        ResponseEntity<? super SignInResponseDto> response = authService.signIn(requestBody);
-        return response;
+    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody, HttpServletResponse response) {
+        ResponseEntity<? super SignInResponseDto> responseEntity = authService.signIn(requestBody, response);
+        return responseEntity;
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        ResponseEntity<? super TokenRefreshResponseDto> responseEntity = authService.refreshToken(request, response);
+        return responseEntity;
+    }
+    
     
 }

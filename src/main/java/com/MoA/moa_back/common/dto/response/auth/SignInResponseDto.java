@@ -1,7 +1,9 @@
-package com.MoA.moa_back.common.dto.response;
+package com.MoA.moa_back.common.dto.response.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import com.MoA.moa_back.common.dto.response.ResponseDto;
 
 import lombok.Getter;
 

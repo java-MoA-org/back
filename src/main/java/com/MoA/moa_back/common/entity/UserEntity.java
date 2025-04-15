@@ -1,10 +1,10 @@
 package com.MoA.moa_back.common.entity;
 
-import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
+
+import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +24,6 @@ public class UserEntity {
   private String userId;
   private String userPassword;
   private String joinType;
-  private String snsId;
   private String userNickname;
   private String profileImage;
   private String userIntroduce;
@@ -35,7 +34,6 @@ public class UserEntity {
     this.userId = dto.getUserId();
     this.userPassword = dto.getUserPassword();
     this.joinType = dto.getJoinType();
-    this.snsId = dto.getSnsId();
     this.userNickname = dto.getUserNickname();
     this.profileImage = dto.getProfileImage();
     this.userEmail = dto.getUserEmail();

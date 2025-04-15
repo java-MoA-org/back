@@ -1,4 +1,4 @@
-package com.MoA.moa_back.common.dto.request;
+package com.MoA.moa_back.common.dto.request.auth;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -34,10 +34,6 @@ public class SignUpRequestDto {
     @NotNull
     @Pattern(regexp = "^(NORMAL|KAKAO|NAVER)$")
     private String joinType;
-
-    @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-    private String snsId;
 
     @NotNull
     @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$")
