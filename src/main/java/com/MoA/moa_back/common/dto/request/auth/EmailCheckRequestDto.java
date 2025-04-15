@@ -1,4 +1,4 @@
-package com.MoA.moa_back.common.dto.request;
+package com.MoA.moa_back.common.dto.request.auth;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

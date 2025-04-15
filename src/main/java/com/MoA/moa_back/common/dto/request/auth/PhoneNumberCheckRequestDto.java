@@ -1,4 +1,4 @@
-package com.MoA.moa_back.common.dto.request;
+package com.MoA.moa_back.common.dto.request.auth;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -11,9 +11,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NicknameCheckRequestDto {
-    
+public class PhoneNumberCheckRequestDto {
+
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,8}$")
-    private String userNickname;
+    @Pattern(regexp = "^[0-9]{3}-[0-9]{4}-[0-9]{4}$")
+    private String userPhoneNumber;
+    
 }
