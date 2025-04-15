@@ -18,7 +18,6 @@ import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetMyBoardResponseDto;
 import com.MoA.moa_back.service.BoardService;
 
 import jakarta.validation.Valid;
@@ -39,16 +38,6 @@ public class BoardController {
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.postBoard(requestBody, userId);
-    return response;
-  }
-
-  // API: 나의 게시글 조회 //
-  @GetMapping("/my")
-  public ResponseEntity<? super GetMyBoardResponseDto> getMyBoard(
-    // @AuthenticationPrincipal String userId
-  ) {
-    String userId = "testuser"; // 테스트용 유저아이디
-    ResponseEntity<? super GetMyBoardResponseDto> response = boardService.getMyBoard(userId);
     return response;
   }
 
