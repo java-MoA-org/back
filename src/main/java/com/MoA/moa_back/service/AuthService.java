@@ -3,14 +3,18 @@ package com.MoA.moa_back.service;
 import org.springframework.http.ResponseEntity;
 
 // 주석 추가
-import com.MoA.moa_back.common.dto.request.EmailCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.IdCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.NicknameCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.PhoneNumberCheckRequestDto;
-import com.MoA.moa_back.common.dto.request.SignInRequestDto;
-import com.MoA.moa_back.common.dto.request.SignUpRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.SignInResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
     ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto requestDto);
@@ -18,5 +22,6 @@ public interface AuthService {
     ResponseEntity<ResponseDto> emailCheck(EmailCheckRequestDto requestDto);
     ResponseEntity<ResponseDto> phoneNumberCheck(PhoneNumberCheckRequestDto requestDto);
     ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto);
-    ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto requestDto);
+    ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto requestDto,HttpServletResponse response);
+    ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response);
 }
