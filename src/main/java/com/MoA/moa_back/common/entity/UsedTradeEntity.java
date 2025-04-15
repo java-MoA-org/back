@@ -5,15 +5,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
-import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
+import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,35 +20,37 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name="board")
-@Table(name="board")
+
+@Entity(name="usedTrade")
+@Table(name="used_trade")
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardEntity {
+public class UsedTradeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer boardSequence;
+  private Integer tradeSequence;
   private String userId;
+  private String itemTypeTag; // 물건 타입 ex) 전자기기, 옷
+  private String usedItemStatusTag; // 물건 상태 ex) 사용감 있음 , 새상품, 사용감 없음
   private String creationDate;
-  private String location;
-  private String detailLocation;
   private String title;
   private String content;
-
+  private String price;
+  private String transactionStatus; // 거래상태 ex) 판매중, 판매완료
+  private String location;
+  private String detailLocation;
   @ElementCollection
-  @CollectionTable(name="board_images", joinColumns = @JoinColumn(name="board_sequence"))
+  @CollectionTable(name="used_trade_images", joinColumns = @JoinColumn(name="trade_sequence"))
   @Column(name="image_url")
   private List<String> images = new ArrayList<>();
 
-  @Enumerated(EnumType.STRING)
-  @Column(length=4)
-  private TagType tag = TagType.자유;
   @Column(nullable=false)
   private Integer views = 0;
 
-  public BoardEntity(PostBoardRequestDto dto, String userId) {
+  // 생성자에서 기본값으로 '판매중' 설정
+  public UsedTradeEntity(PostUsedTradeRequestDto dto, String userId) {
     LocalDate now = LocalDate.now();
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -59,18 +58,17 @@ public class BoardEntity {
     this.creationDate = now.format(dateTimeFormatter);
     this.title = dto.getTitle();
     this.content = dto.getContent();
+    this.itemTypeTag = dto.getItemTypeTag();
+    this.usedItemStatusTag = dto.getUsedItemStatusTag();
+    this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.tag = dto.getTag() != null ? dto.getTag() : TagType.자유;
     this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
+    this.transactionStatus = "판매중"; // 기본값 설정
   }
 
-  public void patch(PatchBoardRequestDto dto) {
-    this.title = dto.getTitle();
-    this.content = dto.getContent();
-    this.location = dto.getLocation();
-    this.detailLocation = dto.getDetailLocation();
-    this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
+  // 판매완료로 상태를 변경하는 메서드
+  public void markAsSold() {
+    this.transactionStatus = "판매완료"; // 판매완료로 상태 변경
   }
-  
 }

@@ -3,11 +3,13 @@ package com.MoA.moa_back.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 
 import jakarta.transaction.Transactional;
 
+@Repository
 public interface DailyCommentRepository extends JpaRepository<DailyCommentEntity, Integer> {
 
   // 특정 일상 게시글에 달린 모든 댓글을 작성일 기준 내림차순 조회 //
