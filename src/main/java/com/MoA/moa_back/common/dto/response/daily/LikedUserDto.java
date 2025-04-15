@@ -15,4 +15,9 @@ public class LikedUserDto {
   private String profileImage;
   private String userNickname;
 
+  public LikedUserDto(String userId, String profileImage) {
+    this.userId = userId;
+    this.profileImage = profileImage;
+  }
+
 }

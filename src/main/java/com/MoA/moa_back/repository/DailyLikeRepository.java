@@ -1,5 +1,7 @@
 package com.MoA.moa_back.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 
@@ -25,4 +27,6 @@ public interface DailyLikeRepository extends JpaRepository<DailyLikeEntity, Dail
   @Transactional
   void deleteByDailySequence(Integer dailySequence);
 
+  // 특정 게시글에 좋아요 누른 유저 목록 조회 //
+  List<DailyLikeEntity> findByDailySequence(Integer dailySequence);
 }

@@ -32,4 +32,5 @@ public class BoardCommentResponseDto {
 
     return list;
   }
+  
 }

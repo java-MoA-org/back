@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.MoA.moa_back.common.entity.DailyEntity;
 
-
 public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
 
   // method: 특정 게시글 존재 여부 확인 //
@@ -14,11 +13,13 @@ public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
 
   // method: 게시글 시퀀스로 조회 //
   DailyEntity findByDailySequence(Integer dailySequence);
-  
-  // method: 특정 유저가 작성한 게시글들을 최신순으로 조회 //
-  List<DailyEntity> findByUserIdOrderByCreationDateDesc(String userId);
-  
-  // method: 전체 게시글을 최신순으로 조회 //
-  List<DailyEntity> findByOrderByDailySequenceDesc();
 
+  // method: 특정 유저가 작성한 게시글들을 작성일 기준 최신순으로 조회 //
+  List<DailyEntity> findByUserIdOrderByCreationDateDesc(String userId);
+
+  // method: 특정 유저가 작성한 게시글들을 시퀀스 기준 최신순으로 조회 //
+  List<DailyEntity> findByUserIdOrderByDailySequenceDesc(String userId);
+
+  // method: 전체 게시글을 시퀀스 기준 최신순으로 조회 //
+  List<DailyEntity> findByOrderByDailySequenceDesc();
 }
