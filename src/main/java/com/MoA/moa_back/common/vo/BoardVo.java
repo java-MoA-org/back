@@ -40,7 +40,7 @@ public class BoardVo {
       int likeCount = likeRepository.countByBoardSequence(boardEntity.getBoardSequence());
       int commentCount = commentRepository.countByBoardSequence(boardEntity.getBoardSequence());
       int views = boardEntity.getViews();
-      list.add(new BoardVo(boardEntity, likeCount, commentCount));
+      list.add(new BoardVo(boardEntity, likeCount, commentCount, views));
     }
 
     return list;

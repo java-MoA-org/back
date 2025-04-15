@@ -1,6 +1,5 @@
 package com.MoA.moa_back.service.implement;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -50,8 +49,6 @@ public class BoardServiceImplement implements BoardService {
     }
     return ResponseDto.success(HttpStatus.CREATED);
   }
-
-  
 
   // method: 게시판(태그) 별 게시글 목록 조회 //
   @Override

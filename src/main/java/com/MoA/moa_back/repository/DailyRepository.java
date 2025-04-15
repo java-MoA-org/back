@@ -3,9 +3,11 @@ package com.MoA.moa_back.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.MoA.moa_back.common.entity.DailyEntity;
 
+@Repository
 public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
 
   // method: 특정 게시글 존재 여부 확인 //

@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.stereotype.Repository;
 
 import com.MoA.moa_back.common.entity.DailyLikeEntity;
 import com.MoA.moa_back.common.entity.pk.DailyLikeCountPk;
 
 import jakarta.transaction.Transactional;
 
+@Repository
 public interface DailyLikeRepository extends JpaRepository<DailyLikeEntity, DailyLikeCountPk> {
 
   // 유저가 해당 게시글에 좋아요를 눌렀는지 확인 (중복 방지) //

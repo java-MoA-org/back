@@ -128,7 +128,6 @@ public class DailyServiceImplement implements DailyService {
     }
   }
 
-
   // method: 일상 게시글 수정 (작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> patchDailyBoard(PatchDailyRequestDto dto, Integer dailySequence, String userId) {
