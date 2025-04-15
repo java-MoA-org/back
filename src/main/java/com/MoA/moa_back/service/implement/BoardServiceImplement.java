@@ -1,5 +1,6 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,11 @@ import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.board.BoardCommentSummaryResponseDto;
+import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.BoardSummaryResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetMyBoardResponseDto;
 import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.BoardLikeEntity;
@@ -50,6 +52,25 @@ public class BoardServiceImplement implements BoardService {
     return ResponseDto.success(HttpStatus.CREATED);
   }
 
+  // method: 나의 게시글 목록조회 //
+  @Override
+  public ResponseEntity<? super GetMyBoardResponseDto> getMyBoard(String userId) {
+
+    List<BoardEntity> boardEntities = new ArrayList<>();
+    
+    try {
+
+      boardEntities = boardRepository.findByOrderByBoardSequenceDesc();
+
+    } catch(Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return GetMyBoardResponseDto.success(boardEntities);
+
+  }
+
   // method: 게시판(태그) 별 게시글 목록 조회 //
   @Override
   public ResponseEntity<? extends ResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, Integer pageSize) {
@@ -77,6 +98,7 @@ public class BoardServiceImplement implements BoardService {
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
             entity.getTitle(),
+            entity.getContent(),
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
@@ -94,7 +116,7 @@ public class BoardServiceImplement implements BoardService {
     }
   }
 
-  // method: 게시글 상세 조회 + 조회수 증가 + 댓글 포함 //
+  // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
   public ResponseEntity<ResponseDto> getBoardDetail(Integer boardSequence) {
     try {
@@ -107,13 +129,9 @@ public class BoardServiceImplement implements BoardService {
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
 
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
-      List<BoardCommentSummaryResponseDto> commentList = commentEntities.stream()
-        .map(comment -> new BoardCommentSummaryResponseDto(
-          comment.getUserId(),        
-          comment.getBoardComment(),
-          comment.getCreationDate()
-        ))
-        .toList();
+      List<BoardCommentResponseDto> commentList = commentEntities.stream()
+      .map(BoardCommentResponseDto::new)
+      .toList();
 
       GetBoardResponseDto responseDto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
       return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -208,6 +226,39 @@ public class BoardServiceImplement implements BoardService {
     }
 
     return ResponseDto.success(HttpStatus.CREATED);
+  }
+
+  // method: 게시글에 댓글 삭제 (글작성자, 댓글작성자만 가능) //
+  @Override
+  public ResponseEntity<ResponseDto> deleteBoardComment(Integer commentSequence, String userId) {
+
+    try {
+      // 1. 댓글 엔티티 조회 //
+      BoardCommentEntity commentEntity = boardCommentRepository.findById(commentSequence).orElse(null);
+      if (commentEntity == null)
+        return ResponseDto.noExistComment();
+  
+      // 2. 게시글 작성자 조회 //
+      BoardEntity boardEntity = boardRepository.findById(commentEntity.getBoardSequence()).orElse(null);
+      if (boardEntity == null)
+        return ResponseDto.noExistBoard();
+  
+      // 3. 댓글 작성자 또는 게시글 작성자가 아니면 권한 없음 //
+      boolean isCommentWriter = commentEntity.getUserId().equals(userId);
+      boolean isPostWriter = boardEntity.getUserId().equals(userId);
+  
+      if (!isCommentWriter && !isPostWriter)
+        return ResponseDto.noPermission();
+  
+      // 4. 삭제 수행 //
+      boardCommentRepository.deleteByCommentSequence(commentEntity.getCommentSequence());
+  
+      return ResponseDto.success(HttpStatus.OK);
+  
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
   }
 
 }

@@ -5,15 +5,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
-import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
+
+import com.MoA.moa_back.common.dto.request.daily.PatchDailyRequestDto;
+import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,16 +22,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name="board")
-@Table(name="board")
+
+@Entity(name="dailyBoard")
+@Table(name="daily_board")
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardEntity {
-
+public class DailyEntity {
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer boardSequence;
+    private Integer dailySequence;
     private String userId;
     private String creationDate;
     private String location;
@@ -41,17 +41,14 @@ public class BoardEntity {
     private String content;
 
     @ElementCollection
-    @CollectionTable(name="board_images", joinColumns = @JoinColumn(name="board_sequence"))
+    @CollectionTable(name="daily_images", joinColumns = @JoinColumn(name="daily_sequence"))
     @Column(name="image_url")
     private List<String> images = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(length=4)
-    private TagType tag = TagType.자유;
     @Column(nullable=false)
     private Integer views = 0;
 
-    public BoardEntity(PostBoardRequestDto dto, String userId) {
+    public DailyEntity(PostDailyRequestDto dto, String userId) {
         LocalDate now = LocalDate.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -61,11 +58,10 @@ public class BoardEntity {
         this.content = dto.getContent();
         this.location = dto.getLocation();
         this.detailLocation = dto.getDetailLocation();
-        this.tag = dto.getTag() != null ? dto.getTag() : TagType.자유;
         this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
     }
 
-    public void patch(PatchBoardRequestDto dto) {
+    public void patch(PatchDailyRequestDto dto) {
         this.title = dto.getTitle();
         this.content = dto.getContent();
         this.location = dto.getLocation();

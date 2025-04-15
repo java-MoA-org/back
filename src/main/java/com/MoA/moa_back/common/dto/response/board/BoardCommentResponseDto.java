@@ -10,13 +10,13 @@ import lombok.Getter;
 @Getter
 public class BoardCommentResponseDto {
 
-  private Integer commentNumber;
+  private Integer commentSequence;
   private String commentWriterId;
   private String commentWriteDate;
   private String comment;
 
-  private BoardCommentResponseDto(BoardCommentEntity boardCommentEntity) {
-    this.commentNumber = boardCommentEntity.getCommentSequence();
+  public BoardCommentResponseDto(BoardCommentEntity boardCommentEntity) {
+    this.commentSequence = boardCommentEntity.getCommentSequence();
     this.commentWriterId = boardCommentEntity.getUserId();
     this.commentWriteDate = boardCommentEntity.getCreationDate();
     this.comment = boardCommentEntity.getBoardComment();
