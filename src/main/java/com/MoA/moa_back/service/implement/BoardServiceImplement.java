@@ -19,7 +19,6 @@ import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.BoardSummaryResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetMyBoardResponseDto;
 import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.BoardLikeEntity;
@@ -52,24 +51,6 @@ public class BoardServiceImplement implements BoardService {
     return ResponseDto.success(HttpStatus.CREATED);
   }
 
-  // method: 나의 게시글 목록조회 //
-  @Override
-  public ResponseEntity<? super GetMyBoardResponseDto> getMyBoard(String userId) {
-
-    List<BoardEntity> boardEntities = new ArrayList<>();
-    
-    try {
-
-      boardEntities = boardRepository.findByOrderByBoardSequenceDesc();
-
-    } catch(Exception e) {
-      e.printStackTrace();
-      return ResponseDto.databaseError();
-    }
-
-    return GetMyBoardResponseDto.success(boardEntities);
-
-  }
 
   // method: 게시판(태그) 별 게시글 목록 조회 //
   @Override

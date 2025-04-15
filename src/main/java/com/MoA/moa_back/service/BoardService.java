@@ -6,14 +6,12 @@ import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetMyBoardResponseDto;
 
 public interface BoardService {
 
   // method: 게시글 작성 //
   ResponseEntity<ResponseDto> postBoard(PostBoardRequestDto dto, String userId);
-  // method: 나의 게시글 목록 조회 //
-  ResponseEntity<? super GetMyBoardResponseDto> getMyBoard(String userId);
+
   // method: 게시판(태그) 별 게시글 목록 조회 (페이징)//
   ResponseEntity<? extends ResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, Integer pageSize);
   // method: 게시글 상세 조회 + 조회수 증가 //
