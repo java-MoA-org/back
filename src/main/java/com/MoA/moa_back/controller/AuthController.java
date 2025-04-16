@@ -77,5 +77,12 @@ public class AuthController {
         return responseEntity;
     }
     
+    @PostMapping("/sign-out")
+    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
+        
+        ResponseEntity<ResponseDto> responseDto = authService.signOut(response);
+        
+        return responseDto;
+    }
     
 }
