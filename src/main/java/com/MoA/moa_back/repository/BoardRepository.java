@@ -30,5 +30,11 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
 
   // method: 아이디에 따라 게시글 조회
   List<BoardEntity> findByUserId(String userId);
-  
+
+  // method: 제목에 키워드가 포함된 게시글 목록 조회 (페이징 포함) //
+  Page<BoardEntity> findByTitleContaining(String keyword, Pageable pageable);
+
+  // method: 특정 태그 + 제목에 키워드가 포함된 게시글 목록 조회 (페이징 포함) //
+  Page<BoardEntity> findByTagAndTitleContaining(BoardTagType tag, String keyword, Pageable pageable);
+
 }

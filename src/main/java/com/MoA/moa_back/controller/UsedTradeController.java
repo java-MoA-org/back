@@ -73,6 +73,17 @@ public class UsedTradeController {
     return response;
   }
 
+  // API: 중고거래글 검색 (태그별 가능) //
+  @GetMapping("/search")
+  public ResponseEntity<? super GetUsedTradeListResponseDto> searchUsedTradeList(
+    @RequestParam(value = "tag", defaultValue = "ALL") String tag,
+    @RequestParam(value = "keyword", defaultValue = "") String keyword,
+    @RequestParam(value = "page", defaultValue = "1") Integer pageNumber
+  ) {
+    ResponseEntity<? super GetUsedTradeListResponseDto> response = usedTradeService.searchUsedTradeList(tag, keyword, pageNumber);
+    return response;
+  }
+
   // API: 중고거래 게시글 찜하기 or 취소하기 //
   @PutMapping("/{tradeSequence}/likes")
   public ResponseEntity<ResponseDto> toggleUsedTradeLike(

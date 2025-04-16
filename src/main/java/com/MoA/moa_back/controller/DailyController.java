@@ -37,10 +37,9 @@ public class DailyController {
   // API: 일상 게시글 목록 조회 (페이지네이션) //
   @GetMapping("/list/{pageNumber}")
   public ResponseEntity<? super GetDailyListResponseDto> getDailyList(
-    @PathVariable("pageNumber") Integer pageNumber,
-    @RequestParam(name="size", defaultValue="10") Integer pageSize
+    @PathVariable("pageNumber") Integer pageNumber
   ) {
-    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.getDailyBoardList(pageNumber, pageSize);
+    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.getDailyBoardList(pageNumber);
     return response;
   }
 
@@ -73,6 +72,16 @@ public class DailyController {
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.deleteDailyBoard(dailySequence, userId);
+    return response;
+  }
+
+  // API: 일상 게시글 검색 (제목만) //
+  @GetMapping("/search")
+  public ResponseEntity<? super GetDailyListResponseDto> searchBoardList(
+    @RequestParam(value = "keyword", defaultValue = "") String keyword,
+    @RequestParam(value = "page", defaultValue = "1") Integer pageNumber
+  ) {
+    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.searchDailyBoardList(keyword, pageNumber);
     return response;
   }
 

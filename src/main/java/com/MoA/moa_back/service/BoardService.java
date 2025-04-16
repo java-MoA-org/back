@@ -21,6 +21,8 @@ public interface BoardService {
   ResponseEntity<ResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardSequence, String userId);
   // method: 게시글 삭제 //
   ResponseEntity<ResponseDto> deleteBoard(Integer boardSequence, String userId);
+  // method: 게시글 (태그)별 검색 // 
+  ResponseEntity<? super GetBoardListResponseDto> searchBoardList(String tag, String keyword, Integer pageNumber);
 
   // method: 특정 게시글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putBoardLikeCount(Integer boardSequence, String userId);

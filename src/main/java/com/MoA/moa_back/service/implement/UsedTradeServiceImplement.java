@@ -146,6 +146,64 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
 
   }
+  
+  // method: 중고거래글 (태그) 별 제목 검색 //
+  @Override
+  public ResponseEntity<? super GetUsedTradeListResponseDto> searchUsedTradeList(String tag, String keyword, Integer pageNumber) {
+    try {
+      int pageSize = 10;
+      Sort sort = Sort.by("tradeSequence").descending();
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+  
+      ItemTypeTag itemTypeTag = null;
+      if (!"ALL".equalsIgnoreCase(tag)) {
+        try {
+          itemTypeTag = ItemTypeTag.valueOf(tag);
+        } catch (IllegalArgumentException e) {
+          return ResponseDto.invalidTag();
+        }
+      }
+  
+      Page<UsedTradeEntity> page = (itemTypeTag == null)
+        ? usedTradeRepository.findByTitleContaining(keyword, pageable)
+        : usedTradeRepository.findByItemTypeTagAndTitleContaining(itemTypeTag, keyword, pageable);
+  
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
+        return ResponseDto.invalidPageNumber();
+      }
+  
+      List<UsedTradeSummaryResponseDto> list = page.stream()
+        .map(entity -> {
+          int likeCount = usedTradeLikeRepository.countByTradeSequence(entity.getTradeSequence());
+  
+          UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
+          String profileImage = (user != null) ? user.getProfileImage() : null;
+          String nickname = (user != null) ? user.getUserNickname() : null;
+  
+          return new UsedTradeSummaryResponseDto(
+            entity.getTradeSequence(),
+            entity.getViews(),
+            likeCount,
+            entity.getCreationDate(),
+            entity.getImages(),
+            entity.getTitle(),
+            entity.getUserId(),
+            entity.getLocation(),
+            entity.getUsedItemStatusTag().toString(),
+            profileImage,
+            nickname
+          );
+        })
+        .toList();
+  
+      GetUsedTradeListResponseDto responseBody = new GetUsedTradeListResponseDto(list, page.getTotalPages());
+      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+  }  
 
   // method: 중고거래 게시글 삭제 (작성자만 가능) //
   @Override

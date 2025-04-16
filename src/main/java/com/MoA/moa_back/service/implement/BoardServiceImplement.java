@@ -79,6 +79,8 @@ public class BoardServiceImplement implements BoardService {
       List<BoardSummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+          int commentCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
             entity.getTitle(),
@@ -86,7 +88,8 @@ public class BoardServiceImplement implements BoardService {
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
-            likeCount
+            likeCount,
+            commentCount
           );
         })
         .toList();
@@ -100,8 +103,6 @@ public class BoardServiceImplement implements BoardService {
     }
     
   }
-  
-  
 
   // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
@@ -170,6 +171,60 @@ public class BoardServiceImplement implements BoardService {
     }
 
     return ResponseDto.success(HttpStatus.OK);
+  }
+  
+  // method: 게시글 검색 (태그별로 가능) //
+  @Override
+  public ResponseEntity<? super GetBoardListResponseDto> searchBoardList(String tag, String keyword, Integer pageNumber) {
+    try {
+      int pageSize = 10;
+      Sort sort = Sort.by("boardSequence").descending();
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+  
+      BoardTagType tagType = null;
+      if (!"ALL".equalsIgnoreCase(tag)) {
+        try {
+          tagType = BoardTagType.valueOf(tag);
+        } catch (IllegalArgumentException e) {
+          return ResponseDto.invalidTag(); // 잘못된 태그 처리
+        }
+      }
+  
+      // 태그와 키워드를 기준으로 게시글 조회
+      Page<BoardEntity> boardPage = (tagType == null)
+        ? boardRepository.findByTitleContaining(keyword, pageable)
+        : boardRepository.findByTagAndTitleContaining(tagType, keyword, pageable);
+  
+      // 페이지 번호 유효성 검사
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), boardPage.getTotalPages())) {
+        return ResponseDto.invalidPageNumber();
+      }
+  
+      // 게시글 정보를 BoardSummaryResponseDto로 변환
+      List<BoardSummaryResponseDto> boardList = boardPage.stream()
+        .map(entity -> {
+
+          int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+          int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
+  
+          return new BoardSummaryResponseDto(
+            entity.getBoardSequence(),
+            entity.getTitle(),
+            entity.getContent(),
+            entity.getCreationDate(),
+            entity.getTag(),
+            entity.getViews(),
+            likeCount,
+            commentCount
+          );
+        }).toList();
+  
+      return ResponseEntity.ok(new GetBoardListResponseDto(boardList, boardPage.getTotalPages()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+    
   }
 
   // method: 게시글에 좋아요를 누르거나 취소 //
@@ -246,6 +301,7 @@ public class BoardServiceImplement implements BoardService {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+
   }
 
 }

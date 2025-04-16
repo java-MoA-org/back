@@ -2,10 +2,11 @@ package com.MoA.moa_back.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 
 @Repository
@@ -28,6 +29,9 @@ public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
   
   // method: 아이디에 따라 게시글 조회
   List<DailyEntity> findByUserId(String userId);
+
+  // method: 제목에 키워드가 포함된 일상 게시글 목록 조회 (페이징 포함) //
+  Page<DailyEntity> findByTitleContaining(String keyword, Pageable pageable);
 
   
 }

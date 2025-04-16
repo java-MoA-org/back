@@ -20,6 +20,8 @@ public interface UsedTradeService {
   ResponseEntity<ResponseDto> patchUsedTrade(PatchUsedTradeRequestDto dto, Integer tradeSequence, String userId);
   // method: 일상 게시글 삭제 //
   ResponseEntity<ResponseDto> deleteUsedTrade(Integer tradeSequence, String userId);
+  // method: 중고거래글 (태그) 별 제목 검색 //
+  ResponseEntity<? super GetUsedTradeListResponseDto> searchUsedTradeList(String tag, String keyword, Integer pageNumber);
 
   // method: 특정 게시글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId);

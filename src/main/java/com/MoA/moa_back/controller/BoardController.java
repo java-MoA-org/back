@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
 import com.MoA.moa_back.service.BoardService;
 
 import jakarta.validation.Valid;
@@ -50,7 +51,6 @@ public class BoardController {
     return response;
   }
 
-
   // API: 게시글 상세보기 + 조회수 증가 //
   @GetMapping("/{boardSequence}")
   public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(
@@ -80,6 +80,17 @@ public class BoardController {
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.deleteBoard(boardSequence, userId);
+    return response;
+  }
+
+  // API: 게시글 검색 (태그별 가능) //
+  @GetMapping("/search")
+  public ResponseEntity<? super GetBoardListResponseDto> searchBoardList(
+    @RequestParam(value = "tag", defaultValue = "ALL") String tag,
+    @RequestParam(value = "keyword", defaultValue = "") String keyword,
+    @RequestParam(value = "page", defaultValue = "1") Integer pageNumber
+  ) {
+    ResponseEntity<? super GetBoardListResponseDto> response = boardService.searchBoardList(tag, keyword, pageNumber);
     return response;
   }
 
@@ -113,7 +124,6 @@ public class BoardController {
     // @AuthenticationPrincipal String userId
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
-    ResponseEntity<ResponseDto> response = boardService.deleteBoardComment(commentSequence, userId);
-    return response;
+    return boardService.deleteBoardComment(commentSequence, userId);
   }
 }
