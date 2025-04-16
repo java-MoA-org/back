@@ -38,7 +38,7 @@ public class AuthController {
         return response;
     }
 
-    // 비밀번호 중복 확인
+    // 닉네임 중복 확인
     @PostMapping("/nickname/check")
     public ResponseEntity<ResponseDto> nicknameCheck(@RequestBody @Valid NicknameCheckRequestDto requestBody) {
         ResponseEntity<ResponseDto> response = authService.nicknameCheck(requestBody);

@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.MoA.moa_back.filter.JwtAuthenticationFilter;
+import com.MoA.moa_back.handler.OAuth2SuccessHandler;
+import com.MoA.moa_back.service.implement.OAuth2ServiceImplement;
 import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
 
 import jakarta.servlet.ServletException;
@@ -32,7 +34,8 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+    private final OAuth2ServiceImplement oAuth2Service;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     @Order(0)
@@ -47,12 +50,17 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
-                .requestMatchers( HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/daily/**").permitAll()
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
                 .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .redirectionEndpoint(endpoint -> endpoint.baseUri("/oauth2/callback/*"))
+                .authorizationEndpoint(endpoint -> endpoint.baseUri("/api/v1/auth/sns"))
+                .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2Service))
+                .successHandler(oAuth2SuccessHandler)
             )
             .exceptionHandling(exception -> exception
             .authenticationEntryPoint(new AuthenticationFailEntryPoint())
