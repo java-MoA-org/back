@@ -2,9 +2,10 @@ package com.MoA.moa_back.common.dto.request.board;
 
 import java.util.List;
 
-import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.common.enums.BoardTagType;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,8 @@ public class PostBoardRequestDto {
   private String detailLocation;
 
   private List<String> imageList;
-
-  private TagType tag;
+  
+  @NotNull 
+  private BoardTagType tag;
 
 }

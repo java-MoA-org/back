@@ -28,4 +28,5 @@ public class GetLikedUserListResponseDto extends ResponseDto {
         GetLikedUserListResponseDto body = new GetLikedUserListResponseDto(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, likedUserList);
         return ResponseEntity.status(HttpStatus.OK).body(body);
     }
+    
 }

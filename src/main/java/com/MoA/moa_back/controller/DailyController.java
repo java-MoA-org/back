@@ -9,6 +9,8 @@ import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyResponseDto;
+import com.MoA.moa_back.common.dto.response.daily.GetDailyListResponseDto;
+import com.MoA.moa_back.common.dto.response.daily.GetLikedUserListResponseDto;
 import com.MoA.moa_back.service.DailyService;
 
 import jakarta.validation.Valid;
@@ -34,11 +36,11 @@ public class DailyController {
 
   // API: 일상 게시글 목록 조회 (페이지네이션) //
   @GetMapping("/list/{pageNumber}")
-  public ResponseEntity<? extends ResponseDto> getDailyList(
+  public ResponseEntity<? super GetDailyListResponseDto> getDailyList(
     @PathVariable("pageNumber") Integer pageNumber,
-    @RequestParam(name = "size", defaultValue = "10") Integer pageSize
+    @RequestParam(name="size", defaultValue="10") Integer pageSize
   ) {
-    ResponseEntity<? extends ResponseDto> response = dailyService.getDailyBoardList(pageNumber, pageSize);
+    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.getDailyBoardList(pageNumber, pageSize);
     return response;
   }
 
@@ -87,10 +89,11 @@ public class DailyController {
 
   // API: 일상 게시글 좋아요 누른 유저 목록 조회 //
   @GetMapping("/{dailySequence}/list/likes")
-  public ResponseEntity<? extends ResponseDto> getLikedUsers(
+  public ResponseEntity<? super GetLikedUserListResponseDto> getLikedUsers(
     @PathVariable("dailySequence") Integer dailySequence
   ) {
-    return dailyService.getDailyBoardLikedUsers(dailySequence);
+    ResponseEntity<? super GetLikedUserListResponseDto> response = dailyService.getDailyBoardLikedUsers(dailySequence);
+    return response;
   }
 
   // API: 일상 게시글 댓글 작성 //
@@ -112,7 +115,8 @@ public class DailyController {
     // @AuthenticationPrincipal String userId
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
-    return dailyService.deleteDailyComment(commentSequence, userId);
+    ResponseEntity<ResponseDto> response = dailyService.deleteDailyComment(commentSequence, userId);
+    return response;
   }
 
 }

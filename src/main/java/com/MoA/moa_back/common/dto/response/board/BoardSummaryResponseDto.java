@@ -1,6 +1,6 @@
 package com.MoA.moa_back.common.dto.response.board;
 
-import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.common.enums.BoardTagType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ public class BoardSummaryResponseDto {
   private String title;
   private String content;
   private String creationDate;
-  private TagType tag;
+  private BoardTagType tag;
   private Integer views;
   private Integer likeCount; 
 }

@@ -7,38 +7,47 @@ import org.springframework.http.ResponseEntity;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.entity.BoardEntity;
-import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.common.enums.BoardTagType;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class GetBoardResponseDto extends ResponseDto {
-
-  private String creationDate;
+  private Integer boardSequence;
   private String title;
   private String content;
-  private TagType tag;
+  private String creationDate;
+  private BoardTagType tag;
   private Integer views;
   private Integer likeCount;
-  private List<String> images;
-  private String writerId;
-  private List<BoardCommentResponseDto> commentList;
+  private List<BoardCommentResponseDto> comments;
 
-  public GetBoardResponseDto(BoardEntity boardEntity, int likeCount, List<BoardCommentResponseDto> commentList) {
-    this.creationDate = boardEntity.getCreationDate();
-    this.title = boardEntity.getTitle();
-    this.content = boardEntity.getContent();
-    this.tag = boardEntity.getTag();
-    this.views = boardEntity.getViews();
-    this.likeCount = likeCount;
-    this.images = boardEntity.getImages();
-    this.writerId = boardEntity.getUserId();
-    this.commentList = commentList;
+  public static GetBoardResponseDto of(
+    BoardEntity board,
+    int likeCount,
+    List<BoardCommentResponseDto> commentList
+  ) {
+    return new GetBoardResponseDto(
+      board.getBoardSequence(),
+      board.getTitle(),
+      board.getContent(),
+      board.getCreationDate(),
+      board.getTag(),
+      board.getViews(),
+      likeCount,
+      commentList
+    );
+  }
+
+  public static ResponseEntity<GetBoardResponseDto> success(
+    BoardEntity board,
+    int likeCount,
+    List<BoardCommentResponseDto> commentList
+  ) {
+    GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList);
+    return ResponseEntity.status(HttpStatus.OK).body(body);
   }
   
-
-  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity, int likeCount, List<BoardCommentResponseDto> commentList) {
-    GetBoardResponseDto dto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
-    return ResponseEntity.status(HttpStatus.OK).body(dto);
-  }
 }

@@ -24,4 +24,5 @@ public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
 
   // method: 전체 게시글을 시퀀스 기준 최신순으로 조회 //
   List<DailyEntity> findByOrderByDailySequenceDesc();
+  
 }

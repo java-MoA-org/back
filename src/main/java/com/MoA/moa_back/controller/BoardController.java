@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
@@ -17,6 +16,7 @@ import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.service.BoardService;
 
 import jakarta.validation.Valid;
@@ -42,12 +42,11 @@ public class BoardController {
 
   // API: 게시글 리스트 조회 (태그 기준)
   @GetMapping("/list/{tag}/{pageNumber}")
-  public ResponseEntity<? extends ResponseDto> getBoardListByBoardTag(
+  public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(
     @PathVariable("tag") String tag,
-    @PathVariable("pageNumber") Integer pageNumber,
-    @RequestParam(name = "size", defaultValue = "10") Integer pageSize
+    @PathVariable("pageNumber") Integer pageNumber
   ) {
-    ResponseEntity<? extends ResponseDto> response = boardService.getBoardListByBoardTag(tag, pageNumber, pageSize);
+    ResponseEntity<? super GetBoardListResponseDto> response = boardService.getBoardListByBoardTag(tag, pageNumber);
     return response;
   }
 
@@ -114,6 +113,7 @@ public class BoardController {
     // @AuthenticationPrincipal String userId
   ) {
     String userId = "testuser"; // 테스트용 유저아이디
-    return boardService.deleteBoardComment(commentSequence, userId);
+    ResponseEntity<ResponseDto> response = boardService.deleteBoardComment(commentSequence, userId);
+    return response;
   }
 }

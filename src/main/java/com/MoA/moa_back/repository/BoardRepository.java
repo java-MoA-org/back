@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.MoA.moa_back.common.entity.BoardEntity;
-import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.common.enums.BoardTagType;
 
 @Repository
 public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
@@ -26,7 +26,7 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
   List<BoardEntity> findByOrderByBoardSequenceDesc();
   
   // method: 태그에 해당하는 게시글 목록을 페이징하여 조회 //
-  Page<BoardEntity> findByTag(TagType tag, Pageable pageable);
+  Page<BoardEntity> findByTag(BoardTagType tag, Pageable pageable);
 
   // method: 아이디에 따라 게시글 조회
   List<BoardEntity> findByUserId(String userId);

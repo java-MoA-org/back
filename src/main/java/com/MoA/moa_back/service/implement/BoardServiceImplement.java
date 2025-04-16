@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -16,12 +15,13 @@ import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.BoardSummaryResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.BoardLikeEntity;
-import com.MoA.moa_back.common.entity.TagType;
+import com.MoA.moa_back.common.enums.BoardTagType;
+import com.MoA.moa_back.common.util.PageUtil;
 import com.MoA.moa_back.repository.BoardCommentRepository;
 import com.MoA.moa_back.repository.BoardLikeRepository;
 import com.MoA.moa_back.repository.BoardRepository;
@@ -52,26 +52,31 @@ public class BoardServiceImplement implements BoardService {
 
   // method: 게시판(태그) 별 게시글 목록 조회 //
   @Override
-  public ResponseEntity<? extends ResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, Integer pageSize) {
-    TagType tagType;
+  public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber) {
     try {
-      tagType = TagType.valueOf(tag);
-    } catch (IllegalArgumentException e) {
-      return ResponseDto.invalidTag();
-    }
-
-    try {
-      pageSize = (pageSize == null || pageSize <= 0) ? 10 : pageSize;
-      int pageIndex = pageNumber - 1;
-
-      if (pageIndex < 0) return ResponseDto.invalidPageNumber();
-
-      Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by("boardSequence").descending());
-      Page<BoardEntity> boardPage = boardRepository.findByTag(tagType, pageable);
-
-      if (pageIndex >= boardPage.getTotalPages()) return ResponseDto.invalidPageNumber();
-
-      List<BoardSummaryResponseDto> boardList = boardPage.stream()
+      int pageSize = 10;
+      Sort sort = Sort.by("boardSequence").descending();
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+  
+      BoardTagType boardTagType = null;
+  
+      if (!"ALL".equalsIgnoreCase(tag)) {
+        try {
+          boardTagType = BoardTagType.valueOf(tag);
+        } catch (IllegalArgumentException e) {
+          return ResponseDto.invalidTag();
+        }
+      }
+  
+      Page<BoardEntity> page = (boardTagType == null)
+        ? boardRepository.findAll(pageable)
+        : boardRepository.findByTag(boardTagType, pageable);
+  
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
+        return ResponseDto.invalidPageNumber();
+      }
+  
+      List<BoardSummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
           return new BoardSummaryResponseDto(
@@ -85,40 +90,43 @@ public class BoardServiceImplement implements BoardService {
           );
         })
         .toList();
-
-      GetBoardListResponseDto responseBody = new GetBoardListResponseDto(boardList, boardPage.getTotalPages());
+  
+      GetBoardListResponseDto responseBody = new GetBoardListResponseDto(list, page.getTotalPages());
       return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+    
   }
+  
+  
 
   // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
-  public ResponseEntity<ResponseDto> getBoardDetail(Integer boardSequence) {
+  public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence) {
     try {
       BoardEntity boardEntity = boardRepository.findById(boardSequence).orElse(null);
       if (boardEntity == null) return ResponseDto.noExistBoard();  
-
+  
       boardEntity.setViews(boardEntity.getViews() + 1);
       boardRepository.save(boardEntity);
-
+  
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
-
+  
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
       List<BoardCommentResponseDto> commentList = commentEntities.stream()
-      .map(BoardCommentResponseDto::new)
-      .toList();
-
-      GetBoardResponseDto responseDto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
-      return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-
+        .map(BoardCommentResponseDto::new)
+        .toList();
+  
+      return GetBoardResponseDto.success(boardEntity, likeCount, commentList);
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError(); 
     }
+
   }
 
   // method: 게시글 수정 (작성자만 가능) //

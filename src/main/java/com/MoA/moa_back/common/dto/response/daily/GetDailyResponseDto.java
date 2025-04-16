@@ -6,41 +6,52 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
-import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
-import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
+import com.MoA.moa_back.common.entity.UserEntity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class GetDailyResponseDto extends ResponseDto {
-  
-  private String creationDate;
+  private Integer dailySequence;
   private String title;
   private String content;
+  private String creationDate;
+  private String profileImage;
+  private String writerNickname;
   private Integer views;
   private Integer likeCount;
-  private List<String> images;
-  private String writerId;
-  private String profileImage;
-  private List<DailyCommentResponseDto> commentList;
+  private List<DailyCommentResponseDto> comments;
 
-  public GetDailyResponseDto(DailyEntity dailyEnttity, int likeCount, List<DailyCommentResponseDto> commentList, String profileImage) {
-    this.creationDate = dailyEnttity.getCreationDate();
-    this.title = dailyEnttity.getTitle();
-    this.content = dailyEnttity.getContent();
-    this.views = dailyEnttity.getViews();
-    this.likeCount = likeCount;
-    this.images = dailyEnttity.getImages();
-    this.writerId = dailyEnttity.getUserId();
-    this.profileImage = profileImage;
-    this.commentList = commentList;
+  public static GetDailyResponseDto of(
+    DailyEntity daily,
+    int likeCount,
+    List<DailyCommentResponseDto> commentList,
+    UserEntity user
+  ) {
+    return new GetDailyResponseDto(
+      daily.getDailySequence(),
+      daily.getTitle(),
+      daily.getContent(),
+      daily.getCreationDate(),
+      user.getProfileImage(),
+      user.getUserNickname(),
+      daily.getViews(),
+      likeCount,
+      commentList
+    );
   }
 
-  public static ResponseEntity<GetBoardResponseDto> success(BoardEntity boardEntity, int likeCount, List<BoardCommentResponseDto> commentList) {
-    GetBoardResponseDto dto = new GetBoardResponseDto(boardEntity, likeCount, commentList);
-    return ResponseEntity.status(HttpStatus.OK).body(dto);
+  public static ResponseEntity<GetDailyResponseDto> success(
+    DailyEntity daily,
+    int likeCount,
+    List<DailyCommentResponseDto> commentList,
+    UserEntity user
+  ) {
+    GetDailyResponseDto body = GetDailyResponseDto.of(daily, likeCount, commentList, user);
+    return ResponseEntity.status(HttpStatus.OK).body(body);
   }
-
+  
 }

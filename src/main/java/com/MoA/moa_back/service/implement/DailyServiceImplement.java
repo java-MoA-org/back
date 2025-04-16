@@ -2,6 +2,9 @@ package com.MoA.moa_back.service.implement;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,13 +16,14 @@ import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.LikedUserDto;
 import com.MoA.moa_back.common.dto.response.daily.DailyCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyListResponseDto;
-import com.MoA.moa_back.common.dto.response.daily.GetDailyResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetLikedUserListResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.DailySummaryResponseDto;
+import com.MoA.moa_back.common.dto.response.daily.GetDailyResponseDto;
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.common.entity.DailyLikeEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.MoA.moa_back.common.util.PageUtil;
 import com.MoA.moa_back.repository.DailyCommentRepository;
 import com.MoA.moa_back.repository.DailyLikeRepository;
 import com.MoA.moa_back.repository.DailyRepository;
@@ -52,28 +56,23 @@ public class DailyServiceImplement implements DailyService {
   
   // method: 일상 게시판 일상 게시글 목록 조회 //
   @Override
-  public ResponseEntity<? extends ResponseDto> getDailyBoardList(Integer pageNumber, Integer pageSize) {
+  public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, Integer pageSize) {
     try {
-      pageSize = (pageSize == null || pageSize <= 0) ? 10 : pageSize;
-      int pageIndex = pageNumber - 1;
-      if (pageIndex < 0) return ResponseDto.invalidPageNumber();
-  
-      var pageable = org.springframework.data.domain.PageRequest.of(
-        pageIndex, pageSize,
-        org.springframework.data.domain.Sort.by("dailySequence").descending()
-      );
-  
-      var page = dailyRepository.findAll(pageable);
-      if (pageIndex >= page.getTotalPages()) return ResponseDto.invalidPageNumber();
-  
+      Sort sort = Sort.by("dailySequence").descending();
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+
+      Page<DailyEntity> page = dailyRepository.findAll(pageable);
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages()))
+        return ResponseDto.invalidPageNumber();
+
       List<DailySummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
-  
+
           UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
           String profileImage = (user != null) ? user.getProfileImage() : null;
-  
+
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
             entity.getTitle(),
@@ -86,18 +85,20 @@ public class DailyServiceImplement implements DailyService {
           );
         })
         .toList();
-  
+
       return ResponseEntity.status(HttpStatus.OK)
         .body(new GetDailyListResponseDto(list, page.getTotalPages()));
+      
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+    
   }
-  
+
   // method: 일상 게시글 상세 조회 + 조회수 증가 //
   @Override
-  public ResponseEntity<ResponseDto> getDailyBoardDetail(Integer dailySequence) {
+  public ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer dailySequence) {
     try {
       DailyEntity dailyEntity = dailyRepository.findById(dailySequence).orElse(null);
       if (dailyEntity == null) return ResponseDto.noExistDaily();
@@ -119,14 +120,14 @@ public class DailyServiceImplement implements DailyService {
       String writerId = dailyEntity.getUserId();
       UserEntity writer = userRepository.findByUserId(writerId);
   
-      return ResponseEntity.status(HttpStatus.OK)
-        .body(new GetDailyResponseDto(dailyEntity, likeCount, commentList, writer.getProfileImage()));
+      return GetDailyResponseDto.success(dailyEntity, likeCount, commentList, writer);
   
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+  
 
   // method: 일상 게시글 수정 (작성자만 가능) //
   @Override
@@ -193,7 +194,7 @@ public class DailyServiceImplement implements DailyService {
 
   // method: 일상 게시글에 좋아요 목록 조회 //
   @Override
-  public ResponseEntity<? extends ResponseDto> getDailyBoardLikedUsers(Integer dailySequence) {
+  public ResponseEntity<? super GetLikedUserListResponseDto> getDailyBoardLikedUsers(Integer dailySequence) {
     try {
       boolean exists = dailyRepository.existsByDailySequence(dailySequence);
       if (!exists) return ResponseDto.noExistDaily();
