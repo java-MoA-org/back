@@ -14,5 +14,6 @@ public class BoardSummaryResponseDto {
   private String creationDate;
   private BoardTagType tag;
   private Integer views;
-  private Integer likeCount; 
+  private Integer likeCount;
+  private Integer commentCount;
 }

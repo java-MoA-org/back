@@ -15,13 +15,15 @@ public interface DailyService {
   // method: 일상 게시글 작성 //
   ResponseEntity<ResponseDto> postDailyBoard(PostDailyRequestDto dto, String userId);
   // method: 일상게시판 게시글 목록 조회 (페이징)//
-  ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, Integer pageSize);
+  ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber);
   // method: 일상 게시글 상세 조회 및 조회수 증가 //
   ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer boardSequence);
   // method: 일상 게시글 수정 //
   ResponseEntity<ResponseDto> patchDailyBoard(PatchDailyRequestDto dto, Integer dailySequence, String userId);
   // method: 일상 게시글 삭제 //
   ResponseEntity<ResponseDto> deleteDailyBoard(Integer dailySequence, String userId);
+  // method: 일상 게시글 검색 // 
+  ResponseEntity<? super GetDailyListResponseDto> searchDailyBoardList(String keyword, Integer pageNumber);
 
   // method: 특정 게시글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putDailyBoardLikeCount(Integer dailySequence, String userId);

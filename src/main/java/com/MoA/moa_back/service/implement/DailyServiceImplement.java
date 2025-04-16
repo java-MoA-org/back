@@ -56,23 +56,26 @@ public class DailyServiceImplement implements DailyService {
   
   // method: 일상 게시판 일상 게시글 목록 조회 //
   @Override
-  public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, Integer pageSize) {
+  public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber) {
     try {
+      int pageSize = 10;
       Sort sort = Sort.by("dailySequence").descending();
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-
+  
       Page<DailyEntity> page = dailyRepository.findAll(pageable);
-      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages()))
+  
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
         return ResponseDto.invalidPageNumber();
-
+      }
+  
       List<DailySummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
-
+  
           UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
           String profileImage = (user != null) ? user.getProfileImage() : null;
-
+  
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
             entity.getTitle(),
@@ -85,17 +88,17 @@ public class DailyServiceImplement implements DailyService {
           );
         })
         .toList();
-
-      return ResponseEntity.status(HttpStatus.OK)
-        .body(new GetDailyListResponseDto(list, page.getTotalPages()));
-      
+  
+      GetDailyListResponseDto responseBody = new GetDailyListResponseDto(list, page.getTotalPages());
+      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-    
-  }
 
+  }
+  
   // method: 일상 게시글 상세 조회 + 조회수 증가 //
   @Override
   public ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer dailySequence) {
@@ -127,7 +130,6 @@ public class DailyServiceImplement implements DailyService {
       return ResponseDto.databaseError();
     }
   }
-  
 
   // method: 일상 게시글 수정 (작성자만 가능) //
   @Override
@@ -168,6 +170,50 @@ public class DailyServiceImplement implements DailyService {
     }
   }
 
+  // method: 일상 게시글 검색 //
+  @Override
+  public ResponseEntity<? super GetDailyListResponseDto> searchDailyBoardList(String keyword, Integer pageNumber) {
+    try {
+      int pageSize = 10;
+      Sort sort = Sort.by("dailySequence").descending();
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+  
+      Page<DailyEntity> page = dailyRepository.findByTitleContaining(keyword, pageable);
+  
+      if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
+        return ResponseDto.invalidPageNumber();
+      }
+  
+      List<DailySummaryResponseDto> list = page.stream()
+        .map(entity -> {
+          int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
+          int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
+  
+          UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
+          String profileImage = (user != null) ? user.getProfileImage() : null;
+  
+          return new DailySummaryResponseDto(
+            entity.getDailySequence(),
+            entity.getTitle(),
+            entity.getContent(),
+            entity.getCreationDate(),
+            profileImage,
+            entity.getViews(),
+            likeCount,
+            commentCount
+          );
+        })
+        .toList();
+  
+      GetDailyListResponseDto responseBody = new GetDailyListResponseDto(list, page.getTotalPages());
+      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+  
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+  }
+  
   // method: 일상 게시글에 좋아요를 누르거나 취소 //
   @Override
   public ResponseEntity<ResponseDto> putDailyBoardLikeCount(Integer dailySequence, String userId) {
