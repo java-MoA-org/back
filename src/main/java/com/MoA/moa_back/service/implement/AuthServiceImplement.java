@@ -177,5 +177,32 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
         return ResponseEntity.ok(body);
     }
 
+    @Override
+    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
+        // ❌ HttpOnly 쿠키 삭제
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0); // 만료
+
+        // ✅ 일반 쿠키 삭제 (프론트에서 할 수도 있지만 여기서 같이 처리 가능)
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setHttpOnly(false);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+
+        Cookie userIdCookie = new Cookie("userId", null);
+        userIdCookie.setHttpOnly(false);
+        userIdCookie.setPath("/");
+        userIdCookie.setMaxAge(0);
+
+        // 쿠키 추가
+        response.addCookie(refreshTokenCookie);
+        response.addCookie(accessTokenCookie);
+        response.addCookie(userIdCookie);
+
+        return ResponseDto.success(HttpStatus.OK);
+    }
+
 
 }
