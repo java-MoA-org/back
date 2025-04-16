@@ -20,4 +20,6 @@ public interface ResponseCode {
   
     String DATABASE_ERROR = "DBE";
     String OPEN_AI_ERROR = "OAE";
+
+    String NO_EXIST_USER = "NEU";
   }

@@ -19,4 +19,6 @@ public interface ResponseMessage {
     String NO_PERMISSION = "No Permission.";
   
     String DATABASE_ERROR = "Database Error";
+
+    String NO_EXIST_USER = "No Exist User";
   }
