@@ -1,13 +1,13 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
+import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.usedtrade.GetUsedTradeListResponseDto;
+import com.MoA.moa_back.common.dto.response.usedtrade.GetUsedTradeResponseDto;
 import com.MoA.moa_back.service.UsedTradeService;
 
 import jakarta.validation.Valid;
@@ -17,17 +17,70 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/used-trade")
 @RequiredArgsConstructor
 public class UsedTradeController {
-  
+
   private final UsedTradeService usedTradeService;
 
   // API: 중고거래 게시글 작성 //
   @PostMapping({"", "/"})
-  public ResponseEntity<ResponseDto> postDaily(
+  public ResponseEntity<ResponseDto> postUsedTrade(
     @RequestBody @Valid PostUsedTradeRequestDto requestBody
     // @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
-    ResponseEntity<ResponseDto> response = usedTradeService.postUsedTrade(requestBody, userId);
+    String userId = "testuser";
+    ResponseEntity<ResponseDto> respons = usedTradeService.postUsedTrade(requestBody, userId);
+    return respons;
+  }
+
+  // API: 중고거래 게시글 목록 조회 (전체 or 태그별) //
+  @GetMapping("/list/{tag}/{pageNumber}")
+  public ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeList(
+    @PathVariable("tag") String tag,
+    @PathVariable("pageNumber") Integer pageNumber
+  ) {
+    ResponseEntity<? super GetUsedTradeListResponseDto> respons = usedTradeService.getUsedTradeListByTag(tag, pageNumber);
+    return respons;
+  }
+
+  // API: 중고거래 게시글 상세 조회 (조회수 증가 포함) //
+  @GetMapping("/{tradeSequence}")
+  public ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(
+    @PathVariable("tradeSequence") Integer tradeSequence
+  ) {
+    ResponseEntity<? super GetUsedTradeResponseDto> respons = usedTradeService.getUsedTradeDetail(tradeSequence);
+    return respons;
+  }
+
+  // API: 중고거래 게시글 수정 //
+  @PatchMapping("/{tradeSequence}")
+  public ResponseEntity<ResponseDto> patchUsedTrade(
+    @RequestBody @Valid PatchUsedTradeRequestDto requestBody,
+    @PathVariable("tradeSequence") Integer tradeSequence
+    // @AuthenticationPrincipal String userId
+  ) {
+    String userId = "testuser";
+    ResponseEntity<ResponseDto> respons = usedTradeService.patchUsedTrade(requestBody, tradeSequence, userId);
+    return respons;
+  }
+
+  // API: 중고거래 게시글 삭제 //
+  @DeleteMapping("/{tradeSequence}")
+  public ResponseEntity<ResponseDto> deleteUsedTrade(
+    @PathVariable("tradeSequence") Integer tradeSequence
+    // @AuthenticationPrincipal String userId
+  ) {
+    String userId = "testuser";
+    ResponseEntity<ResponseDto> response = usedTradeService.deleteUsedTrade(tradeSequence, userId);
+    return response;
+  }
+
+  // API: 중고거래 게시글 찜하기 or 취소하기 //
+  @PutMapping("/{tradeSequence}/likes")
+  public ResponseEntity<ResponseDto> toggleUsedTradeLike(
+    @PathVariable("tradeSequence") Integer tradeSequence
+    // @AuthenticationPrincipal String userId
+  ) {
+    String userId = "testuser";
+    ResponseEntity<ResponseDto> response = usedTradeService.putUsedTradeLikeCount(tradeSequence, userId);
     return response;
   }
 

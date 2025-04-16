@@ -13,11 +13,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetDailyListResponseDto extends ResponseDto {
-    private List<DailySummaryResponseDto> dailyList;
+
+  private List<DailySummaryResponseDto> dailyList;
   private Integer totalPages;
 
   public static ResponseEntity<GetDailyListResponseDto> success(List<DailySummaryResponseDto> dailyList, int totalPages) {
     GetDailyListResponseDto body = new GetDailyListResponseDto(dailyList, totalPages);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
+
 }

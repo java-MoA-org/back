@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
+import com.MoA.moa_back.common.enums.BoardTagType;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -47,7 +48,7 @@ public class BoardEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(length=4)
-  private TagType tag = TagType.자유;
+  private BoardTagType tag = BoardTagType.FREE;
   @Column(nullable=false)
   private Integer views = 0;
 
@@ -61,7 +62,7 @@ public class BoardEntity {
     this.content = dto.getContent();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.tag = dto.getTag() != null ? dto.getTag() : TagType.자유;
+    this.tag = dto.getTag() != null ? dto.getTag() : BoardTagType.FREE;
     this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
   }
 
