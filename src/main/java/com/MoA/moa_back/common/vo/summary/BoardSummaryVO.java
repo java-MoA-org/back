@@ -1,4 +1,4 @@
-package com.MoA.moa_back.common.vo;
+package com.MoA.moa_back.common.vo.summary;
 
 import java.util.ArrayList;
 import java.util.List;

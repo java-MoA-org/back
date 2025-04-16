@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.UsedTradeEntity;
 import com.MoA.moa_back.common.enums.ItemTypeTag;
 
@@ -27,7 +28,10 @@ public interface UsedTradeRepository extends JpaRepository<UsedTradeEntity, Inte
 
   // method: 전체 중고거래 게시글을 시퀀스 기준 최신순으로 조회 //
   List<UsedTradeEntity> findByOrderByTradeSequenceDesc();
-
+  
+  // method: 아이디에 따라 게시글 조회
+  List<UsedTradeEntity> findByUserId(String userId);
+  
   // method: 태그에 해당하는 게시글 목록을 페이징하여 조회 //
   Page<UsedTradeEntity> findByItemTypeTag(ItemTypeTag itemTypeTag, Pageable pageable);
 

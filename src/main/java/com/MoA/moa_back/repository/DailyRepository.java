@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 
 @Repository
@@ -24,5 +25,9 @@ public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
 
   // method: 전체 게시글을 시퀀스 기준 최신순으로 조회 //
   List<DailyEntity> findByOrderByDailySequenceDesc();
+  
+  // method: 아이디에 따라 게시글 조회
+  List<DailyEntity> findByUserId(String userId);
+
   
 }
