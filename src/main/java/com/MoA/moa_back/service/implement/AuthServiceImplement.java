@@ -110,7 +110,7 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
         if (requestDto.getUserIntroduce() == null) {
             requestDto.setUserIntroduce("");
         }
-
+        // image는 requestDto에 포함되어서 넘어옴
         UserEntity userEntity = new UserEntity(requestDto);
         userRepository.save(userEntity);
 

@@ -1,7 +1,9 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
@@ -13,6 +15,7 @@ import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.service.AuthService;
+import com.MoA.moa_back.service.ImageService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AuthController {
     
     private final AuthService authService;
+    private final ImageService imageService;
 
     // 아이디 중복 확인
     @PostMapping("/id/check")
@@ -59,6 +63,15 @@ public class AuthController {
         return response;
     }
     
+    @PostMapping("/profileImage/upload")
+    public String upload(
+        @RequestParam("file") MultipartFile file
+    ) {
+        String url = imageService.uploadProfileImage(file);
+        return url;
+    }
+    
+
     @PostMapping("/sign-up")
     public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestBody) {
         ResponseEntity<ResponseDto> response = authService.signUp(requestBody);

@@ -21,7 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.MoA.moa_back.filter.JwtAuthenticationFilter;
 import com.MoA.moa_back.handler.OAuth2SuccessHandler;
 import com.MoA.moa_back.service.implement.OAuth2ServiceImplement;
-import com.nimbusds.oauth2.sdk.auth.JWTAuthentication;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -78,7 +77,8 @@ public class WebSecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     configuration.addAllowedHeader("*");
     configuration.addAllowedMethod("*");
-    configuration.addAllowedOrigin("*");
+    configuration.addAllowedOrigin("http://localhost:3000");
+    configuration.setAllowCredentials(true);
 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

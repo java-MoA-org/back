@@ -57,7 +57,7 @@ public class UserEntity {
   if (dto.getUserPhoneNumber() != null && !dto.getUserPhoneNumber().equals(this.userPhoneNumber)) {
       this.userPhoneNumber = dto.getUserPhoneNumber();
   }
-  // 프로필 사진이이 null이 아니고, 기존 값과 다를 때만 변경
+  // 프로필 사진이 null이 아니고, 기존 값과 다를 때만 변경
   if (dto.getProfileImage() != null && !dto.getProfileImage().equals(this.profileImage)) {
     this.profileImage = dto.getProfileImage();
 } else {
