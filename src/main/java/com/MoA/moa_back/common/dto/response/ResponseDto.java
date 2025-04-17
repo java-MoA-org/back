@@ -99,5 +99,10 @@ public class ResponseDto {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 }
 
+public static ResponseEntity<ResponseDto> noExistNotice() {
+  ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_NOTICE, ResponseMessage.NO_EXIST_NOTICE);
+  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+}
+
 
 }

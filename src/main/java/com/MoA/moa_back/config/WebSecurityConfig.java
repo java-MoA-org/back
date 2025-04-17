@@ -50,11 +50,18 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+
+                .requestMatchers(HttpMethod.POST, "/notice").permitAll()
+                /*
+                .requestMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/notice/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/notice/**").hasRole("ADMIN")
+                */ 
                 .requestMatchers("/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/daily/**").permitAll()
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
                 .requestMatchers("/api/news/**").permitAll() 
-                .requestMatchers("/home/**").permitAll() // 일시적 인증 없이 누구나 접근
+                .requestMatchers("/home/**").permitAll() 
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
