@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
+import com.MoA.moa_back.common.dto.request.user.Interests;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
