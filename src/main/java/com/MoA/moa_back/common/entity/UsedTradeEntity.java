@@ -1,7 +1,6 @@
 package com.MoA.moa_back.common.entity;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +9,7 @@ import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
 import com.MoA.moa_back.common.enums.ItemTypeTag;
 import com.MoA.moa_back.common.enums.TransactionStatus;
 import com.MoA.moa_back.common.enums.UsedItemStatusTag;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -37,24 +37,17 @@ public class UsedTradeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer tradeSequence;
 
-  private String userId;
-
   @Enumerated(EnumType.STRING)
   private ItemTypeTag itemTypeTag;
 
   @Enumerated(EnumType.STRING)
   private UsedItemStatusTag usedItemStatusTag;
 
-  private String creationDate;
-  private String title;
-  private String content;
-  private String price;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
 
   @Enumerated(EnumType.STRING)
   private TransactionStatus transactionStatus;
-
-  private String location;
-  private String detailLocation;
 
   @ElementCollection
   @CollectionTable(name = "used_trade_images", joinColumns = @JoinColumn(name = "trade_sequence"))
@@ -63,13 +56,17 @@ public class UsedTradeEntity {
 
   @Column(nullable = false)
   private Integer views = 0;
+  
+  private String userId;
+  private String title;
+  private String content;
+  private String price;
+  private String location;
+  private String detailLocation;
 
   public UsedTradeEntity(PostUsedTradeRequestDto dto, String userId) {
-    LocalDate now = LocalDate.now();
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-  
     this.userId = userId;
-    this.creationDate = now.format(dateTimeFormatter);
+    this.creationDate = LocalDateTime.now();
     this.title = dto.getTitle();
     this.content = dto.getContent();
     this.itemTypeTag = dto.getItemTypeTag();

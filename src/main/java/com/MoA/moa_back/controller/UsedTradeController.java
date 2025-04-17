@@ -1,6 +1,7 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
@@ -23,10 +24,9 @@ public class UsedTradeController {
   // API: 중고거래 게시글 작성 //
   @PostMapping({"", "/"})
   public ResponseEntity<ResponseDto> postUsedTrade(
-    @RequestBody @Valid PostUsedTradeRequestDto requestBody
-    // @AuthenticationPrincipal String userId
+    @RequestBody @Valid PostUsedTradeRequestDto requestBody,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser";
     ResponseEntity<ResponseDto> respons = usedTradeService.postUsedTrade(requestBody, userId);
     return respons;
   }
@@ -35,9 +35,10 @@ public class UsedTradeController {
   @GetMapping("/list/{tag}/{pageNumber}")
   public ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeList(
     @PathVariable("tag") String tag,
-    @PathVariable("pageNumber") Integer pageNumber
+    @PathVariable("pageNumber") Integer pageNumber,
+    @RequestParam(name = "sortOption", defaultValue = "LATEST") String sortOption
   ) {
-    ResponseEntity<? super GetUsedTradeListResponseDto> respons = usedTradeService.getUsedTradeListByTag(tag, pageNumber);
+    ResponseEntity<? super GetUsedTradeListResponseDto> respons = usedTradeService.getUsedTradeListByTag(tag, pageNumber, sortOption);
     return respons;
   }
 
@@ -54,10 +55,9 @@ public class UsedTradeController {
   @PatchMapping("/{tradeSequence}")
   public ResponseEntity<ResponseDto> patchUsedTrade(
     @RequestBody @Valid PatchUsedTradeRequestDto requestBody,
-    @PathVariable("tradeSequence") Integer tradeSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser";
     ResponseEntity<ResponseDto> respons = usedTradeService.patchUsedTrade(requestBody, tradeSequence, userId);
     return respons;
   }
@@ -65,10 +65,9 @@ public class UsedTradeController {
   // API: 중고거래 게시글 삭제 //
   @DeleteMapping("/{tradeSequence}")
   public ResponseEntity<ResponseDto> deleteUsedTrade(
-    @PathVariable("tradeSequence") Integer tradeSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser";
     ResponseEntity<ResponseDto> response = usedTradeService.deleteUsedTrade(tradeSequence, userId);
     return response;
   }
@@ -87,10 +86,9 @@ public class UsedTradeController {
   // API: 중고거래 게시글 찜하기 or 취소하기 //
   @PutMapping("/{tradeSequence}/likes")
   public ResponseEntity<ResponseDto> toggleUsedTradeLike(
-    @PathVariable("tradeSequence") Integer tradeSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser";
     ResponseEntity<ResponseDto> response = usedTradeService.putUsedTradeLikeCount(tradeSequence, userId);
     return response;
   }

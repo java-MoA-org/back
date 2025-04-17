@@ -13,8 +13,8 @@ public interface BoardService {
 
   // method: 게시글 작성 //
   ResponseEntity<ResponseDto> postBoard(PostBoardRequestDto dto, String userId);
-  // method: 게시판(태그) 별 게시글 목록 조회 (페이징)//
-  ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber);
+  // method: 게시판 게시글 목록 조회 최신순 좋아요순 정렬 기능 (태그기준, 페이징) //
+  ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, String sortOption);
   // method: 게시글 상세 조회 + 조회수 증가 //
   ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence);
   // method: 게시글 수정 //

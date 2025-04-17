@@ -1,5 +1,6 @@
 package com.MoA.moa_back.common.dto.response.usedtrade;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.enums.ItemTypeTag;
 import com.MoA.moa_back.common.enums.TransactionStatus;
 import com.MoA.moa_back.common.enums.UsedItemStatusTag;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +24,10 @@ public class GetUsedTradeResponseDto extends ResponseDto {
   private Integer tradeSequence;
   private String title;
   private String content;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
+  
   private String profileImage;
   private String writerNickname;
   private Integer views;
@@ -37,38 +42,38 @@ public class GetUsedTradeResponseDto extends ResponseDto {
   private Boolean hasChatRoom;
 
   public static GetUsedTradeResponseDto of(
-    UsedTradeEntity entity,
+    UsedTradeEntity usedTrade,
     UserEntity user,
     int likeCount,
     Boolean hasChatRoom
   ) {
     return new GetUsedTradeResponseDto(
-      entity.getTradeSequence(),
-      entity.getTitle(),
-      entity.getContent(),
-      entity.getCreationDate(),
+      usedTrade.getTradeSequence(),
+      usedTrade.getTitle(),
+      usedTrade.getContent(),
+      usedTrade.getCreationDate(),
       user.getProfileImage(),
       user.getUserNickname(),
-      entity.getViews(),
-      entity.getItemTypeTag(),
-      entity.getUsedItemStatusTag(),
-      entity.getPrice(),
-      entity.getLocation(),
-      entity.getDetailLocation(),
-      entity.getTransactionStatus(),
-      entity.getImages(),
+      usedTrade.getViews(),
+      usedTrade.getItemTypeTag(),
+      usedTrade.getUsedItemStatusTag(),
+      usedTrade.getPrice(),
+      usedTrade.getLocation(),
+      usedTrade.getDetailLocation(),
+      usedTrade.getTransactionStatus(),
+      usedTrade.getImages(),
       likeCount,
       hasChatRoom
     );
   }
 
   public static ResponseEntity<GetUsedTradeResponseDto> success(
-    UsedTradeEntity entity,
+    UsedTradeEntity usedTrade,
     UserEntity user,
     int likeCount,
     Boolean hasChatRoom
   ) {
-    GetUsedTradeResponseDto body = GetUsedTradeResponseDto.of(entity, user, likeCount, hasChatRoom);
+    GetUsedTradeResponseDto body = GetUsedTradeResponseDto.of(usedTrade, user, likeCount, hasChatRoom);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
   

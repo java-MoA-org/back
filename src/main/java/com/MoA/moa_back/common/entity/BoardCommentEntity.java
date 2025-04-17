@@ -1,9 +1,9 @@
 package com.MoA.moa_back.common.entity;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,15 +31,14 @@ public class BoardCommentEntity {
   private Integer boardSequence;
 
   private String boardComment;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
 
   public BoardCommentEntity(PostBoardCommentRequestDto dto, Integer boardSequence, String userId) {
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     this.userId = userId;
     this.boardSequence = boardSequence;
-    this.creationDate = now.format(dateTimeFormatter);
+    this.creationDate = LocalDateTime.now();
     this.boardComment = dto.getBoardComment();
   }
 

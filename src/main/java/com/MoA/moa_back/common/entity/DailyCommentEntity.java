@@ -1,9 +1,9 @@
 package com.MoA.moa_back.common.entity;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,19 +34,17 @@ public class DailyCommentEntity {
   private Integer dailySequence;
 
   private String dailyComment;
-  private String creationDate;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
 
   @ManyToOne(fetch=FetchType.LAZY)
   @JoinColumn(name="userId", referencedColumnName="userId", insertable = false, updatable = false)
   private UserEntity user;
 
   public DailyCommentEntity(PostDailyCommentRequestDto dto, Integer dailySequence, String userId) {
-    LocalDateTime now = LocalDateTime.now();
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     this.userId = userId;
     this.dailySequence = dailySequence;
-    this.creationDate = now.format(dateTimeFormatter);
+    this.creationDate = LocalDateTime.now();
     this.dailyComment = dto.getDailyComment();
   }
 }

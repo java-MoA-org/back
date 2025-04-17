@@ -1,13 +1,13 @@
 package com.MoA.moa_back.common.entity;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 import com.MoA.moa_back.common.dto.request.daily.PatchDailyRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -34,7 +34,8 @@ public class DailyEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer dailySequence;
   private String userId;
-  private String creationDate;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
   private String location;
   private String detailLocation;
   private String title;
@@ -49,11 +50,8 @@ public class DailyEntity {
   private Integer views = 0;
 
   public DailyEntity(PostDailyRequestDto dto, String userId) {
-    LocalDate now = LocalDate.now();
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     this.userId = userId;
-    this.creationDate = now.format(dateTimeFormatter);
+    this.creationDate = LocalDateTime.now();
     this.title = dto.getTitle();
     this.content = dto.getContent();
     this.location = dto.getLocation();

@@ -1,5 +1,7 @@
 package com.MoA.moa_back.common.dto.response.daily;
 
+import java.time.LocalDateTime;
+
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 
@@ -10,7 +12,7 @@ public class DailyCommentResponseDto {
 
   private Integer commentSequence;
   private String commentWriterId;
-  private String commentWriteDate;
+  private LocalDateTime commentWriteDate;
   private String comment;
   private String profileImage;
   private String writerNickname;
