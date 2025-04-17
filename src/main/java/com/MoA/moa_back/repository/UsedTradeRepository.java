@@ -40,4 +40,7 @@ public interface UsedTradeRepository extends JpaRepository<UsedTradeEntity, Inte
   // method: 태그 + 제목 키워드로 검색 //
   Page<UsedTradeEntity> findByItemTypeTagAndTitleContaining(ItemTypeTag itemTypeTag, String keyword, Pageable pageable);
 
+  // method: 메인 홈 최신 중고거래 글 5개 조회
+  List<UsedTradeEntity> findTop5ByOrderByCreationDateDesc();  
+
 }
