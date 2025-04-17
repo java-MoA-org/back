@@ -12,11 +12,14 @@ import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
+import com.MoA.moa_back.common.dto.request.user.Interests;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.MoA.moa_back.common.entity.UserInterestsEntity;
 import com.MoA.moa_back.provider.*;
+import com.MoA.moa_back.repository.UserInterestsRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.AuthService;
 
@@ -30,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImplement implements AuthService{
 
     private final UserRepository userRepository;
+    private final UserInterestsRepository userInterestsRepository;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JwtProvider jwtProvider;
 
@@ -110,9 +114,44 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
         if (requestDto.getUserIntroduce() == null) {
             requestDto.setUserIntroduce("");
         }
-        // image는 requestDto에 포함되어서 넘어옴
+
+        Interests interests = null;
+
+        if (requestDto.getInterests() != null) {
+            interests = requestDto.getInterests();
+        
+            boolean allFalse = !interests.isUserInterestTrip() &&
+                               !interests.isUserInterestGame() &&
+                               !interests.isUserInterestFashion() &&
+                               !interests.isUserInterestWorkout() &&
+                               !interests.isUserInterestFood() &&
+                               !interests.isUserInterestMusic() &&
+                               !interests.isUserInterestEconomics();
+        
+            // 아무것도 선택하지 않은 경우 userInterestNull만 true로 설정
+            if (allFalse) {
+                interests.setUserInterestNull(true);
+            } else {
+                interests.setUserInterestNull(false);
+            }
+        
+            requestDto.setInterests(interests);
+        }
+        
+
         UserEntity userEntity = new UserEntity(requestDto);
         userRepository.save(userEntity);
+        UserInterestsEntity interestsEntity = new UserInterestsEntity(
+            requestDto.getUserId(),
+            interests.isUserInterestTrip(),
+            interests.isUserInterestGame(),
+            interests.isUserInterestFashion(),
+            interests.isUserInterestWorkout(), 
+            interests.isUserInterestFood(), 
+            interests.isUserInterestMusic(), 
+            interests.isUserInterestEconomics(), 
+            interests.isUserInterestNull());
+        userInterestsRepository.save(interestsEntity);
 
         return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
