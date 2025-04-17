@@ -2,9 +2,14 @@ package com.MoA.moa_back.service.implement;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.mypage.GetUserPageResponseDto;
 import com.MoA.moa_back.common.entity.BoardEntity;
@@ -21,13 +26,13 @@ import com.MoA.moa_back.repository.DailyRepository;
 import com.MoA.moa_back.repository.UsedTradeLikeRepository;
 import com.MoA.moa_back.repository.UsedTradeRepository;
 import com.MoA.moa_back.repository.UserRepository;
-import com.MoA.moa_back.service.MyPageService;
+import com.MoA.moa_back.service.UserPageService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageServiceImplement implements MyPageService {
+public class UserPageServiceImplement implements UserPageService {
 
      private final UserRepository userRepository;
     private final BoardRepository boardRepository;
@@ -38,8 +43,11 @@ public class MyPageServiceImplement implements MyPageService {
     private final UsedTradeRepository usedTradeRepository;
     private final UsedTradeLikeRepository usedTradeLikeRepository;
 
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+
     @Override
-    public ResponseEntity<? extends ResponseDto> getUserBoardList(String userNickname) {
+    public ResponseEntity<? super GetUserPageResponseDto> getUserBoardList(String userNickname) {
        try {
                 // 1. 유저 정보 조회
                 UserEntity user = userRepository.findByUserNickname(userNickname);
@@ -66,4 +74,44 @@ public class MyPageServiceImplement implements MyPageService {
                 return ResponseDto.databaseError();
             }
       }
+
+    @Override
+    public ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userNickname) {
+        try{
+            UserEntity userEntity = userRepository.findByUserNickname(userNickname);
+            if (userEntity == null) return ResponseDto.noExistUser();
+
+            // 닉네임 변경 검증
+            if (dto.getUserNickname() != null && !dto.getUserNickname().equals(userEntity.getUserNickname())) {
+                boolean isExist = userRepository.existsByUserNickname(dto.getUserNickname());
+                if (isExist) return ResponseDto.existUserNickname();
+            }
+    
+            // 비밀번호 변경 조건 검증
+            if (dto.getUserPassword() != null && !dto.getUserPassword().isBlank()) {
+                if (dto.getCurrentPassword() == null || !passwordEncoder.matches(dto.getCurrentPassword(), userEntity.getUserPassword())) {
+                    return ResponseDto.noPermission(); // 현재 비밀번호가 틀림
+                }
+            }
+            userEntity.patch(dto, passwordEncoder);
+            userRepository.save(userEntity);
+            
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> nicknameCheck(NicknameCheckRequestDto dto) {
+        try{
+            boolean isExist = userRepository.existsByUserNickname(dto.getUserNickname());
+            if(isExist) return ResponseDto.existUserNickname();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
+    }
 }
