@@ -37,4 +37,6 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer> {
   // method: 특정 태그 + 제목에 키워드가 포함된 게시글 목록 조회 (페이징 포함) //
   Page<BoardEntity> findByTagAndTitleContaining(BoardTagType tag, String keyword, Pageable pageable);
 
+  // method: 메인 홈 최신 게시판 글 5개 조회
+  List<BoardEntity> findTop5ByOrderByCreationDateDesc();
 }

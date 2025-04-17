@@ -33,5 +33,8 @@ public interface DailyRepository extends JpaRepository<DailyEntity, Integer> {
   // method: 제목에 키워드가 포함된 일상 게시글 목록 조회 (페이징 포함) //
   Page<DailyEntity> findByTitleContaining(String keyword, Pageable pageable);
 
+  // method: 메인 홈 최신 일상 글 5개 조회
+  List<DailyEntity> findTop5ByOrderByCreationDateDesc();
+
   
 }
