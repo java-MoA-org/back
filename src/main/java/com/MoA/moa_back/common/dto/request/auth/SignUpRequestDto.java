@@ -1,5 +1,7 @@
 package com.MoA.moa_back.common.dto.request.auth;
 
+import com.MoA.moa_back.common.dto.request.user.Interests;
+
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -38,5 +40,8 @@ public class SignUpRequestDto {
     @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$")
     private String profileImage;
     
+    @Pattern(regexp = "^.{0,50}$")
     private String userIntroduce;
+
+    private Interests interests;
 }

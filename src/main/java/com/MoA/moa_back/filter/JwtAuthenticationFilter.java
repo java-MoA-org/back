@@ -36,6 +36,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
             try {
+                System.out.println("요청 URI: " + request.getRequestURI());
+
+                String path = request.getRequestURI();
+                if (path.startsWith("/profile/file/")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
                 
                 String token = getToken(request);
                 if(token == null) {
