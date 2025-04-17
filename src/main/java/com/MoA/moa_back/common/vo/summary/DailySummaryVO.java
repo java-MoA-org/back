@@ -1,5 +1,6 @@
 package com.MoA.moa_back.common.vo.summary;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class DailySummaryVO {
   private String title;
   private Integer views;
   private int likeCount;
-  private String creationDate;
+  private LocalDateTime creationDate;
 
   // 메인홈용 추가 필드
   private String userNickname;
