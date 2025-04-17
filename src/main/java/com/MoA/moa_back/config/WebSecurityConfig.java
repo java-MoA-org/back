@@ -54,6 +54,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/daily/**").permitAll()
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
+                .requestMatchers("/api/news/**").permitAll() 
+                .requestMatchers("/home/**").permitAll() // 일시적 인증 없이 누구나 접근
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
