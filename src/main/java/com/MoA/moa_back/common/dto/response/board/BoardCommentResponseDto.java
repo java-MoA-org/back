@@ -1,5 +1,6 @@
 package com.MoA.moa_back.common.dto.response.board;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class BoardCommentResponseDto {
 
   private Integer commentSequence;
   private String commentWriterId;
-  private String commentWriteDate;
+  private LocalDateTime commentWriteDate;
   private String comment;
 
   public BoardCommentResponseDto(BoardCommentEntity boardCommentEntity) {

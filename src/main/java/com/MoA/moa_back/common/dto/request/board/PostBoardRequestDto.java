@@ -1,8 +1,10 @@
 package com.MoA.moa_back.common.dto.request.board;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.MoA.moa_back.common.enums.BoardTagType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +20,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostBoardRequestDto {
 
-  private String creationDate;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
 
   @NotBlank
   @Size(max=50)

@@ -1,7 +1,7 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.MoA.moa_back.common.dto.request.daily.PatchDailyRequestDto;
@@ -26,10 +26,9 @@ public class DailyController {
   // API: 일상 게시글 작성 //
   @PostMapping({"", "/"})
   public ResponseEntity<ResponseDto> postDaily(
-    @RequestBody @Valid PostDailyRequestDto requestBody
-    // @AuthenticationPrincipal String userId
+    @RequestBody @Valid PostDailyRequestDto requestBody,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.postDailyBoard(requestBody, userId);
     return response;
   }
@@ -37,9 +36,10 @@ public class DailyController {
   // API: 일상 게시글 목록 조회 (페이지네이션) //
   @GetMapping("/list/{pageNumber}")
   public ResponseEntity<? super GetDailyListResponseDto> getDailyList(
-    @PathVariable("pageNumber") Integer pageNumber
+    @PathVariable("pageNumber") Integer pageNumber,
+    @RequestParam(name = "sortOption", defaultValue = "LATEST") String sortOption
   ) {
-    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.getDailyBoardList(pageNumber);
+    ResponseEntity<? super GetDailyListResponseDto> response = dailyService.getDailyBoardList(pageNumber, sortOption);
     return response;
   }
 
@@ -56,10 +56,9 @@ public class DailyController {
   @PatchMapping("/{dailySequence}")
   public ResponseEntity<ResponseDto> patchDaily(
     @RequestBody @Valid PatchDailyRequestDto requestBody,
-    @PathVariable("dailySequence") Integer dailySequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("dailySequence") Integer dailySequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.patchDailyBoard(requestBody, dailySequence, userId);
     return response;
   }
@@ -67,10 +66,9 @@ public class DailyController {
   // API: 일상 게시글 삭제 //
   @DeleteMapping("/{dailySequence}")
   public ResponseEntity<ResponseDto> deleteDaily(
-    @PathVariable("dailySequence") Integer dailySequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("dailySequence") Integer dailySequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.deleteDailyBoard(dailySequence, userId);
     return response;
   }
@@ -88,10 +86,9 @@ public class DailyController {
   // API: 일상 게시글 좋아요 누르기 or 취소 //
   @PutMapping("/{dailySequence}/likes")
   public ResponseEntity<ResponseDto> toggleDailyLike(
-    @PathVariable("dailySequence") Integer dailySequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("dailySequence") Integer dailySequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.putDailyBoardLikeCount(dailySequence, userId);
     return response;
   }
@@ -109,10 +106,9 @@ public class DailyController {
   @PostMapping("/{dailySequence}/comments")
   public ResponseEntity<ResponseDto> postDailyComment(
     @RequestBody @Valid PostDailyCommentRequestDto requestBody,
-    @PathVariable("dailySequence") Integer dailySequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("dailySequence") Integer dailySequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.postDailyBoardComment(requestBody, dailySequence, userId);
     return response;
   }
@@ -120,10 +116,9 @@ public class DailyController {
   // API: 일상 게시글 댓글 삭제 //
   @DeleteMapping("/{commentSequence}/comments")
   public ResponseEntity<ResponseDto> deleteDailyComment(
-    @PathVariable("commentSequence") Integer commentSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("commentSequence") Integer commentSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = dailyService.deleteDailyComment(commentSequence, userId);
     return response;
   }

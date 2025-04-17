@@ -15,7 +15,7 @@ public interface DailyService {
   // method: 일상 게시글 작성 //
   ResponseEntity<ResponseDto> postDailyBoard(PostDailyRequestDto dto, String userId);
   // method: 일상게시판 게시글 목록 조회 (페이징)//
-  ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber);
+  ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, String sortOption);
   // method: 일상 게시글 상세 조회 및 조회수 증가 //
   ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer boardSequence);
   // method: 일상 게시글 수정 //

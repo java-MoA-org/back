@@ -56,12 +56,26 @@ public class DailyServiceImplement implements DailyService {
   
   // method: 일상 게시판 일상 게시글 목록 조회 //
   @Override
-  public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber) {
+  public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
-      Sort sort = Sort.by("dailySequence").descending();
-      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
   
+      Sort sort;
+      switch (sortOption.toUpperCase()) {
+        case "LIKES":
+          sort = Sort.by(Sort.Order.desc("dailySequence"));
+          break;
+        case "VIEWS":
+          sort = Sort.by(Sort.Order.desc("views"));
+          break;
+        default: // LATEST
+          sort = Sort.by(
+            Sort.Order.desc("creationDate"),
+            Sort.Order.desc("dailySequence")
+          );
+      }
+  
+      Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
       Page<DailyEntity> page = dailyRepository.findAll(pageable);
   
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
@@ -72,7 +86,6 @@ public class DailyServiceImplement implements DailyService {
         .map(entity -> {
           int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
-  
           UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
           String profileImage = (user != null) ? user.getProfileImage() : null;
   
@@ -86,6 +99,12 @@ public class DailyServiceImplement implements DailyService {
             likeCount,
             commentCount
           );
+        })
+        .sorted((a, b) -> {
+          if ("LIKES".equalsIgnoreCase(sortOption)) {
+            return Integer.compare(b.getLikeCount(), a.getLikeCount());
+          }
+          return 0;
         })
         .toList();
   

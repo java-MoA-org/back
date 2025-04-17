@@ -1,5 +1,6 @@
 package com.MoA.moa_back.common.dto.response.board;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.enums.BoardTagType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +20,10 @@ public class GetBoardResponseDto extends ResponseDto {
   private Integer boardSequence;
   private String title;
   private String content;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
+  
   private BoardTagType tag;
   private Integer views;
   private Integer likeCount;

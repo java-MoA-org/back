@@ -1,6 +1,9 @@
 package com.MoA.moa_back.common.dto.request.daily;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,7 +18,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostDailyRequestDto {
   
-  private String creationDate;
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
 
   @NotBlank
   @Size(max=50)

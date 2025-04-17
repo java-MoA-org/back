@@ -43,23 +43,35 @@ public class BoardServiceImplement implements BoardService {
     try {
       BoardEntity boardEntity = new BoardEntity(dto, userId);
       boardRepository.save(boardEntity);
+      return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-    return ResponseDto.success(HttpStatus.CREATED);
   }
 
-  // method: 게시판(태그) 별 게시글 목록 조회 //
+  // method: 게시판 게시글 목록 조회 최신순 좋아요순 정렬 가능 (태그기준, 페이징) //
   @Override
-  public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber) {
+  public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
-      Sort sort = Sort.by("boardSequence").descending();
+
+      Sort sort;
+      switch (sortOption.toUpperCase()) {
+        case "LIKES":
+          sort = Sort.by(Sort.Order.desc("boardSequence"));
+          break;
+        case "VIEWS":
+          sort = Sort.by(Sort.Order.desc("views"));
+          break;
+        default:
+          sort = Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("boardSequence"));
+          break;
+      }
+
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-  
+
       BoardTagType boardTagType = null;
-  
       if (!"ALL".equalsIgnoreCase(tag)) {
         try {
           boardTagType = BoardTagType.valueOf(tag);
@@ -67,19 +79,19 @@ public class BoardServiceImplement implements BoardService {
           return ResponseDto.invalidTag();
         }
       }
-  
+
       Page<BoardEntity> page = (boardTagType == null)
         ? boardRepository.findAll(pageable)
         : boardRepository.findByTag(boardTagType, pageable);
-  
+
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
         return ResponseDto.invalidPageNumber();
       }
-  
+
       List<BoardSummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
-          int commentCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+          int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
 
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
@@ -93,15 +105,18 @@ public class BoardServiceImplement implements BoardService {
           );
         })
         .toList();
-  
-      GetBoardListResponseDto responseBody = new GetBoardListResponseDto(list, page.getTotalPages());
-      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-  
+
+      if (sortOption.equalsIgnoreCase("LIKES")) {
+        list = list.stream()
+          .sorted((a, b) -> b.getLikeCount() - a.getLikeCount())
+          .toList();
+      }
+
+      return ResponseEntity.status(HttpStatus.OK).body(new GetBoardListResponseDto(list, page.getTotalPages()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-    
   }
 
   // method: 게시글 상세 조회 + 조회수 증가 //
@@ -109,25 +124,23 @@ public class BoardServiceImplement implements BoardService {
   public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence) {
     try {
       BoardEntity boardEntity = boardRepository.findById(boardSequence).orElse(null);
-      if (boardEntity == null) return ResponseDto.noExistBoard();  
-  
+      if (boardEntity == null) return ResponseDto.noExistBoard();
+
       boardEntity.setViews(boardEntity.getViews() + 1);
       boardRepository.save(boardEntity);
-  
+
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
-  
+
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
       List<BoardCommentResponseDto> commentList = commentEntities.stream()
         .map(BoardCommentResponseDto::new)
         .toList();
-  
+
       return GetBoardResponseDto.success(boardEntity, likeCount, commentList);
-  
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseDto.databaseError(); 
+      return ResponseDto.databaseError();
     }
-
   }
 
   // method: 게시글 수정 (작성자만 가능) //
@@ -143,12 +156,11 @@ public class BoardServiceImplement implements BoardService {
       boardEntity.patch(dto);
       boardRepository.save(boardEntity);
 
+      return ResponseDto.success(HttpStatus.OK);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
-    return ResponseDto.success(HttpStatus.OK);
   }
 
   // method: 게시글 삭제 (작성자만 가능) //
@@ -165,14 +177,13 @@ public class BoardServiceImplement implements BoardService {
       boardCommentRepository.deleteByBoardSequence(boardSequence);
       boardRepository.delete(boardEntity);
 
+      return ResponseDto.success(HttpStatus.OK);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
-    return ResponseDto.success(HttpStatus.OK);
   }
-  
+
   // method: 게시글 검색 (태그별로 가능) //
   @Override
   public ResponseEntity<? super GetBoardListResponseDto> searchBoardList(String tag, String keyword, Integer pageNumber) {
@@ -180,33 +191,29 @@ public class BoardServiceImplement implements BoardService {
       int pageSize = 10;
       Sort sort = Sort.by("boardSequence").descending();
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-  
+
       BoardTagType tagType = null;
       if (!"ALL".equalsIgnoreCase(tag)) {
         try {
           tagType = BoardTagType.valueOf(tag);
         } catch (IllegalArgumentException e) {
-          return ResponseDto.invalidTag(); // 잘못된 태그 처리
+          return ResponseDto.invalidTag();
         }
       }
-  
-      // 태그와 키워드를 기준으로 게시글 조회
+
       Page<BoardEntity> boardPage = (tagType == null)
         ? boardRepository.findByTitleContaining(keyword, pageable)
         : boardRepository.findByTagAndTitleContaining(tagType, keyword, pageable);
-  
-      // 페이지 번호 유효성 검사
+
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), boardPage.getTotalPages())) {
         return ResponseDto.invalidPageNumber();
       }
-  
-      // 게시글 정보를 BoardSummaryResponseDto로 변환
+
       List<BoardSummaryResponseDto> boardList = boardPage.stream()
         .map(entity -> {
-
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
           int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
-  
+
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
             entity.getTitle(),
@@ -218,13 +225,12 @@ public class BoardServiceImplement implements BoardService {
             commentCount
           );
         }).toList();
-  
+
       return ResponseEntity.ok(new GetBoardListResponseDto(boardList, boardPage.getTotalPages()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-    
   }
 
   // method: 게시글에 좋아요를 누르거나 취소 //
@@ -244,12 +250,11 @@ public class BoardServiceImplement implements BoardService {
         boardLikeRepository.deleteByBoardSequenceAndUserId(boardSequence, userId);
       }
 
+      return ResponseDto.success(HttpStatus.OK);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
-    return ResponseDto.success(HttpStatus.OK);
   }
 
   // method: 게시글에 댓글 작성 //
@@ -262,47 +267,33 @@ public class BoardServiceImplement implements BoardService {
       BoardCommentEntity boardCommentEntity = new BoardCommentEntity(dto, boardSequence, userId);
       boardCommentRepository.save(boardCommentEntity);
 
+      return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
-    return ResponseDto.success(HttpStatus.CREATED);
   }
 
   // method: 게시글에 댓글 삭제 (글작성자, 댓글작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> deleteBoardComment(Integer commentSequence, String userId) {
-
     try {
-      // 1. 댓글 엔티티 조회 //
       BoardCommentEntity commentEntity = boardCommentRepository.findById(commentSequence).orElse(null);
-      if (commentEntity == null)
-        return ResponseDto.noExistComment();
-  
-      // 2. 게시글 작성자 조회 //
+      if (commentEntity == null) return ResponseDto.noExistComment();
+
       BoardEntity boardEntity = boardRepository.findById(commentEntity.getBoardSequence()).orElse(null);
-      if (boardEntity == null)
-        return ResponseDto.noExistBoard();
-  
-      // 3. 댓글 작성자 또는 게시글 작성자가 아니면 권한 없음 //
+      if (boardEntity == null) return ResponseDto.noExistBoard();
+
       boolean isCommentWriter = commentEntity.getUserId().equals(userId);
       boolean isPostWriter = boardEntity.getUserId().equals(userId);
-  
-      if (!isCommentWriter && !isPostWriter)
-        return ResponseDto.noPermission();
-  
-      // 4. 삭제 수행 //
+      if (!isCommentWriter && !isPostWriter) return ResponseDto.noPermission();
+
       boardCommentRepository.deleteByCommentSequence(commentEntity.getCommentSequence());
-  
+
       return ResponseDto.success(HttpStatus.OK);
-  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-
   }
-
 }
-

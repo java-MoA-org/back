@@ -1,18 +1,23 @@
 package com.MoA.moa_back.common.vo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.repository.BoardCommentRepository;
 import com.MoA.moa_back.repository.BoardLikeRepository;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 
 @Getter
 public class BoardVo {
   private Integer boardSequence;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
+  
   private String title;
   private String tag;
   private int likeCount;

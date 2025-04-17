@@ -1,18 +1,23 @@
 package com.MoA.moa_back.common.vo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.repository.DailyCommentRepository;
 import com.MoA.moa_back.repository.DailyLikeRepository;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 
 @Getter
 public class DailyVo {
   private Integer dailySequence;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
+  
   private String title;
   private int likeCount;
   private int commentCount;
@@ -21,7 +26,7 @@ public class DailyVo {
 
   private DailyVo(DailyEntity dailyEntity, int likeCount, int commentCount, int views) {
     this.dailySequence = dailyEntity.getDailySequence();
-    this.creationDate = dailyEntity.getCreationDate();
+    this.creationDate = LocalDateTime.now();
     this.title = dailyEntity.getTitle();
     this.likeCount = likeCount;
     this.commentCount = commentCount;

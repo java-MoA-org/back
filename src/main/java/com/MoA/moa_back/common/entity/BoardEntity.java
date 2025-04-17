@@ -1,13 +1,13 @@
 package com.MoA.moa_back.common.entity;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.enums.BoardTagType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -34,8 +34,12 @@ public class BoardEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer boardSequence;
+  
   private String userId;
-  private String creationDate;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+  private LocalDateTime creationDate;
+
   private String location;
   private String detailLocation;
   private String title;
@@ -49,15 +53,16 @@ public class BoardEntity {
   @Enumerated(EnumType.STRING)
   @Column(length=4)
   private BoardTagType tag = BoardTagType.FREE;
+
   @Column(nullable=false)
   private Integer views = 0;
 
-  public BoardEntity(PostBoardRequestDto dto, String userId) {
-    LocalDate now = LocalDate.now();
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  @Column(name = "like_count", nullable = false)
+  private Integer likeCount = 0;
 
+  public BoardEntity(PostBoardRequestDto dto, String userId) {
     this.userId = userId;
-    this.creationDate = now.format(dateTimeFormatter);
+    this.creationDate = LocalDateTime.now();
     this.title = dto.getTitle();
     this.content = dto.getContent();
     this.location = dto.getLocation();

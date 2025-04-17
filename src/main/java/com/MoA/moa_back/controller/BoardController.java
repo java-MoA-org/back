@@ -1,6 +1,7 @@
 package com.MoA.moa_back.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,21 +34,21 @@ public class BoardController {
   // API: 게시글 작성 //
   @PostMapping({"", "/"})
   public ResponseEntity<ResponseDto> postBoard(
-    @RequestBody @Valid PostBoardRequestDto requestBody
-    // @AuthenticationPrincipal String userId
+    @RequestBody @Valid PostBoardRequestDto requestBody,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.postBoard(requestBody, userId);
     return response;
   }
 
-  // API: 게시글 리스트 조회 (태그 기준)
+  // API: 게시글 리스트 조회 (태그 + 페이지 + 정렬 기준) //
   @GetMapping("/list/{tag}/{pageNumber}")
   public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(
     @PathVariable("tag") String tag,
-    @PathVariable("pageNumber") Integer pageNumber
+    @PathVariable("pageNumber") Integer pageNumber,
+    @RequestParam(name = "sortOption", defaultValue = "LATEST") String sortOption
   ) {
-    ResponseEntity<? super GetBoardListResponseDto> response = boardService.getBoardListByBoardTag(tag, pageNumber);
+    ResponseEntity<? super GetBoardListResponseDto> response = boardService.getBoardListByBoardTag(tag, pageNumber, sortOption);
     return response;
   }
 
@@ -64,10 +65,9 @@ public class BoardController {
   @PatchMapping("/{boardSequence}")
   public ResponseEntity<ResponseDto> patchBoard(
     @RequestBody @Valid PatchBoardRequestDto requestBody,
-    @PathVariable("boardSequence") Integer boardSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("boardSequence") Integer boardSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.patchBoard(requestBody, boardSequence, userId);
     return response;
   }
@@ -75,10 +75,9 @@ public class BoardController {
   // API: 게시글 삭제 //
   @DeleteMapping("/{boardSequence}")
   public ResponseEntity<ResponseDto> deleteBoard(
-    @PathVariable("boardSequence") Integer boardSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("boardSequence") Integer boardSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.deleteBoard(boardSequence, userId);
     return response;
   }
@@ -97,10 +96,9 @@ public class BoardController {
   // API: 게시글 좋아요 누르기 or 취소 //
   @PutMapping("/{boardSequence}/likes")
   public ResponseEntity<ResponseDto> toggleBoardLike(
-    @PathVariable("boardSequence") Integer boardSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("boardSequence") Integer boardSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.putBoardLikeCount(boardSequence, userId);
     return response;
   }
@@ -109,10 +107,9 @@ public class BoardController {
   @PostMapping("/{boardSequence}/comments")
   public ResponseEntity<ResponseDto> postBoardComment(
     @RequestBody @Valid PostBoardCommentRequestDto requestBody,
-    @PathVariable("boardSequence") Integer boardSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("boardSequence") Integer boardSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
     ResponseEntity<ResponseDto> response = boardService.postBoardComment(requestBody, boardSequence, userId);
     return response;
   }
@@ -120,10 +117,11 @@ public class BoardController {
   // API: 게시글 댓글 삭제 //
   @DeleteMapping("/{commentSequence}/comments")
   public ResponseEntity<ResponseDto> deleteDailyComment(
-    @PathVariable("commentSequence") Integer commentSequence
-    // @AuthenticationPrincipal String userId
+    @PathVariable("commentSequence") Integer commentSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    String userId = "testuser"; // 테스트용 유저아이디
-    return boardService.deleteBoardComment(commentSequence, userId);
+    ResponseEntity<ResponseDto> response = boardService.deleteBoardComment(commentSequence, userId);
+    return response;
   }
+
 }
