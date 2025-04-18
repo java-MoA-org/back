@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 @Getter
-public class BoardVo {
+public class BoardVO {
   private Integer boardSequence;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -25,7 +25,7 @@ public class BoardVo {
   private String previewContent;
   private int views;
 
-  private BoardVo(BoardEntity boardEntity, int likeCount, int commentCount, int views) {
+  private BoardVO(BoardEntity boardEntity, int likeCount, int commentCount, int views) {
     this.boardSequence = boardEntity.getBoardSequence();
     this.creationDate = boardEntity.getCreationDate();
     this.title = boardEntity.getTitle();
@@ -38,14 +38,14 @@ public class BoardVo {
     this.previewContent = content.length() > 50 ? content.substring(0, 50) + "..." : content;
   }
 
-  public static List<BoardVo> getList(List<BoardEntity> boardEntities, BoardLikeRepository likeRepository, BoardCommentRepository commentRepository) {
-    List<BoardVo> list = new ArrayList<>();
+  public static List<BoardVO> getList(List<BoardEntity> boardEntities, BoardLikeRepository likeRepository, BoardCommentRepository commentRepository) {
+    List<BoardVO> list = new ArrayList<>();
 
     for (BoardEntity boardEntity : boardEntities) {
       int likeCount = likeRepository.countByBoardSequence(boardEntity.getBoardSequence());
       int commentCount = commentRepository.countByBoardSequence(boardEntity.getBoardSequence());
       int views = boardEntity.getViews();
-      list.add(new BoardVo(boardEntity, likeCount, commentCount, views));
+      list.add(new BoardVO(boardEntity, likeCount, commentCount, views));
     }
 
     return list;

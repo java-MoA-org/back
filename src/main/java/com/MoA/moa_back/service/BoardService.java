@@ -7,6 +7,7 @@ import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 
 public interface BoardService {
@@ -29,6 +30,8 @@ public interface BoardService {
 
   // method: 특정 게시글 댓글 작성 //
   ResponseEntity<ResponseDto> postBoardComment(PostBoardCommentRequestDto dto, Integer boardSequence, String userId);
+  // method: 특정 게시글 댓글 불러오기 //
+  ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence);
   // method: 특정 게시글 댓글 삭제 (작성자만 가능) //
   ResponseEntity<ResponseDto> deleteBoardComment(Integer commentSequence, String userId);
 

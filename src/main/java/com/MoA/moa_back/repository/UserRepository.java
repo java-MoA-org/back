@@ -1,5 +1,7 @@
 package com.MoA.moa_back.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, String> {
 
     UserEntity findByUserNickname(String userNickname);
     UserEntity findByUserIdAndJoinType(String userId, String joinType);
+
+    List<UserEntity> findByUserIdIn(List<String> userIds);
 }

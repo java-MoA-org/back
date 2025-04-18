@@ -57,9 +57,6 @@ public class BoardEntity {
   @Column(nullable=false)
   private Integer views = 0;
 
-  @Column(name = "like_count", nullable = false)
-  private Integer likeCount = 0;
-
   public BoardEntity(PostBoardRequestDto dto, String userId) {
     this.userId = userId;
     this.creationDate = LocalDateTime.now();
