@@ -16,6 +16,8 @@ import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.common.entity.UsedTradeEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.MoA.moa_back.common.entity.UserInterestsEntity;
+import com.MoA.moa_back.common.vo.UserInterestVO;
 import com.MoA.moa_back.common.vo.summary.BoardSummaryVO;
 import com.MoA.moa_back.common.vo.summary.DailySummaryVO;
 import com.MoA.moa_back.common.vo.summary.UsedTradeSummaryVO;
@@ -25,6 +27,7 @@ import com.MoA.moa_back.repository.DailyLikeRepository;
 import com.MoA.moa_back.repository.DailyRepository;
 import com.MoA.moa_back.repository.UsedTradeLikeRepository;
 import com.MoA.moa_back.repository.UsedTradeRepository;
+import com.MoA.moa_back.repository.UserInterestsRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.UserPageService;
 
@@ -39,6 +42,8 @@ public class UserPageServiceImplement implements UserPageService {
     private final BoardLikeRepository boardLikeRepository;
     private final DailyRepository dailyRepository;
     private final DailyLikeRepository dailyLikeRepository;
+
+    private final UserInterestsRepository userInterestsRepository;
 
     private final UsedTradeRepository usedTradeRepository;
     private final UsedTradeLikeRepository usedTradeLikeRepository;
@@ -65,9 +70,13 @@ public class UserPageServiceImplement implements UserPageService {
                 // 4. 중고거래 리스트
                 List<UsedTradeEntity> tradeEntities = usedTradeRepository.findByUserId(userId);
                 List<UsedTradeSummaryVO> trades = UsedTradeSummaryVO.getList(tradeEntities, usedTradeLikeRepository);
+
+                // 5. 관심사 조회
+                UserInterestsEntity interestEntity = userInterestsRepository.findByUserId(userId);
+                UserInterestVO interests = new UserInterestVO(interestEntity);
     
                 // 5. 응답 반환
-                return GetUserPageResponseDto.success(boards, dailys, trades);
+                return GetUserPageResponseDto.success(boards, dailys, trades, interests);
     
             } catch (Exception e) {
                 e.printStackTrace();

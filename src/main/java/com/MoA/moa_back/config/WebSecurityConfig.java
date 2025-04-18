@@ -56,6 +56,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
                 .requestMatchers("/api/news/**").permitAll() 
                 .requestMatchers("/home/**").permitAll() // 일시적 인증 없이 누구나 접근
+                .requestMatchers("/api/v1/user-page/**").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -93,6 +94,7 @@ class AuthenticationFailEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        authException.printStackTrace();
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("{ \"code\": \"AF\", \"message\": \"Auth Fail.\" }");
