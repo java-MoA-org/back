@@ -89,8 +89,9 @@ public class DailyServiceImplement implements DailyService {
         .map(entity -> {
           int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
-          UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
-          String profileImage = (user != null) ? user.getProfileImage() : null;
+          UserEntity user = userRepository.findByUserId(entity.getUserId());
+          String profileImage = (user.getProfileImage() != null) ? user.getProfileImage() : null;
+          String nickname = (user != null) ? user.getUserNickname() : null;
   
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
@@ -98,6 +99,7 @@ public class DailyServiceImplement implements DailyService {
             entity.getContent(),
             entity.getCreationDate(),
             profileImage,
+            nickname,
             entity.getViews(),
             likeCount,
             commentCount
@@ -212,7 +214,8 @@ public class DailyServiceImplement implements DailyService {
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
   
           UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
-          String profileImage = (user != null) ? user.getProfileImage() : null;
+          String profileImage = (user.getProfileImage() != null) ? user.getProfileImage() : null;
+          String nickname = (user != null) ? user.getUserNickname() : null;
   
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
@@ -220,6 +223,7 @@ public class DailyServiceImplement implements DailyService {
             entity.getContent(),
             entity.getCreationDate(),
             profileImage,
+            nickname,
             entity.getViews(),
             likeCount,
             commentCount

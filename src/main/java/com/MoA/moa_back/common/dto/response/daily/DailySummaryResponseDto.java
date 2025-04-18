@@ -18,6 +18,7 @@ public class DailySummaryResponseDto {
   private LocalDateTime creationDate;
   
   private String profileImage;
+  private String userNickname;
   private Integer views;
   private Integer likeCount; 
   private Integer commentCount;

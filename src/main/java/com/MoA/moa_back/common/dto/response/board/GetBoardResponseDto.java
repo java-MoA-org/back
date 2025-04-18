@@ -27,7 +27,10 @@ public class GetBoardResponseDto extends ResponseDto {
   
   private BoardTagType tag;
   private Integer views;
+  private String writerId;
+
   private Integer likeCount;
+
   private List<BoardCommentVO> comments;
 
   public static GetBoardResponseDto of(
@@ -42,6 +45,7 @@ public class GetBoardResponseDto extends ResponseDto {
       board.getCreationDate(),
       board.getTag(),
       board.getViews(),
+      board.getUserId(),
       likeCount,
       commentList
     );
