@@ -102,6 +102,7 @@ public class BoardServiceImplement implements BoardService {
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
+            entity.getUserId(),
             likeCount,
             commentCount
           );
@@ -223,6 +224,7 @@ public class BoardServiceImplement implements BoardService {
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
+            entity.getUserId(),
             likeCount,
             commentCount
           );
