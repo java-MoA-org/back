@@ -20,6 +20,7 @@ public class BoardSummaryResponseDto {
   
   private BoardTagType tag;
   private Integer views;
+  private String writerId;
   private Integer likeCount;
   private Integer commentCount;
 }
