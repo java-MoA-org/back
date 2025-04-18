@@ -19,9 +19,8 @@ public class UsedTradeSummaryVO {
   private int likeCount;
   private LocalDateTime creationDate;
 
-    // 메인홈 전용 추가 필드
-    private String userNickname;
-    private String thumbnailImage;
+  private String userNickname;
+  private String thumbnailImage;
 
   private UsedTradeSummaryVO(UsedTradeEntity usedTradeEntity, int likeCount){
     this.tradeSequence = usedTradeEntity.getTradeSequence();
@@ -31,17 +30,15 @@ public class UsedTradeSummaryVO {
     this.creationDate = usedTradeEntity.getCreationDate();
   }
 
-    // 메인 홈 전용 생성자
-    private UsedTradeSummaryVO(UsedTradeEntity tradeEntity, int likeCount, String userNickname, String thumbnailImage) {
-      this.tradeSequence = tradeEntity.getTradeSequence();
-      this.title = tradeEntity.getTitle();
-      this.views = tradeEntity.getViews();
-      this.likeCount = likeCount;
-      this.creationDate = tradeEntity.getCreationDate();
-      this.userNickname = userNickname;
-      this.thumbnailImage = thumbnailImage;
-    }
-  
+  private UsedTradeSummaryVO(UsedTradeEntity tradeEntity, int likeCount, String userNickname, String thumbnailImage) {
+    this.tradeSequence = tradeEntity.getTradeSequence();
+    this.title = tradeEntity.getTitle();
+    this.views = tradeEntity.getViews();
+    this.likeCount = likeCount;
+    this.creationDate = tradeEntity.getCreationDate();
+    this.userNickname = userNickname;
+    this.thumbnailImage = thumbnailImage;
+  }
 
   public static List<UsedTradeSummaryVO> getList(List<UsedTradeEntity> tradeEntities, UsedTradeLikeRepository likeRepository){
     List<UsedTradeSummaryVO> list = new ArrayList<>();
@@ -53,7 +50,6 @@ public class UsedTradeSummaryVO {
     return list;
   }
 
-  // 메인 홈 전용 리스트 생성
   public static List<UsedTradeSummaryVO> getList(
     List<UsedTradeEntity> tradeEntities,
     UsedTradeLikeRepository likeRepository,
@@ -62,12 +58,15 @@ public class UsedTradeSummaryVO {
     List<UsedTradeSummaryVO> list = new ArrayList<>();
 
     for (UsedTradeEntity tradeEntity : tradeEntities) {
+
       int likeCount = likeRepository.countByTradeSequence(tradeEntity.getTradeSequence());
+
       String nickname = userRepository.findById(tradeEntity.getUserId())
                           .map(UserEntity::getUserNickname)
                           .orElse("탈퇴한 사용자");
+
       String thumbnail = (tradeEntity.getImages() != null && !tradeEntity.getImages().isEmpty())
-                          ? tradeEntity.getImages().get(0)
+                          ? tradeEntity.getImages().get(0) // 첫 번째 이미지가 썸네일
                           : null;
 
       list.add(new UsedTradeSummaryVO(tradeEntity, likeCount, nickname, thumbnail));

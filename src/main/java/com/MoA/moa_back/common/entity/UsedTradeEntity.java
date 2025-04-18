@@ -81,8 +81,6 @@ public class UsedTradeEntity {
   public void patch(PatchUsedTradeRequestDto dto) {
     this.title = dto.getTitle();
     this.content = dto.getContent();
-    this.itemTypeTag = dto.getItemTypeTag();
-    this.usedItemStatusTag = dto.getUsedItemStatusTag();
     this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();

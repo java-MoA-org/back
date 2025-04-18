@@ -51,7 +51,7 @@ public class BoardEntity {
   private List<String> images = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
-  @Column(length=4)
+  @Column(length=20)
   private BoardTagType tag = BoardTagType.FREE;
 
   @Column(nullable=false)
