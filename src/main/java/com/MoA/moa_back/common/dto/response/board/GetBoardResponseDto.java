@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.enums.BoardTagType;
+import com.MoA.moa_back.common.vo.BoardCommentVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
@@ -27,12 +28,12 @@ public class GetBoardResponseDto extends ResponseDto {
   private BoardTagType tag;
   private Integer views;
   private Integer likeCount;
-  private List<BoardCommentResponseDto> comments;
+  private List<BoardCommentVO> comments;
 
   public static GetBoardResponseDto of(
     BoardEntity board,
     int likeCount,
-    List<BoardCommentResponseDto> commentList
+    List<BoardCommentVO> commentList
   ) {
     return new GetBoardResponseDto(
       board.getBoardSequence(),
@@ -49,7 +50,7 @@ public class GetBoardResponseDto extends ResponseDto {
   public static ResponseEntity<GetBoardResponseDto> success(
     BoardEntity board,
     int likeCount,
-    List<BoardCommentResponseDto> commentList
+    List<BoardCommentVO> commentList
   ) {
     GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList);
     return ResponseEntity.status(HttpStatus.OK).body(body);

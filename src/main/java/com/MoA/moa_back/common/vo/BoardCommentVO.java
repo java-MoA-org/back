@@ -1,4 +1,4 @@
-package com.MoA.moa_back.common.dto.response.board;
+package com.MoA.moa_back.common.vo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,25 +9,25 @@ import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import lombok.Getter;
 
 @Getter
-public class BoardCommentResponseDto {
+public class BoardCommentVO {
 
   private Integer commentSequence;
   private String commentWriterId;
   private LocalDateTime commentWriteDate;
   private String comment;
 
-  public BoardCommentResponseDto(BoardCommentEntity boardCommentEntity) {
+  public BoardCommentVO(BoardCommentEntity boardCommentEntity) {
     this.commentSequence = boardCommentEntity.getCommentSequence();
     this.commentWriterId = boardCommentEntity.getUserId();
     this.commentWriteDate = boardCommentEntity.getCreationDate();
     this.comment = boardCommentEntity.getBoardComment();
   }
 
-  public static List<BoardCommentResponseDto> getList(List<BoardCommentEntity> boardCommentEntities) {
-    List<BoardCommentResponseDto> list = new ArrayList<>();
+  public static List<BoardCommentVO> getList(List<BoardCommentEntity> boardCommentEntities) {
+    List<BoardCommentVO> list = new ArrayList<>();
 
     for (BoardCommentEntity boardCommentEntity : boardCommentEntities) {
-      BoardCommentResponseDto dto = new BoardCommentResponseDto(boardCommentEntity);
+      BoardCommentVO dto = new BoardCommentVO(boardCommentEntity);
       list.add(dto);
     }
 

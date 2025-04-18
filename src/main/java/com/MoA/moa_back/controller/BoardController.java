@@ -17,6 +17,7 @@ import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
 import com.MoA.moa_back.service.BoardService;
@@ -111,6 +112,15 @@ public class BoardController {
     @AuthenticationPrincipal String userId
   ) {
     ResponseEntity<ResponseDto> response = boardService.postBoardComment(requestBody, boardSequence, userId);
+    return response;
+  }
+
+  // API: 게시글 댓글 불러오기 //
+  @GetMapping("/{boardSequence}/comments")
+  public ResponseEntity<? super GetBoardCommentResponseDto> getComment(
+    @PathVariable("boardSequence") Integer boardSequence
+  ) {
+    ResponseEntity<? super GetBoardCommentResponseDto> response = boardService.getCommentsByBoardSequence(boardSequence);
     return response;
   }
 

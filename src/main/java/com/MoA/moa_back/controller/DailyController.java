@@ -9,6 +9,7 @@ import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyResponseDto;
+import com.MoA.moa_back.common.dto.response.daily.GetDailyCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyListResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetLikedUserListResponseDto;
 import com.MoA.moa_back.service.DailyService;
@@ -110,6 +111,15 @@ public class DailyController {
     @AuthenticationPrincipal String userId
   ) {
     ResponseEntity<ResponseDto> response = dailyService.postDailyBoardComment(requestBody, dailySequence, userId);
+    return response;
+  }
+
+  // API: 게시글 댓글 불러오기 //
+  @GetMapping("/{dailySequence}/comments")
+  public ResponseEntity<? super GetDailyCommentResponseDto> getComment(
+    @PathVariable("dailySequence") Integer dailySequence
+  ) {
+    ResponseEntity<? super GetDailyCommentResponseDto> response = dailyService.getCommentsByDailySequence(dailySequence);
     return response;
   }
 
