@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.vo.UserInterestVO;
 import com.MoA.moa_back.common.vo.summary.BoardSummaryVO;
 import com.MoA.moa_back.common.vo.summary.DailySummaryVO;
 import com.MoA.moa_back.common.vo.summary.UsedTradeSummaryVO;
@@ -20,9 +21,11 @@ public class GetUserPageResponseDto extends ResponseDto {
   private List<BoardSummaryVO> boards;
   private List<DailySummaryVO> dailyBoards;
   private List<UsedTradeSummaryVO> tradeBoards;
+  private UserInterestVO interests;
 
-      public static ResponseEntity<GetUserPageResponseDto> success(List<BoardSummaryVO> boards, List<DailySummaryVO> dailyBoards, List<UsedTradeSummaryVO> tradeBoards) {
-        GetUserPageResponseDto body = new GetUserPageResponseDto(boards, dailyBoards, tradeBoards);
+
+      public static ResponseEntity<GetUserPageResponseDto> success(List<BoardSummaryVO> boards, List<DailySummaryVO> dailyBoards, List<UsedTradeSummaryVO> tradeBoards, UserInterestVO interests) {
+        GetUserPageResponseDto body = new GetUserPageResponseDto(boards, dailyBoards, tradeBoards, interests);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
 }
