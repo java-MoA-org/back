@@ -53,11 +53,12 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
 
                 .requestMatchers(HttpMethod.POST, "/notice").permitAll()
-                /*
-                .requestMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/notice/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/notice/**").hasRole("ADMIN")
-                */ 
+                
+                // 🔽 공지사항 관련 GET 요청 허용 추가
+                .requestMatchers(HttpMethod.GET, "/notice").permitAll()
+                .requestMatchers(HttpMethod.GET, "/notice/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/notice").permitAll()
+                
                 .requestMatchers("/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/daily/**").permitAll()
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
