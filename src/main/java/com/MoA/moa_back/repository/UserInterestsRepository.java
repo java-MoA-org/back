@@ -7,6 +7,6 @@ import com.MoA.moa_back.common.entity.UserInterestsEntity;
 
 @Repository
 public interface UserInterestsRepository extends JpaRepository<UserInterestsEntity, String>{
-    
+    UserInterestsEntity findByUserId(String userId);
     
 }

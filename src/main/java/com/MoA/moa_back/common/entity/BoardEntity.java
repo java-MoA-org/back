@@ -51,14 +51,11 @@ public class BoardEntity {
   private List<String> images = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
-  @Column(length=4)
+  @Column(length=20)
   private BoardTagType tag = BoardTagType.FREE;
 
   @Column(nullable=false)
   private Integer views = 0;
-
-  @Column(name = "like_count", nullable = false)
-  private Integer likeCount = 0;
 
   public BoardEntity(PostBoardRequestDto dto, String userId) {
     this.userId = userId;

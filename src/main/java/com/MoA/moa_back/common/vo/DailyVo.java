@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 
 @Getter
-public class DailyVo {
+public class DailyVO {
   private Integer dailySequence;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -24,7 +24,7 @@ public class DailyVo {
   private String previewContent;
   private int views;
 
-  private DailyVo(DailyEntity dailyEntity, int likeCount, int commentCount, int views) {
+  private DailyVO(DailyEntity dailyEntity, int likeCount, int commentCount, int views) {
     this.dailySequence = dailyEntity.getDailySequence();
     this.creationDate = LocalDateTime.now();
     this.title = dailyEntity.getTitle();
@@ -36,14 +36,14 @@ public class DailyVo {
     this.previewContent = content.length() > 50 ? content.substring(0, 50) + "..." : content;
   }
 
-  public static List<DailyVo> getList(List<DailyEntity> dailyEntities, DailyLikeRepository likeRepository, DailyCommentRepository commentRepository) {
-    List<DailyVo> list = new ArrayList<>();
+  public static List<DailyVO> getList(List<DailyEntity> dailyEntities, DailyLikeRepository likeRepository, DailyCommentRepository commentRepository) {
+    List<DailyVO> list = new ArrayList<>();
 
     for (DailyEntity dailyEntity : dailyEntities) {
       int likeCount = likeRepository.countByDailySequence(dailyEntity.getDailySequence());
       int commentCount = commentRepository.countByDailySequence(dailyEntity.getDailySequence());
       int views = dailyEntity.getViews();
-      list.add(new DailyVo(dailyEntity, likeCount, commentCount, views));
+      list.add(new DailyVO(dailyEntity, likeCount, commentCount, views));
     }
 
     return list;

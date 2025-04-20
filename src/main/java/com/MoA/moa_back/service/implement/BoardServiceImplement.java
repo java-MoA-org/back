@@ -1,5 +1,6 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -13,15 +14,16 @@ import com.MoA.moa_back.common.dto.request.board.PatchBoardRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.board.PostBoardRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
-import com.MoA.moa_back.common.dto.response.board.BoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.BoardSummaryResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardResponseDto;
+import com.MoA.moa_back.common.dto.response.board.GetBoardCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.board.GetBoardListResponseDto;
 import com.MoA.moa_back.common.entity.BoardCommentEntity;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.BoardLikeEntity;
 import com.MoA.moa_back.common.enums.BoardTagType;
 import com.MoA.moa_back.common.util.PageUtil;
+import com.MoA.moa_back.common.vo.BoardCommentVO;
 import com.MoA.moa_back.repository.BoardCommentRepository;
 import com.MoA.moa_back.repository.BoardLikeRepository;
 import com.MoA.moa_back.repository.BoardRepository;
@@ -100,6 +102,7 @@ public class BoardServiceImplement implements BoardService {
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
+            entity.getUserId(),
             likeCount,
             commentCount
           );
@@ -132,8 +135,8 @@ public class BoardServiceImplement implements BoardService {
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
 
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
-      List<BoardCommentResponseDto> commentList = commentEntities.stream()
-        .map(BoardCommentResponseDto::new)
+      List<BoardCommentVO> commentList = commentEntities.stream()
+        .map(BoardCommentVO::new)
         .toList();
 
       return GetBoardResponseDto.success(boardEntity, likeCount, commentList);
@@ -221,6 +224,7 @@ public class BoardServiceImplement implements BoardService {
             entity.getCreationDate(),
             entity.getTag(),
             entity.getViews(),
+            entity.getUserId(),
             likeCount,
             commentCount
           );
@@ -272,6 +276,24 @@ public class BoardServiceImplement implements BoardService {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+  }
+  
+  // method: 특정 게시글 댓글 불러오기 //
+  @Override
+  public ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence) {
+
+    List<BoardCommentEntity> commentEntities = new ArrayList<>();
+
+    try {
+
+      commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
+
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return GetBoardCommentResponseDto.success(commentEntities);
   }
 
   // method: 게시글에 댓글 삭제 (글작성자, 댓글작성자만 가능) //

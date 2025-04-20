@@ -1,6 +1,8 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,16 +16,17 @@ import com.MoA.moa_back.common.dto.request.daily.PostDailyCommentRequestDto;
 import com.MoA.moa_back.common.dto.request.daily.PostDailyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.LikedUserDto;
-import com.MoA.moa_back.common.dto.response.daily.DailyCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyListResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetLikedUserListResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.DailySummaryResponseDto;
+import com.MoA.moa_back.common.dto.response.daily.GetDailyCommentResponseDto;
 import com.MoA.moa_back.common.dto.response.daily.GetDailyResponseDto;
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.common.entity.DailyLikeEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.util.PageUtil;
+import com.MoA.moa_back.common.vo.DailyCommentVO;
 import com.MoA.moa_back.repository.DailyCommentRepository;
 import com.MoA.moa_back.repository.DailyLikeRepository;
 import com.MoA.moa_back.repository.DailyRepository;
@@ -86,8 +89,9 @@ public class DailyServiceImplement implements DailyService {
         .map(entity -> {
           int likeCount = dailyLikeRepository.countByDailySequence(entity.getDailySequence());
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
-          UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
-          String profileImage = (user != null) ? user.getProfileImage() : null;
+          UserEntity user = userRepository.findByUserId(entity.getUserId());
+          String profileImage = (user.getProfileImage() != null) ? user.getProfileImage() : null;
+          String nickname = (user != null) ? user.getUserNickname() : null;
   
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
@@ -95,6 +99,7 @@ public class DailyServiceImplement implements DailyService {
             entity.getContent(),
             entity.getCreationDate(),
             profileImage,
+            nickname,
             entity.getViews(),
             likeCount,
             commentCount
@@ -132,10 +137,10 @@ public class DailyServiceImplement implements DailyService {
   
       List<DailyCommentEntity> commentEntities = dailyCommentRepository.findByDailySequenceOrderByCreationDateDesc(dailySequence);
   
-      List<DailyCommentResponseDto> commentList = commentEntities.stream()
+      List<DailyCommentVO> commentList = commentEntities.stream()
         .map(comment -> {
           UserEntity user = userRepository.findByUserId(comment.getUserId());
-          return new DailyCommentResponseDto(comment, user);
+          return new DailyCommentVO(comment, user);
         })
         .toList();
   
@@ -209,7 +214,8 @@ public class DailyServiceImplement implements DailyService {
           int commentCount = dailyCommentRepository.countByDailySequence(entity.getDailySequence());
   
           UserEntity user = userRepository.findById(entity.getUserId()).orElse(null);
-          String profileImage = (user != null) ? user.getProfileImage() : null;
+          String profileImage = (user.getProfileImage() != null) ? user.getProfileImage() : null;
+          String nickname = (user != null) ? user.getUserNickname() : null;
   
           return new DailySummaryResponseDto(
             entity.getDailySequence(),
@@ -217,6 +223,7 @@ public class DailyServiceImplement implements DailyService {
             entity.getContent(),
             entity.getCreationDate(),
             profileImage,
+            nickname,
             entity.getViews(),
             likeCount,
             commentCount
@@ -298,6 +305,31 @@ public class DailyServiceImplement implements DailyService {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+  }
+
+  // method: 특정 게시글 댓글 불러오기 //
+  @Override
+  public ResponseEntity<? super GetDailyCommentResponseDto> getCommentsByDailySequence(Integer dailySequence) {
+
+    List<DailyCommentEntity> commentEntities = new ArrayList<>();
+    List<UserEntity> userEntities = new ArrayList<>();  // UserEntity 목록 추가
+
+    try {
+
+      commentEntities = dailyCommentRepository.findByDailySequenceOrderByCreationDateDesc(dailySequence);
+
+      List<String> userIds = commentEntities.stream()
+                                            .map(DailyCommentEntity::getUserId)
+                                            .distinct()
+                                            .collect(Collectors.toList());
+      userEntities = userRepository.findByUserIdIn(userIds);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return GetDailyCommentResponseDto.success(commentEntities, userEntities);
   }
 
   // method: 일상 게시글에 댓글 삭제 (글작성자, 댓글작성자만 가능) //
