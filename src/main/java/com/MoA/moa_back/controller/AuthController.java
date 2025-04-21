@@ -5,15 +5,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.MoA.moa_back.common.dto.request.auth.CodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.EmailCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.service.AuthService;
@@ -62,7 +64,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/verify")
-    public ResponseEntity<ResponseDto> verifyEmailCode(@RequestBody CodeVerifyRequestDto dto) {
+    public ResponseEntity<ResponseDto> verifyEmailCode(@RequestBody EmailCodeVerifyRequestDto dto) {
         ResponseEntity<ResponseDto> response = authService.verifyEmailCode(dto);
         return response;
     }
@@ -70,12 +72,19 @@ public class AuthController {
     
 
     // 전화번호 중복 확인
-    @PostMapping("/phone/check")
-    public ResponseEntity<ResponseDto> phoneNumberCheck(@RequestBody @Valid PhoneNumberCheckRequestDto requestDto) {
-        ResponseEntity<ResponseDto> response = authService.phoneNumberCheck(requestDto);
+    @PostMapping("/phone/verify/require")
+    public ResponseEntity<? super PhoneNumberVerifyResponseDto> phoneNumberCheck(@RequestBody @Valid PhoneNumberCheckRequestDto requestDto) {
+        ResponseEntity<? super PhoneNumberVerifyResponseDto> response = authService.phoneNumberVerifyRequire(requestDto);
         return response;
     }
     
+    @PostMapping("/phone/verify")
+    public ResponseEntity<ResponseDto> verifyPhoneNumberCode(@RequestBody PhoneNumberCodeVerifyRequestDto dto) {
+        ResponseEntity<ResponseDto> response = authService.verifyPhoneNumberCode(dto);
+        return response;
+    }
+
+
     @PostMapping("/profileImage/upload")
     public String upload(
         @RequestParam("file") MultipartFile file

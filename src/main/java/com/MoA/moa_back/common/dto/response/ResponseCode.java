@@ -23,4 +23,5 @@ public interface ResponseCode {
     String OPEN_AI_ERROR = "OAE";
 
     String NO_EXIST_USER = "NEU";
+    String TOKEN_TIME_OUT = "TTO";
   }

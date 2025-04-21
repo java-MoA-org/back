@@ -104,5 +104,9 @@ public class ResponseDto {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 }
 
+  public static ResponseEntity<ResponseDto> tokenTimeOut(){
+    ResponseDto body = new ResponseDto(ResponseCode.TOKEN_TIME_OUT, ResponseMessage.TOKEN_TIME_OUT);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
 
 }
