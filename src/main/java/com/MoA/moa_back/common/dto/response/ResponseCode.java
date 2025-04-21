@@ -5,6 +5,7 @@ public interface ResponseCode {
   
     String VALIDATION_FAIL = "VF";
     String EXIST_USER = "EU";
+    String VERIFY_CODE_ERROR = "VCE";
 
     String NO_EXIST_BOARD = "NB";
     String NO_EXIST_DAILY = "ND.";
