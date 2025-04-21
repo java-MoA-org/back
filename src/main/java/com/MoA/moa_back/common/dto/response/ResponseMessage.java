@@ -22,4 +22,6 @@ public interface ResponseMessage {
     String DATABASE_ERROR = "Database Error";
 
     String NO_EXIST_USER = "No Exist User";
+
+    String TOKEN_TIME_OUT = "Token Time Out";
   }

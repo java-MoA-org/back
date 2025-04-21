@@ -3,7 +3,6 @@ package com.MoA.moa_back.service.implement;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,16 +10,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.MoA.moa_back.common.dto.request.auth.CodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.EmailCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.request.user.Interests;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
@@ -31,6 +32,7 @@ import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.AuthService;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,7 +86,7 @@ public class AuthServiceImplement implements AuthService{
             boolean existsUserEmail = userRepository.existsByUserEmail(userEmail);
             if(existsUserEmail) return ResponseDto.existUserEmail();
             String code = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
-            emailToken = jwtProvider.createEmailToken(userEmail, code);
+            emailToken = jwtProvider.createVerifyToken(userEmail, code);
 
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(userEmail);
@@ -101,30 +103,73 @@ public class AuthServiceImplement implements AuthService{
     }
 
     @Override
-    public ResponseEntity<ResponseDto> verifyEmailCode(CodeVerifyRequestDto requestDto){
+    public ResponseEntity<ResponseDto> verifyEmailCode(EmailCodeVerifyRequestDto requestDto){
 
         String token = requestDto.getEmailToken();
-        Claims claims = jwtProvider.parseToken(token);
-        String codeInToken = claims.get("code", String.class);
-        String emailInToken = claims.get("email", String.class);
 
-        if (!requestDto.getUserEmail().equals(emailInToken)) return ResponseDto.verifyCodeError();
-        if (!requestDto.getUserEmailVC().equals(codeInToken)) return ResponseDto.verifyCodeError();
+        try {
+            Claims claims = jwtProvider.parseToken(token);
+            String codeInToken = claims.get("code", String.class);
+            String emailInToken = claims.get("email", String.class);
+    
+            if (!requestDto.getUserEmail().equals(emailInToken)) return ResponseDto.verifyCodeError();
+            if (!requestDto.getUserEmailVC().equals(codeInToken)) return ResponseDto.verifyCodeError();
+            
+        } catch (ExpiredJwtException e) {
+            e.printStackTrace();
+            return ResponseDto.tokenTimeOut();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
 
         return ResponseDto.success(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<ResponseDto> phoneNumberCheck(PhoneNumberCheckRequestDto requestDto) {
-        
-        try {
+    public ResponseEntity<? super PhoneNumberVerifyResponseDto> phoneNumberVerifyRequire(PhoneNumberCheckRequestDto requestDto) {
+
+        String phoneNumberToken = null;
+
+        try{
             String userPhoneNumber = requestDto.getUserPhoneNumber();
-            boolean existsPhoneNumber = userRepository.existsByUserPhoneNumber(userPhoneNumber);
-            if(existsPhoneNumber) return ResponseDto.existUserPhoneNumber();
+            boolean existsUserPhoneNumber = userRepository.existsByUserPhoneNumber(userPhoneNumber);
+            if(existsUserPhoneNumber) return ResponseDto.existUserPhoneNumber();
+            String code = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
+            System.out.println(code);
+            phoneNumberToken = jwtProvider.createVerifyToken(userPhoneNumber, code);
+
+            // 인증번호 전송은 사업자 인증이 요구되므로 추후 개발 예정
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return PhoneNumberVerifyResponseDto.success(phoneNumberToken);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> verifyPhoneNumberCode(PhoneNumberCodeVerifyRequestDto requestDto){
+
+        String token = requestDto.getUserPhoneNumberToken();
+
+        try {
+            Claims claims = jwtProvider.parseToken(token);
+            String codeInToken = claims.get("code", String.class);
+            String phoneNumberInToken = claims.get("phoneNumber", String.class);
+    
+            if (!requestDto.getUserPhoneNumber().equals(phoneNumberInToken)) return ResponseDto.verifyCodeError();
+            if (!requestDto.getUserPhoneNumberVC().equals(codeInToken)) return ResponseDto.verifyCodeError();
+            
+        } catch (ExpiredJwtException e) {
+            e.printStackTrace();
+            return ResponseDto.tokenTimeOut();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
         return ResponseDto.success(HttpStatus.OK);
     }
 

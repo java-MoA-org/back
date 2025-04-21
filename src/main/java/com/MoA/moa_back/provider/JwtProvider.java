@@ -42,15 +42,15 @@ public class JwtProvider {
     }
 
 
-    public String generateEmailVerificationToken(String email, String code) {
+    public String generateVerificationToken(String verifyDetail, String code) {
         long now = System.currentTimeMillis();
         long expirationTime = 10 * 60 * 1000; // 10분
-
+        String detail = verifyDetail.contains("@") ? "email" : "phoneNumber";
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
                 .setSubject("email-verification")
-                .claim("email", email)
+                .claim(detail, verifyDetail)
                 .claim("code", code)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + expirationTime))
@@ -74,8 +74,8 @@ public class JwtProvider {
 
 
 
-    public String createEmailToken(String userEmail, String code){
-        return generateEmailVerificationToken(userEmail, code);
+    public String createVerifyToken(String verifyDetail, String code){
+        return generateVerificationToken(verifyDetail, code);
     }
     
     public String createAccessToken(String userId) {
