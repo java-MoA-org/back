@@ -3,12 +3,16 @@ package com.MoA.moa_back.provider;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Random;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -21,15 +25,57 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private String generateToken(String userId, long minutes) {
+    private String generateToken(String value, long minutes) {
         Date expiration = Date.from(Instant.now().plus(minutes, ChronoUnit.MINUTES));
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
             .signWith(key, SignatureAlgorithm.HS256)
-            .setSubject(userId)
+            .setSubject(value)
             .setIssuedAt(new Date())
             .setExpiration(expiration)
             .compact();
+    }
+
+    public static String generate6DigitCode() {
+        int code = new Random().nextInt(1_000_000); // 0 ~ 999999
+        return String.format("%06d", code); // 6자리, 앞에 0 채움
+    }
+
+
+    public String generateEmailVerificationToken(String email, String code) {
+        long now = System.currentTimeMillis();
+        long expirationTime = 10 * 60 * 1000; // 10분
+
+        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+
+        return Jwts.builder()
+                .setSubject("email-verification")
+                .claim("email", email)
+                .claim("code", code)
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + expirationTime))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public Claims parseToken(String token) {
+        try {
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("유효하지 않은 JWT 토큰입니다.");
+        }
+    }
+
+
+
+    public String createEmailToken(String userEmail, String code){
+        return generateEmailVerificationToken(userEmail, code);
     }
     
     public String createAccessToken(String userId) {

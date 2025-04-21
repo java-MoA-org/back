@@ -49,6 +49,11 @@ public class ResponseDto {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
   }
 
+  public static ResponseEntity<ResponseDto> verifyCodeError(){
+    ResponseDto body = new ResponseDto(ResponseCode.VERIFY_CODE_ERROR, ResponseMessage.VERIFY_CODE_ERROR);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+  }
+
   public static ResponseEntity<ResponseDto> signInFail() {
     ResponseDto body = new ResponseDto(ResponseCode.SIGN_IN_FAIL, ResponseMessage.SIGN_IN_FAIL);
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);

@@ -1,11 +1,17 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.Random;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.MoA.moa_back.common.dto.request.auth.CodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
@@ -14,6 +20,7 @@ import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.request.user.Interests;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
@@ -23,6 +30,7 @@ import com.MoA.moa_back.repository.UserInterestsRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.AuthService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,6 +44,7 @@ public class AuthServiceImplement implements AuthService{
     private final UserInterestsRepository userInterestsRepository;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JwtProvider jwtProvider;
+    private final JavaMailSender javaMailSender;
 
     @Override
     public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto requestDto) {
@@ -66,16 +75,42 @@ public class AuthServiceImplement implements AuthService{
     }
 
     @Override
-    public ResponseEntity<ResponseDto> emailCheck(EmailCheckRequestDto requestDto) {
-        
-        try {
-            String email = requestDto.getUserEmail();
-            boolean existsEmail = userRepository.existsByUserEmail(email);
-            if(existsEmail) return ResponseDto.existUserEmail();
+    public ResponseEntity<? super EmailVerifyResponseDto> emailVerifyRequire(EmailCheckRequestDto requestDto) {
+
+        String emailToken = null;
+
+        try{
+            String userEmail = requestDto.getUserEmail();
+            boolean existsUserEmail = userRepository.existsByUserEmail(userEmail);
+            if(existsUserEmail) return ResponseDto.existUserEmail();
+            String code = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
+            emailToken = jwtProvider.createEmailToken(userEmail, code);
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(userEmail);
+            message.setSubject("[MoA] 인증번호");
+            message.setText("인증번호는: " + code + "입니다");
+            javaMailSender.send(message);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+
+        return EmailVerifyResponseDto.success(emailToken);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> verifyEmailCode(CodeVerifyRequestDto requestDto){
+
+        String token = requestDto.getEmailToken();
+        Claims claims = jwtProvider.parseToken(token);
+        String codeInToken = claims.get("code", String.class);
+        String emailInToken = claims.get("email", String.class);
+
+        if (!requestDto.getUserEmail().equals(emailInToken)) return ResponseDto.verifyCodeError();
+        if (!requestDto.getUserEmailVC().equals(codeInToken)) return ResponseDto.verifyCodeError();
+
         return ResponseDto.success(HttpStatus.OK);
     }
 
@@ -242,6 +277,8 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
 
         return ResponseDto.success(HttpStatus.OK);
     }
+
+    
 
 
 }

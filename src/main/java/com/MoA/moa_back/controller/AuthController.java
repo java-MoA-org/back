@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.MoA.moa_back.common.dto.request.auth.CodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
@@ -12,17 +13,21 @@ import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.service.AuthService;
 import com.MoA.moa_back.service.ImageService;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -49,13 +54,21 @@ public class AuthController {
         return response;
     }
 
-    // 이메일 중복 확인
-    @PostMapping("/email/check")
-    public ResponseEntity<ResponseDto> emailCheck(@RequestBody @Valid EmailCheckRequestDto requestBody) {
-        ResponseEntity<ResponseDto> response = authService.emailCheck(requestBody);
+    @PostMapping("/email/verify/require")
+    public ResponseEntity<? super EmailVerifyResponseDto> emailVeriyfyRequire(@RequestBody EmailCheckRequestDto requestDto) {
+        ResponseEntity<? super EmailVerifyResponseDto> responseDto = authService.emailVerifyRequire(requestDto);
+        
+        return responseDto;
+    }
+
+    @PostMapping("/email/verify")
+    public ResponseEntity<ResponseDto> verifyEmailCode(@RequestBody CodeVerifyRequestDto dto) {
+        ResponseEntity<ResponseDto> response = authService.verifyEmailCode(dto);
         return response;
     }
     
+    
+
     // 전화번호 중복 확인
     @PostMapping("/phone/check")
     public ResponseEntity<ResponseDto> phoneNumberCheck(@RequestBody @Valid PhoneNumberCheckRequestDto requestDto) {
