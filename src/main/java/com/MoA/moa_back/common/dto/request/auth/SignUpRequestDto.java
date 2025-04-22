@@ -18,10 +18,10 @@ import lombok.ToString;
 public class SignUpRequestDto {
     
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9]{4,12}$")
+    @Pattern(regexp = "^[a-zA-Z0-9]{4,12}$|^(NAVER|KAKAO)_[a-zA-Z0-9]{10}$")
     private String userId;
     @NotNull
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+~`{}\\[\\]:;\"'<>,.?/\\\\|\\-]).{8,12}$")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+~`{}\\[\\]:;\"'<>,.?/\\\\|\\-]).{8,12}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")
     private String userPassword;
     @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,8}$")

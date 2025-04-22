@@ -1,5 +1,6 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.Date;
 import java.util.Random;
 
 import org.springframework.http.HttpStatus;
@@ -251,13 +252,23 @@ public class AuthServiceImplement implements AuthService {
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(refreshCookie);
-
+            
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return SignInResponseDto.success(accessToken, userRole);
+        
+    }
+    
+    @Override
+    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
+        Cookie refreshCookie = new Cookie("refreshToken", "aaa");
+            refreshCookie.setHttpOnly(true);
+            refreshCookie.setPath("/");
+            refreshCookie.setMaxAge(1); // 1일
+        response.addCookie(refreshCookie);
+        return ResponseDto.success(HttpStatus.OK);
     }
 
     @Override
@@ -279,29 +290,8 @@ public class AuthServiceImplement implements AuthService {
         return ResponseEntity.ok(body);
     }
 
-    @Override
-    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
-        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(0);
 
-        Cookie accessTokenCookie = new Cookie("accessToken", null);
-        accessTokenCookie.setHttpOnly(false);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(0);
 
-        Cookie userIdCookie = new Cookie("userId", null);
-        userIdCookie.setHttpOnly(false);
-        userIdCookie.setPath("/");
-        userIdCookie.setMaxAge(0);
-
-        response.addCookie(refreshTokenCookie);
-        response.addCookie(accessTokenCookie);
-        response.addCookie(userIdCookie);
-
-        return ResponseDto.success(HttpStatus.OK);
-    }
 
     
 

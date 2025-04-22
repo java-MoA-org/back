@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -106,18 +107,20 @@ public class AuthController {
         return responseEntity;
     }
 
+    @PostMapping("/sign-out")
+    public ResponseEntity<ResponseDto> signOut(@AuthenticationPrincipal String userId, HttpServletResponse response) {
+        ResponseEntity<ResponseDto> responseEntity = authService.signOut(response);
+        
+        return responseEntity;
+    }
+    
+
     @PostMapping("/refresh")
     public ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<? super TokenRefreshResponseDto> responseEntity = authService.refreshToken(request, response);
         return responseEntity;
     }
     
-    @PostMapping("/sign-out")
-    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
-        
-        ResponseEntity<ResponseDto> responseDto = authService.signOut(response);
-        
-        return responseDto;
-    }
+    
     
 }

@@ -2,6 +2,7 @@ package com.MoA.moa_back.service.implement;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -26,19 +27,29 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        String registration = userRequest.getClientRegistration().getClientName().toUpperCase();
+        String registration = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
+
         Map<String, Object> attributes = oAuth2User.getAttributes();
         
-        String name, userNickname, userEmail, userPhoneNumber, profileImage;
+        String userNickname, userEmail, userPhoneNumber, profileImage;
         Map<String, Object> elements = new HashMap<>();
         CustomOAuth2User customOAuth2User;
         
-        String userId = registration + "_" + attributes.get("id").toString().substring(0, 10);
-        UserEntity userEntity = repository.findByUserIdAndJoinType(userId, registration);
+        String userId = null;
+        Map<String, String> response = (Map<String, String>)oAuth2User.getAttributes().get("response");
+        if("KAKAO".equals(registration)){
+            userId = registration + "_" + attributes.get("id").toString().substring(0, 10);
+        }else if("NAVER".equals(registration)){
+            userId = registration + "_" + response.get("id").toString().substring(0, 10);
+        }else{
+            return null;
+        }
+        UserEntity userEntity = repository.findByUserId(userId);
+        
+        String userPassword = UUID.randomUUID().toString();
         
         if (userEntity == null) {
             if ("KAKAO".equals(registration)) {
-                name = attributes.get("id").toString();
                 Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
                 Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
         
@@ -47,13 +58,13 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
         
                 elements.put("joinType", "KAKAO");
                 elements.put("userId", userId);
+                elements.put("userPassword", userPassword);
                 elements.put("userNickname", userNickname);
                 elements.put("profileImage", profileImage);
-        
+                
             } else if ("NAVER".equals(registration)) {
-                Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-                name = (String) response.get("id");
-        
+                
+                userId = registration + "_" + response.get("id").toString().substring(0, 10);
                 userNickname = (String) response.get("nickname");
                 userEmail = (String) response.get("email");
                 userPhoneNumber = (String) response.get("mobile");
@@ -61,6 +72,7 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
                 
                 elements.put("joinType", "NAVER");
                 elements.put("userId", userId);
+                elements.put("userPassword", userPassword);
                 elements.put("userNickname", userNickname);
                 elements.put("userEmail", userEmail);
                 elements.put("userPhoneNumber", userPhoneNumber);
