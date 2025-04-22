@@ -14,5 +14,5 @@ public interface NoticeService {
 
     ResponseEntity<?> getNotice(int id);           // 실제 구현에서 GetNoticeResponseDto 반환
 
-    ResponseEntity<?> getNoticeList();             // 실제 구현에서 GetNoticeListResponseDto 반환
+    ResponseEntity<ResponseDto> getNoticeList(int page);          // 실제 구현에서 GetNoticeListResponseDto 반환
 }

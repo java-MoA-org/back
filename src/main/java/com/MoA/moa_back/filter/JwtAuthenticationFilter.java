@@ -1,10 +1,13 @@
 package com.MoA.moa_back.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.provider.JwtProvider;
 import com.MoA.moa_back.repository.UserRepository;
 
@@ -64,13 +68,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            boolean existUser = userRepository.existsByUserId(userId);
-            if (!existUser) {
+            UserEntity userEntity = userRepository.findByUserId(userId);
+            if (userEntity == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            setContext(userId, request);
+            // 사용자 권한 가져오기 (예: ADMIN, USER)
+            String userRole = userEntity.getUserRole().name();
+            List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(userRole);
+
+            // 인증 정보 SecurityContext에 주입
+            AbstractAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(userId, null, authorities);
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+            securityContext.setAuthentication(authenticationToken);
+            SecurityContextHolder.setContext(securityContext);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,18 +104,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!isBearer) return null;
 
         return authorization.substring(7);
-    }
-
-    // 인증 정보 SecurityContext에 주입
-    private void setContext(String userId, HttpServletRequest request) {
-        AbstractAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(userId, null, AuthorityUtils.NO_AUTHORITIES);
-
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-        SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-        securityContext.setAuthentication(authenticationToken);
-
-        SecurityContextHolder.setContext(securityContext);
     }
 }

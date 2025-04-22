@@ -8,4 +8,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetNoticeListResponseDto {
     private List<GetNoticeResponseDto> noticeList;
+    
+
+    
 }
