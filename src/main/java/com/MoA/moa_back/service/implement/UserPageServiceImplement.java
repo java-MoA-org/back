@@ -74,9 +74,12 @@ public class UserPageServiceImplement implements UserPageService {
                 // 5. 관심사 조회
                 UserInterestsEntity interestEntity = userInterestsRepository.findByUserId(userId);
                 UserInterestVO interests = new UserInterestVO(interestEntity);
+
+                // 6. 자기소개 조회
+                String userIntroduce = user.getUserIntroduce();
     
                 // 5. 응답 반환
-                return GetUserPageResponseDto.success(boards, dailys, trades, interests);
+                return GetUserPageResponseDto.success(boards, dailys, trades, interests, userIntroduce);
     
             } catch (Exception e) {
                 e.printStackTrace();
