@@ -51,6 +51,7 @@ public class WebSecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/profile/file/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/api/v1/board/**").permitAll()
                 .requestMatchers("/api/v1/daily/**").permitAll()
                 .requestMatchers("/api/v1/used-trade/**").permitAll()
