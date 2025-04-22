@@ -248,7 +248,7 @@ public class AuthServiceImplement implements AuthService {
             userRole = userEntity.getUserRole(); // 🔥 권한 추출
 
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-            refreshCookie.setHttpOnly(true);
+            refreshCookie.setHttpOnly(false);
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(refreshCookie);
@@ -264,7 +264,7 @@ public class AuthServiceImplement implements AuthService {
     @Override
     public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
         Cookie refreshCookie = new Cookie("refreshToken", "aaa");
-            refreshCookie.setHttpOnly(true);
+            refreshCookie.setHttpOnly(false);
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(1); // 1일
         response.addCookie(refreshCookie);
@@ -278,7 +278,7 @@ public class AuthServiceImplement implements AuthService {
 
         if (userId == null) {
             Cookie cookie = new Cookie("refreshToken", null);
-            cookie.setHttpOnly(true);
+            cookie.setHttpOnly(false);
             cookie.setPath("/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
