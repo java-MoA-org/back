@@ -57,7 +57,7 @@ public class BoardServiceImplement implements BoardService {
   public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
-
+  
       Sort sort;
       switch (sortOption.toUpperCase()) {
         case "LIKES":
@@ -70,9 +70,9 @@ public class BoardServiceImplement implements BoardService {
           sort = Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("boardSequence"));
           break;
       }
-
+  
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-
+  
       BoardTagType boardTagType = null;
       if (!"ALL".equalsIgnoreCase(tag)) {
         try {
@@ -81,20 +81,20 @@ public class BoardServiceImplement implements BoardService {
           return ResponseDto.invalidTag();
         }
       }
-
+  
       Page<BoardEntity> page = (boardTagType == null)
         ? boardRepository.findAll(pageable)
         : boardRepository.findByTag(boardTagType, pageable);
-
+  
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
         return ResponseDto.invalidPageNumber();
       }
-
+  
       List<BoardSummaryResponseDto> list = page.stream()
         .map(entity -> {
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
           int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
-
+  
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
             entity.getTitle(),
@@ -109,19 +109,20 @@ public class BoardServiceImplement implements BoardService {
           );
         })
         .toList();
-
+  
       if (sortOption.equalsIgnoreCase("LIKES")) {
         list = list.stream()
           .sorted((a, b) -> b.getLikeCount() - a.getLikeCount())
           .toList();
       }
-
-      return ResponseEntity.status(HttpStatus.OK).body(new GetBoardListResponseDto(list, page.getTotalPages()));
+  
+      // totalElements를 포함하여 반환
+      return ResponseEntity.status(HttpStatus.OK).body(new GetBoardListResponseDto(list, page.getTotalPages(), page.getTotalElements()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-  }
+  }  
 
   // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
@@ -195,7 +196,7 @@ public class BoardServiceImplement implements BoardService {
       int pageSize = 10;
       Sort sort = Sort.by("boardSequence").descending();
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-
+  
       BoardTagType tagType = null;
       if (!"ALL".equalsIgnoreCase(tag)) {
         try {
@@ -204,7 +205,7 @@ public class BoardServiceImplement implements BoardService {
           return ResponseDto.invalidTag();
         }
       }
-
+  
       Page<BoardEntity> boardPage = (tagType == null)
         ? boardRepository.findByTitleContaining(keyword, pageable)
         : boardRepository.findByTagAndTitleContaining(tagType, keyword, pageable);
@@ -217,7 +218,7 @@ public class BoardServiceImplement implements BoardService {
         .map(entity -> {
           int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
           int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
-
+  
           return new BoardSummaryResponseDto(
             entity.getBoardSequence(),
             entity.getTitle(),
@@ -230,14 +231,16 @@ public class BoardServiceImplement implements BoardService {
             commentCount,
             entity.getImages()
           );
-        }).toList();
-
-      return ResponseEntity.ok(new GetBoardListResponseDto(boardList, boardPage.getTotalPages()));
+        })
+        .toList();
+  
+      return ResponseEntity.ok(new GetBoardListResponseDto(boardList, boardPage.getTotalPages(), boardPage.getTotalElements()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+  
 
   // method: 게시글에 좋아요를 누르거나 취소 //
   @Override
