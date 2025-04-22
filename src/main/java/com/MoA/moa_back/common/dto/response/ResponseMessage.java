@@ -9,6 +9,7 @@ public interface ResponseMessage {
     
     String NO_EXIST_BOARD = "No Exist Board.";
     String NO_EXIST_DAILY = "No Exist Daily.";
+    String NO_EXIST_NOTICE = "No Exist Notice.";
     String NO_EXIST_USED_TRADE = "No Exist Used Trade.";
     String NO_EXIST_COMMENT = "No Exist Comment";
     
