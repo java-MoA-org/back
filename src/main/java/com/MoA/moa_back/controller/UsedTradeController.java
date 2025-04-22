@@ -32,7 +32,7 @@ public class UsedTradeController {
   }
 
   // API: 중고거래 게시글 목록 조회 (전체 or 태그별) //
-  @GetMapping("/list/{tag}/{pageNumber}")
+  @GetMapping("/{tag}/{pageNumber}")
   public ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeList(
     @PathVariable("tag") String tag,
     @PathVariable("pageNumber") Integer pageNumber,
