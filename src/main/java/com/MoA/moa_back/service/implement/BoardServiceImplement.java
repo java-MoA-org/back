@@ -104,7 +104,8 @@ public class BoardServiceImplement implements BoardService {
             entity.getViews(),
             entity.getUserId(),
             likeCount,
-            commentCount
+            commentCount,
+            entity.getImages()
           );
         })
         .toList();
@@ -226,7 +227,8 @@ public class BoardServiceImplement implements BoardService {
             entity.getViews(),
             entity.getUserId(),
             likeCount,
-            commentCount
+            commentCount,
+            entity.getImages()
           );
         }).toList();
 

@@ -43,7 +43,7 @@ public class BoardController {
   }
 
   // API: 게시글 리스트 조회 (태그 + 페이지 + 정렬 기준) //
-  @GetMapping("/list/{tag}/{pageNumber}")
+  @GetMapping("/{tag}/{pageNumber}")
   public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(
     @PathVariable("tag") String tag,
     @PathVariable("pageNumber") Integer pageNumber,
