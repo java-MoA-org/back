@@ -55,6 +55,10 @@ public class ResponseDto {
         ResponseDto body = new ResponseDto(ResponseCode.EXIST_USER, ResponseMessage.EXIST_USER);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+    public static ResponseEntity<ResponseDto> verifyCodeError(){
+      ResponseDto body = new ResponseDto(ResponseCode.VERIFY_CODE_ERROR, ResponseMessage.VERIFY_CODE_ERROR);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 
     public static ResponseEntity<ResponseDto> existUserEmail() {
         ResponseDto body = new ResponseDto(ResponseCode.EXIST_USER, ResponseMessage.EXIST_USER);
@@ -104,6 +108,11 @@ public class ResponseDto {
     public static ResponseEntity<ResponseDto> noPermission() {
         ResponseDto body = new ResponseDto(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
+    
+    public static ResponseEntity<ResponseDto> tokenTimeOut(){
+      ResponseDto body = new ResponseDto(ResponseCode.TOKEN_TIME_OUT, ResponseMessage.TOKEN_TIME_OUT);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
     public static ResponseEntity<ResponseDto> databaseError() {

@@ -5,6 +5,7 @@ public interface ResponseMessage {
   
     String VALIDATION_FAIL = "Validation Fail.";
     String EXIST_USER = "Exist User.";
+    String VERIFY_CODE_ERROR = "Veryfy Code Error.";
     
     String NO_EXIST_BOARD = "No Exist Board.";
     String NO_EXIST_DAILY = "No Exist Daily.";
@@ -22,4 +23,6 @@ public interface ResponseMessage {
     String DATABASE_ERROR = "Database Error";
 
     String NO_EXIST_USER = "No Exist User";
+
+    String TOKEN_TIME_OUT = "Token Time Out";
   }
