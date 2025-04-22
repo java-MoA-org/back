@@ -29,6 +29,8 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registration = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
+        
+
         Map<String, Object> attributes = oAuth2User.getAttributes();
         
         String userNickname, userEmail, userPhoneNumber, profileImage;

@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     
         String refreshToken = jwtProvider.createRefreshToken(userId);
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-        refreshCookie.setHttpOnly(true);
+        refreshCookie.setHttpOnly(false);
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(60 * 60 * 24); // 1일
         response.addCookie(refreshCookie);
