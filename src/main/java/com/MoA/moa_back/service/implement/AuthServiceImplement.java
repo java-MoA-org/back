@@ -26,7 +26,8 @@ import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.entity.UserInterestsEntity;
-import com.MoA.moa_back.provider.*;
+import com.MoA.moa_back.common.enums.UserRole;
+import com.MoA.moa_back.provider.JwtProvider;
 import com.MoA.moa_back.repository.UserInterestsRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.AuthService;
@@ -40,7 +41,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImplement implements AuthService{
+public class AuthServiceImplement implements AuthService {
 
     private final UserRepository userRepository;
     private final UserInterestsRepository userInterestsRepository;
@@ -50,16 +51,14 @@ public class AuthServiceImplement implements AuthService{
 
     @Override
     public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto requestDto) {
-        
         try {
             String userId = requestDto.getUserId();
             boolean existsUserId = userRepository.existsByUserId(userId);
-            if(existsUserId) return ResponseDto.existUserId();
+            if (existsUserId) return ResponseDto.existUserId();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return ResponseDto.success(HttpStatus.OK);
     }
 
@@ -68,7 +67,7 @@ public class AuthServiceImplement implements AuthService{
         try {
             String userNickname = requestDto.getUserNickname();
             boolean existsUserNickname = userRepository.existsByUserNickname(userNickname);
-            if(existsUserNickname) return ResponseDto.existUserNickname();
+            if (existsUserNickname) return ResponseDto.existUserNickname();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
@@ -174,105 +173,91 @@ public class AuthServiceImplement implements AuthService{
     }
 
     @Override
-public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
-    
-    boolean existsUserId = userRepository.existsById(requestDto.getUserId());
-    if(existsUserId) return ResponseDto.existUserId();
-    boolean existsUserNickname = userRepository.existsByUserNickname(requestDto.getUserNickname());
-    if(existsUserNickname) return ResponseDto.existUserNickname();
-    boolean existsUserEmail = userRepository.existsByUserEmail(requestDto.getUserEmail());
-    if(existsUserEmail) return ResponseDto.existUserEmail();
-    boolean existsUserPhoneNumber = userRepository.existsByUserPhoneNumber(requestDto.getUserPhoneNumber());
-    if(existsUserPhoneNumber) return ResponseDto.existUserPhoneNumber();
-    
+    public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
+        boolean existsUserId = userRepository.existsById(requestDto.getUserId());
+        if (existsUserId) return ResponseDto.existUserId();
+        boolean existsUserNickname = userRepository.existsByUserNickname(requestDto.getUserNickname());
+        if (existsUserNickname) return ResponseDto.existUserNickname();
+        boolean existsUserEmail = userRepository.existsByUserEmail(requestDto.getUserEmail());
+        if (existsUserEmail) return ResponseDto.existUserEmail();
+        boolean existsUserPhoneNumber = userRepository.existsByUserPhoneNumber(requestDto.getUserPhoneNumber());
+        if (existsUserPhoneNumber) return ResponseDto.existUserPhoneNumber();
 
-    try {
-        String password = requestDto.getUserPassword();
-        String encodedPassword = passwordEncoder.encode(password);
-        requestDto.setUserPassword(encodedPassword);
+        try {
+            String password = requestDto.getUserPassword();
+            String encodedPassword = passwordEncoder.encode(password);
+            requestDto.setUserPassword(encodedPassword);
 
-        if (requestDto.getUserIntroduce() == null) {
-            requestDto.setUserIntroduce("");
-        }
+            if (requestDto.getUserIntroduce() == null) requestDto.setUserIntroduce("");
 
-        Interests interests = null;
-
-        if (requestDto.getInterests() != null) {
-            interests = requestDto.getInterests();
-        
-            boolean allFalse = !interests.isUserInterestTrip() &&
-                               !interests.isUserInterestGame() &&
-                               !interests.isUserInterestFashion() &&
-                               !interests.isUserInterestWorkout() &&
-                               !interests.isUserInterestFood() &&
-                               !interests.isUserInterestMusic() &&
-                               !interests.isUserInterestEconomics();
-        
-            // 아무것도 선택하지 않은 경우 userInterestNull만 true로 설정
-            if (allFalse) {
-                interests.setUserInterestNull(true);
-            } else {
-                interests.setUserInterestNull(false);
+            Interests interests = requestDto.getInterests();
+            if (interests != null) {
+                boolean allFalse = !interests.isUserInterestTrip() &&
+                                   !interests.isUserInterestGame() &&
+                                   !interests.isUserInterestFashion() &&
+                                   !interests.isUserInterestWorkout() &&
+                                   !interests.isUserInterestFood() &&
+                                   !interests.isUserInterestMusic() &&
+                                   !interests.isUserInterestEconomics();
+                interests.setUserInterestNull(allFalse);
+                requestDto.setInterests(interests);
             }
-        
-            requestDto.setInterests(interests);
+
+            UserEntity userEntity = new UserEntity(requestDto);
+            userRepository.save(userEntity);
+
+            if (interests != null) {
+                UserInterestsEntity interestsEntity = new UserInterestsEntity(
+                    requestDto.getUserId(),
+                    interests.isUserInterestTrip(),
+                    interests.isUserInterestGame(),
+                    interests.isUserInterestFashion(),
+                    interests.isUserInterestWorkout(),
+                    interests.isUserInterestFood(),
+                    interests.isUserInterestMusic(),
+                    interests.isUserInterestEconomics(),
+                    interests.isUserInterestNull()
+                );
+                userInterestsRepository.save(interestsEntity);
+            }
+
+            return ResponseDto.success(HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
         }
-        
-
-        UserEntity userEntity = new UserEntity(requestDto);
-        userRepository.save(userEntity);
-        UserInterestsEntity interestsEntity = new UserInterestsEntity(
-            requestDto.getUserId(),
-            interests.isUserInterestTrip(),
-            interests.isUserInterestGame(),
-            interests.isUserInterestFashion(),
-            interests.isUserInterestWorkout(), 
-            interests.isUserInterestFood(), 
-            interests.isUserInterestMusic(), 
-            interests.isUserInterestEconomics(), 
-            interests.isUserInterestNull());
-        userInterestsRepository.save(interestsEntity);
-
-        return ResponseDto.success(HttpStatus.CREATED);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseDto.databaseError();
     }
-}
 
     @Override
     public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto requestDto, HttpServletResponse response) {
-
         String accessToken = null;
         String refreshToken = null;
+        UserRole userRole = null; // 🔥 사용자 권한 추가
 
         try {
             String userId = requestDto.getUserId();
-            
             UserEntity userEntity = userRepository.findByUserId(userId);
-            if(userEntity == null) return ResponseDto.signInFail();
-            
-            String userPassword = requestDto.getUserPassword();
+            if (userEntity == null) return ResponseDto.signInFail();
 
-            String encodedUserPassword = userEntity.getUserPassword();
-            boolean isMatch = passwordEncoder.matches(userPassword, encodedUserPassword);
-            if(!isMatch) return ResponseDto.signInFail();
+            boolean isMatch = passwordEncoder.matches(requestDto.getUserPassword(), userEntity.getUserPassword());
+            if (!isMatch) return ResponseDto.signInFail();
 
             accessToken = jwtProvider.createAccessToken(userId);
             refreshToken = jwtProvider.createRefreshToken(userId);
+            userRole = userEntity.getUserRole(); // 🔥 권한 추출
 
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
             refreshCookie.setHttpOnly(true);
             refreshCookie.setPath("/");
-            refreshCookie.setMaxAge(60 * 60 * 24); // 1일
+            refreshCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(refreshCookie);
 
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
-        return SignInResponseDto.success(accessToken);
-        
+
+        return SignInResponseDto.success(accessToken, userRole);
     }
 
     @Override
@@ -280,14 +265,12 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
         String refreshToken = jwtProvider.extractRefreshToken(request);
         String userId = jwtProvider.validate(refreshToken);
 
-        // accessToken 만료 시 refreshToken도 만료됨
         if (userId == null) {
             Cookie cookie = new Cookie("refreshToken", null);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
-
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -298,13 +281,11 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
 
     @Override
     public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
-        // ❌ HttpOnly 쿠키 삭제
         Cookie refreshTokenCookie = new Cookie("refreshToken", null);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(0); // 만료
+        refreshTokenCookie.setMaxAge(0);
 
-        // ✅ 일반 쿠키 삭제 (프론트에서 할 수도 있지만 여기서 같이 처리 가능)
         Cookie accessTokenCookie = new Cookie("accessToken", null);
         accessTokenCookie.setHttpOnly(false);
         accessTokenCookie.setPath("/");
@@ -315,7 +296,6 @@ public ResponseEntity<ResponseDto> signUp(SignUpRequestDto requestDto) {
         userIdCookie.setPath("/");
         userIdCookie.setMaxAge(0);
 
-        // 쿠키 추가
         response.addCookie(refreshTokenCookie);
         response.addCookie(accessTokenCookie);
         response.addCookie(userIdCookie);
