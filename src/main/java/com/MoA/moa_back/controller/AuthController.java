@@ -9,6 +9,7 @@ import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PatchPasswordRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
@@ -32,6 +33,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -133,6 +136,12 @@ public class AuthController {
     @PostMapping("/find-id/email/verify")
     public ResponseEntity<? super FindIdResponseDto> findIdEmailVerify(@RequestBody EmailCodeVerifyRequestDto requestBody) {
         ResponseEntity<? super FindIdResponseDto> response = authService.verifyEmailVC(requestBody);
+        return response;
+    }
+
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<ResponseDto> patchUserPassword(@RequestBody PatchPasswordRequestDto requestBody, @PathVariable("userId") String userId){
+        ResponseEntity<ResponseDto> response = authService.patchPassword(requestBody, userId);
         return response;
     }
 }

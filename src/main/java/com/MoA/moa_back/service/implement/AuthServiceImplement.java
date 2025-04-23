@@ -15,6 +15,7 @@ import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PatchPasswordRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
@@ -341,6 +342,25 @@ public class AuthServiceImplement implements AuthService {
         }
 
         return FindIdResponseDto.success(userId);
+    }
+
+    @Override
+    public ResponseEntity<ResponseDto> patchPassword(PatchPasswordRequestDto requestDto, String userId) {
+        UserEntity user = null;
+        try {
+            String userPassword = requestDto.getUserPassword();
+            userPassword = passwordEncoder.encode(userPassword);
+
+            user = userRepository.findByUserId(userId);
+            user.setUserPassword(userPassword);
+
+            userRepository.save(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
     }
 
 
