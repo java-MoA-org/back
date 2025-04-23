@@ -18,6 +18,7 @@ import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
 import com.MoA.moa_back.service.AuthService;
 import com.MoA.moa_back.service.ImageService;
 
@@ -69,6 +70,8 @@ public class AuthController {
         ResponseEntity<ResponseDto> response = authService.verifyEmailCode(dto);
         return response;
     }
+
+    
     
     
 
@@ -121,6 +124,15 @@ public class AuthController {
         return responseEntity;
     }
     
+    @PostMapping("/find-id/email/verify/require")
+    public ResponseEntity<? super EmailVerifyResponseDto> emailVerify(@RequestBody EmailCheckRequestDto requestDto) {
+        ResponseEntity<? super EmailVerifyResponseDto> responseEntity = authService.verifyEmail(requestDto);
+        return responseEntity;
+    }
     
-    
+    @PostMapping("/find-id/email/verify")
+    public ResponseEntity<? super FindIdResponseDto> findIdEmailVerify(@RequestBody EmailCodeVerifyRequestDto requestBody) {
+        ResponseEntity<? super FindIdResponseDto> response = authService.verifyEmailVC(requestBody);
+        return response;
+    }
 }
