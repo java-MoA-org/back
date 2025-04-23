@@ -66,10 +66,10 @@ public class UserEntity {
       this.userPhoneNumber = dto.getUserPhoneNumber();
     }
     // 프로필 사진이 null이 아니고, 기존 값과 다를 때만 변경
-    if (dto.getProfileImage() != null && !dto.getProfileImage().equals(this.profileImage)) {
-      this.profileImage = dto.getProfileImage();
-    } else {
-      this.profileImage = null; // null이면 null값 들어가게
+    if (dto.getProfileImage() != null) {
+      if (!dto.getProfileImage().equals(this.profileImage)) {
+        this.profileImage = dto.getProfileImage();
+      }
     }
     // 새 비밀번호가 null/공백이 아니고, 기존 암호화된 비밀번호와 다를 때만 변경
     if (dto.getUserPassword() != null && !dto.getUserPassword().isBlank()) {

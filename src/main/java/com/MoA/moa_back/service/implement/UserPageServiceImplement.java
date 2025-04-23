@@ -12,11 +12,13 @@ import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.mypage.GetUserPageResponseDto;
+import com.MoA.moa_back.common.dto.response.user.GetUserInfoResponseDto;
 import com.MoA.moa_back.common.entity.BoardEntity;
 import com.MoA.moa_back.common.entity.DailyEntity;
 import com.MoA.moa_back.common.entity.UsedTradeEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.entity.UserInterestsEntity;
+import com.MoA.moa_back.common.vo.UserInfoVO;
 import com.MoA.moa_back.common.vo.UserInterestVO;
 import com.MoA.moa_back.common.vo.summary.BoardSummaryVO;
 import com.MoA.moa_back.common.vo.summary.DailySummaryVO;
@@ -88,9 +90,9 @@ public class UserPageServiceImplement implements UserPageService {
       }
 
     @Override
-    public ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userNickname) {
+    public ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userId) {
         try{
-            UserEntity userEntity = userRepository.findByUserNickname(userNickname);
+            UserEntity userEntity = userRepository.findByUserId(userId);
             if (userEntity == null) return ResponseDto.noExistUser();
 
             // 닉네임 변경 검증
@@ -125,5 +127,26 @@ public class UserPageServiceImplement implements UserPageService {
             return ResponseDto.databaseError();
         }
         return ResponseDto.success(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<? super GetUserInfoResponseDto> getUserInfo(String userId) {
+        try{
+         // 1. 유저 정보 조회
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        if (userEntity == null) return ResponseDto.noExistUser();
+
+        // 2. 관심사 조회
+        UserInterestsEntity userInterestsEntity = userInterestsRepository.findByUserId(userEntity.getUserId());
+
+        // 3. VO로 매핑
+        UserInfoVO userInfoVO = new UserInfoVO(userEntity, userInterestsEntity);
+
+        return GetUserInfoResponseDto.success(userInfoVO);
+        
+    }catch(Exception e){
+        e.printStackTrace();
+        return ResponseDto.databaseError();
+    }
     }
 }
