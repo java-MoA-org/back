@@ -60,7 +60,7 @@
                     .requestMatchers("/api/v1/daily/**").permitAll()
                     .requestMatchers("/api/v1/used-trade/**").permitAll()
                     .requestMatchers("/api/news/**").permitAll()
-                    .requestMatchers("/api/v1/user-page/**").permitAll()
+                    .requestMatchers("/api/v1/user-page/boards/*").permitAll()
                     .requestMatchers("/home/**").permitAll()
                     .anyRequest().authenticated()
                 )
