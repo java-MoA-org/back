@@ -1,6 +1,7 @@
 package com.MoA.moa_back.service.implement;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -57,30 +58,12 @@ public class BoardServiceImplement implements BoardService {
   public ResponseEntity<? super GetBoardListResponseDto> getBoardListByBoardTag(String tag, Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
+      int pageCountPerSection = 5;
   
-      Sort sort;
-      switch (sortOption.toUpperCase()) {
-        case "LIKES":
-          sort = Sort.by(Sort.Order.desc("boardSequence"));
-          break;
-        case "VIEWS":
-          sort = Sort.by(Sort.Order.desc("views"));
-          break;
-        default:
-          sort = Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("boardSequence"));
-          break;
-      }
-  
+      Sort sort = resolveSortOption(sortOption);
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
   
-      BoardTagType boardTagType = null;
-      if (!"ALL".equalsIgnoreCase(tag)) {
-        try {
-          boardTagType = BoardTagType.valueOf(tag);
-        } catch (IllegalArgumentException e) {
-          return ResponseDto.invalidTag();
-        }
-      }
+      BoardTagType boardTagType = resolveTag(tag);
   
       Page<BoardEntity> page = (boardTagType == null)
         ? boardRepository.findAll(pageable)
@@ -91,39 +74,74 @@ public class BoardServiceImplement implements BoardService {
       }
   
       List<BoardSummaryResponseDto> list = page.stream()
-        .map(entity -> {
-          int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
-          int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
-  
-          return new BoardSummaryResponseDto(
-            entity.getBoardSequence(),
-            entity.getTitle(),
-            entity.getContent(),
-            entity.getCreationDate(),
-            entity.getTag(),
-            entity.getViews(),
-            entity.getUserId(),
-            likeCount,
-            commentCount,
-            entity.getImages()
-          );
-        })
+        .map(this::buildBoardSummaryResponseDto)
         .toList();
   
-      if (sortOption.equalsIgnoreCase("LIKES")) {
-        list = list.stream()
-          .sorted((a, b) -> b.getLikeCount() - a.getLikeCount())
-          .toList();
+      if ("LIKES".equalsIgnoreCase(sortOption)) {
+        list.sort(Comparator.comparingInt(BoardSummaryResponseDto::getLikeCount).reversed());
       }
   
-      // totalElements를 포함하여 반환
-      return ResponseEntity.status(HttpStatus.OK).body(new GetBoardListResponseDto(list, page.getTotalPages(), page.getTotalElements()));
+      int currentPage = pageable.getPageNumber(); // 0-based
+      int currentSection = PageUtil.getCurrentSection(currentPage, pageCountPerSection);
+      int totalSection = PageUtil.getTotalSection(page.getTotalPages(), pageCountPerSection);
+      List<Integer> pageList = PageUtil.getPageList(currentPage, page.getTotalPages(), pageCountPerSection);
+  
+      return GetBoardListResponseDto.success(
+        list,
+        page.getTotalPages(),
+        page.getTotalElements(),
+        currentPage + 1,  // 1-based page index
+        currentSection,
+        totalSection,
+        pageList
+      );
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-  }  
-
+  }
+  
+  private Sort resolveSortOption(String sortOption) {
+    switch (sortOption.toUpperCase()) {
+      case "LIKES":
+        return Sort.by(Sort.Order.desc("boardSequence"));
+      case "VIEWS":
+        return Sort.by(Sort.Order.desc("views"));
+      default:
+        return Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("boardSequence"));
+    }
+  }
+  
+  private BoardTagType resolveTag(String tag) {
+    if (!"ALL".equalsIgnoreCase(tag)) {
+      try {
+        return BoardTagType.valueOf(tag);
+      } catch (IllegalArgumentException e) {
+        return null;
+      }
+    }
+    return null;
+  }
+  
+  private BoardSummaryResponseDto buildBoardSummaryResponseDto(BoardEntity entity) {
+    int likeCount = boardLikeRepository.countByBoardSequence(entity.getBoardSequence());
+    int commentCount = boardCommentRepository.countByBoardSequence(entity.getBoardSequence());
+  
+    return new BoardSummaryResponseDto(
+      entity.getBoardSequence(),
+      entity.getTitle(),
+      entity.getContent(),
+      entity.getCreationDate(),
+      entity.getTag(),
+      entity.getViews(),
+      entity.getUserId(),
+      likeCount,
+      commentCount,
+      entity.getImages()
+    );
+  }
+  
   // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
   public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence) {
