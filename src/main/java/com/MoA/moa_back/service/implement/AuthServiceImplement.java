@@ -22,6 +22,7 @@ import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
 import com.MoA.moa_back.common.dto.request.user.Interests;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
@@ -247,11 +248,19 @@ public class AuthServiceImplement implements AuthService {
             refreshToken = jwtProvider.createRefreshToken(userId);
             userRole = userEntity.getUserRole(); // 🔥 권한 추출
 
+
+
+            Cookie accessCookie = new Cookie("accessToken", accessToken);
+            accessCookie.setHttpOnly(false);
+            accessCookie.setPath("/");
+            accessCookie.setMaxAge(60 * 30);
+
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
             refreshCookie.setHttpOnly(false);
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(60 * 60 * 24);
             response.addCookie(refreshCookie);
+            response.addCookie(accessCookie);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -290,7 +299,49 @@ public class AuthServiceImplement implements AuthService {
         return ResponseEntity.ok(body);
     }
 
+    @Override
+    public ResponseEntity<? super EmailVerifyResponseDto> verifyEmail(EmailCheckRequestDto requestDto) {
+        String userEmail = requestDto.getUserEmail();
+        if(!userRepository.existsByUserEmail(userEmail)){
+            return ResponseDto.noExistUser();
+        }
+        String code = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
+        String emailToken = jwtProvider.createVerifyToken(userEmail, code);
 
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(userEmail);
+            message.setSubject("[MoA] 인증번호");
+            message.setText("인증번호는: " + code + "입니다");
+            javaMailSender.send(message);
+        return EmailVerifyResponseDto.success(emailToken);
+    }
+
+    @Override
+    public ResponseEntity<? super FindIdResponseDto> verifyEmailVC(EmailCodeVerifyRequestDto requestDto){
+
+        String token = requestDto.getEmailToken();
+        String userId = null;
+        try {
+            Claims claims = jwtProvider.parseToken(token);
+            String codeInToken = claims.get("code", String.class);
+            String emailInToken = claims.get("email", String.class);
+    
+            if (!requestDto.getUserEmail().equals(emailInToken)) return ResponseDto.verifyCodeError();
+            if (!requestDto.getUserEmailVC().equals(codeInToken)) return ResponseDto.verifyCodeError();
+            
+            UserEntity user = userRepository.findUserIdByUserEmail(requestDto.getUserEmail());
+            userId = user.getUserId();
+
+        } catch (ExpiredJwtException e) {
+            e.printStackTrace();
+            return ResponseDto.tokenTimeOut();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return FindIdResponseDto.success(userId);
+    }
 
 
     
