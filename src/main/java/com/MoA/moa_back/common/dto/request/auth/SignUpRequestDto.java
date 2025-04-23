@@ -37,7 +37,9 @@ public class SignUpRequestDto {
     @Pattern(regexp = "^(NORMAL|KAKAO|NAVER)$")
     private String joinType;
 
-    @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$")
+    @Pattern(regexp = "^(|https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp))$")
+    private String userProfileImage;
+
     private String profileImage;
     
     @Pattern(regexp = "^.{0,50}$")
