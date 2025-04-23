@@ -47,6 +47,7 @@
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
+                    .requestMatchers(HttpMethod.PATCH,"/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/profile/file/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
                     .requestMatchers("/oauth2/**").permitAll()
