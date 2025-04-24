@@ -18,7 +18,7 @@ public class SignInResponseDto extends ResponseDto {
     // 생성자
     private SignInResponseDto(String accessToken, UserRole userRole) {
         this.accessToken = accessToken;
-        this.expiration = 60 * 30;
+        this.expiration = 30 * 60;
         if(userRole.equals("ADMIN")){this.expiration = 60 * 60 * 24;}
         this.userRole = userRole.toString(); // Enum을 문자열로 저장
     }
