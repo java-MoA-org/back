@@ -17,6 +17,8 @@ public interface ResponseMessage {
     String INVALID_PAGE_NUMBER = "Invalid Page Number.";
   
     String SIGN_IN_FAIL = "Sign in Fail.";
+
+    String AUTHORIZATION_FAIL = "Authorization Fail.";
   
     String NO_PERMISSION = "No Permission.";
   

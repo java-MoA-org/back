@@ -75,6 +75,11 @@ public class ResponseDto {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
 
+    public static ResponseEntity<ResponseDto> authorizationFail(String message){
+        ResponseDto body = new ResponseDto(ResponseCode.AUTHORIZATION_FAIL, message);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
     public static ResponseEntity<ResponseDto> noExistBoard() {
         ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_BOARD, ResponseMessage.NO_EXIST_BOARD);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);

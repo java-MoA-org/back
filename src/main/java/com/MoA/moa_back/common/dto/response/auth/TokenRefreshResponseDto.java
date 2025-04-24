@@ -9,8 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TokenRefreshResponseDto extends ResponseDto {
     private String accessToken;
+    private Integer expiration;
 
-    public static TokenRefreshResponseDto success(String token) {
-        return new TokenRefreshResponseDto(token);
+    public static TokenRefreshResponseDto success(String token, Integer expiration) {
+        return new TokenRefreshResponseDto(token, expiration);
     }
 }

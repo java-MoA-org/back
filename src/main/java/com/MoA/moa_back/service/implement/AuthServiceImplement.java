@@ -132,14 +132,15 @@ public class AuthServiceImplement implements AuthService {
     public ResponseEntity<? super PhoneNumberVerifyResponseDto> phoneNumberVerifyRequire(PhoneNumberCheckRequestDto requestDto) {
 
         String phoneNumberToken = null;
+        String verifyCode = null;
 
         try{
             String userPhoneNumber = requestDto.getUserPhoneNumber();
             boolean existsUserPhoneNumber = userRepository.existsByUserPhoneNumber(userPhoneNumber);
             if(existsUserPhoneNumber) return ResponseDto.existUserPhoneNumber();
-            String code = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
-            System.out.println(code);
-            phoneNumberToken = jwtProvider.createVerifyToken(userPhoneNumber, code);
+            verifyCode = String.format("%06d", new Random().nextInt(1_000_000)); // 6자리, 앞에 0 채움
+            System.out.println(verifyCode);
+            phoneNumberToken = jwtProvider.createVerifyToken(userPhoneNumber, verifyCode);
 
             // 인증번호 전송은 사업자 인증이 요구되므로 추후 개발 예정
 
@@ -148,7 +149,7 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
 
-        return PhoneNumberVerifyResponseDto.success(phoneNumberToken);
+        return PhoneNumberVerifyResponseDto.success(phoneNumberToken, verifyCode);
     }
 
     @Override
@@ -236,7 +237,6 @@ public class AuthServiceImplement implements AuthService {
         String accessToken = null;
         String refreshToken = null;
         UserRole userRole = null; // 🔥 사용자 권한 추가
-
         try {
             String userId = requestDto.getUserId();
             UserEntity userEntity = userRepository.findByUserId(userId);
@@ -245,21 +245,34 @@ public class AuthServiceImplement implements AuthService {
             boolean isMatch = passwordEncoder.matches(requestDto.getUserPassword(), userEntity.getUserPassword());
             if (!isMatch) return ResponseDto.signInFail();
 
-            accessToken = jwtProvider.createAccessToken(userId);
-            refreshToken = jwtProvider.createRefreshToken(userId);
             userRole = userEntity.getUserRole(); // 🔥 권한 추출
+            accessToken = jwtProvider.createAccessToken(userId, userRole);
+            refreshToken = jwtProvider.createRefreshToken(userId);
 
+            Cookie accessCookie = null;
+            Cookie refreshCookie = null;
+            if(userRole.equals("ADMIN")){
+                accessCookie = new Cookie("accessToken", accessToken);
+                accessCookie.setHttpOnly(false);
+                accessCookie.setPath("/");
+                accessCookie.setMaxAge(60 * 60*24);
 
-
-            Cookie accessCookie = new Cookie("accessToken", accessToken);
-            accessCookie.setHttpOnly(false);
-            accessCookie.setPath("/");
-            accessCookie.setMaxAge(60 * 30);
-
-            Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-            refreshCookie.setHttpOnly(false);
-            refreshCookie.setPath("/");
-            refreshCookie.setMaxAge(60 * 60 * 24);
+                refreshCookie = new Cookie("refreshToken", refreshToken);
+                refreshCookie.setHttpOnly(false);
+                refreshCookie.setPath("/");
+                refreshCookie.setMaxAge(60 * 60 * 24);
+            }else{
+                accessCookie = new Cookie("accessToken", accessToken);
+                accessCookie.setHttpOnly(false);
+                accessCookie.setPath("/");
+                accessCookie.setMaxAge(60 * 30);
+    
+                refreshCookie = new Cookie("refreshToken", refreshToken);
+                refreshCookie.setHttpOnly(false);
+                refreshCookie.setPath("/");
+                refreshCookie.setMaxAge(60 * 60 * 24);
+            }
+            
             response.addCookie(refreshCookie);
             response.addCookie(accessCookie);
             
@@ -276,7 +289,7 @@ public class AuthServiceImplement implements AuthService {
         Cookie refreshCookie = new Cookie("refreshToken", "aaa");
             refreshCookie.setHttpOnly(false);
             refreshCookie.setPath("/");
-            refreshCookie.setMaxAge(1); // 1일
+            refreshCookie.setMaxAge(1);
         response.addCookie(refreshCookie);
         return ResponseDto.success(HttpStatus.OK);
     }
@@ -284,8 +297,15 @@ public class AuthServiceImplement implements AuthService {
     @Override
     public ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = jwtProvider.extractRefreshToken(request);
-        String userId = jwtProvider.validate(refreshToken);
-
+        String userId = null;
+        try {
+            userId = jwtProvider.validate(refreshToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        UserRole userRole = userRepository.findByUserId(userId).getUserRole();
+        int expiration = 60 * 30;
         if (userId == null) {
             Cookie cookie = new Cookie("refreshToken", null);
             cookie.setHttpOnly(false);
@@ -294,9 +314,10 @@ public class AuthServiceImplement implements AuthService {
             response.addCookie(cookie);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        if(userRole.equals("ADMIN")) expiration = 60 * 60 * 24;
 
-        String newAccessToken = jwtProvider.createAccessToken(userId);
-        TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken);
+        String newAccessToken = jwtProvider.createAccessToken(userId,userRole);
+        TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken, expiration);
         return ResponseEntity.ok(body);
     }
 
