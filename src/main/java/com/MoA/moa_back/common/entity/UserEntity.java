@@ -78,7 +78,7 @@ public class UserEntity {
     }
   }
 
-  // 🔍 현재 사용자 권한 반환
+  // 현재 사용자 권한 반환
   public UserRole getUserRole() {
     return this.userRole;
   }

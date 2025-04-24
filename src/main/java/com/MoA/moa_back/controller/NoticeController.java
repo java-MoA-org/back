@@ -14,7 +14,7 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
-    // 공지사항 목록 조회 (페이징)
+    // 🔹 공지사항 목록 조회 (페이징)
     @GetMapping("/list")
     public ResponseEntity<?> getNoticeList(@RequestParam(value = "page", defaultValue = "0") int page) {
         return noticeService.getNoticeList(page);
@@ -34,7 +34,7 @@ public class NoticeController {
     }
 
     // 공지사항 수정 (관리자만 가능)
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> patchNotice(@PathVariable("id") int id, @RequestBody PatchNoticeRequestDto dto) {
         return noticeService.patchNotice(id, dto);

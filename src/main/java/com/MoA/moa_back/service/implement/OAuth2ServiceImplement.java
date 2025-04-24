@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.MoA.moa_back.common.entity.CustomOAuth2User;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.MoA.moa_back.common.enums.UserRole;
 import com.MoA.moa_back.provider.JwtProvider;
 import com.MoA.moa_back.repository.UserRepository;
 
@@ -38,6 +39,7 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
         CustomOAuth2User customOAuth2User;
         
         String userId = null;
+        UserRole userRole = null;
         Map<String, String> response = (Map<String, String>)oAuth2User.getAttributes().get("response");
         if("KAKAO".equals(registration)){
             userId = registration + "_" + attributes.get("id").toString().substring(0, 10);
@@ -87,7 +89,8 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
         } else {
             // 기존 회원인 경우
             userId = userEntity.getUserId();
-            String accessToken = jwtProvider.createAccessToken(userId);
+            userRole = userEntity.getUserRole();
+            String accessToken = jwtProvider.createAccessToken(userId, userRole);
         
             elements.put("accessToken", accessToken);
             customOAuth2User = new CustomOAuth2User(userId, elements, true);

@@ -10,6 +10,10 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.MoA.moa_back.common.enums.JwtErrorCode;
+import com.MoA.moa_back.common.enums.UserRole;
+import com.MoA.moa_back.handler.CustomJwtException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -78,7 +82,11 @@ public class JwtProvider {
         return generateVerificationToken(verifyDetail, code);
     }
     
-    public String createAccessToken(String userId) {
+    public String createAccessToken(String userId, UserRole userRole) {
+
+        if(userRole.equals("ADMIN")){
+            return generateToken(userId, 60 * 24);
+        }
         return generateToken(userId, 30);
     }
     
@@ -96,8 +104,10 @@ public class JwtProvider {
                          .parseClaimsJws(jwt)
                          .getBody()
                          .getSubject();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ExpiredJwtException e) {
+            throw new CustomJwtException("토큰이 만료되었습니다.", JwtErrorCode.EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new CustomJwtException("유효하지 않은 토큰입니다.", JwtErrorCode.INVALID);
         }
         return userId;
     }
