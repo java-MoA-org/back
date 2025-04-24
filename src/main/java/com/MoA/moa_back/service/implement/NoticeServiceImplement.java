@@ -26,6 +26,7 @@ public class NoticeServiceImplement implements NoticeService {
 
     private final NotificationRepository notificationRepository;
 
+    // method: 공지사항 등록
     @Override
     public ResponseEntity<ResponseDto> postNotice(PostNoticeRequestDto dto) {
         try {
@@ -41,6 +42,7 @@ public class NoticeServiceImplement implements NoticeService {
         return ResponseDto.success(HttpStatus.CREATED);
     }
 
+    // method: 공지사항 수정
     @Override
     public ResponseEntity<ResponseDto> patchNotice(int id, PatchNoticeRequestDto dto) {
         try {
@@ -59,6 +61,7 @@ public class NoticeServiceImplement implements NoticeService {
         }
     }
 
+    // method: 공지사항 삭제
     @Override
     public ResponseEntity<ResponseDto> deleteNotice(int id) {
         try {
@@ -71,6 +74,7 @@ public class NoticeServiceImplement implements NoticeService {
         }
     }
 
+    // method: 공지사항 단건 조회 (조회수 증가 포함)
     @Override
     public ResponseEntity<?> getNotice(int id) {
         try {
@@ -88,6 +92,7 @@ public class NoticeServiceImplement implements NoticeService {
         }
     }
 
+    // method: 공지사항 목록 조회 (페이징 + 최신순)
     @Override
     public ResponseEntity<ResponseDto> getNoticeList(int page) {
         try {
