@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.MoA.moa_back.common.entity.DailyCommentEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 
@@ -12,7 +13,10 @@ import lombok.Getter;
 public class DailyCommentVO {
   private Integer commentSequence;
   private String commentWriterId;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private String commentWriteDate;
+
   private String comment;
   private String profileImage;
   private String writerNickname;

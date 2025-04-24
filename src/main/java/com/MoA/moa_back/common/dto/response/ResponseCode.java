@@ -8,15 +8,15 @@ public interface ResponseCode {
     String VERIFY_CODE_ERROR = "VCE";
 
     String NO_EXIST_BOARD = "NB";
-    String NO_EXIST_DAILY = "ND.";
+    String NO_EXIST_DAILY = "ND";
     String NO_EXIST_NOTICE = "NN"; 
-    String NO_EXIST_USED_TRADE = "NU.";
+    String NO_EXIST_USED_TRADE = "NU";
     String NO_EXIST_COMMENT = "NC";
 
     
 
     String INVALID_TAG = "IT";
-    String INVALID_PAGE_NUMBER = "IP.";
+    String INVALID_PAGE_NUMBER = "IP";
     
     String SIGN_IN_FAIL = "SF";
     String AUTHORIZATION_FAIL = "AF";
