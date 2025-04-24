@@ -19,6 +19,7 @@ public interface ResponseCode {
     String INVALID_PAGE_NUMBER = "IP.";
     
     String SIGN_IN_FAIL = "SF";
+    String AUTHORIZATION_FAIL = "AF";
   
     String NO_PERMISSION = "NP";
   
