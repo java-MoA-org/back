@@ -73,9 +73,11 @@ public class BoardServiceImplement implements BoardService {
         return ResponseDto.invalidPageNumber();
       }
   
-      List<BoardSummaryResponseDto> list = page.stream()
-        .map(this::buildBoardSummaryResponseDto)
-        .toList();
+      List<BoardSummaryResponseDto> list = new ArrayList<>(
+        page.stream()
+          .map(this::buildBoardSummaryResponseDto)
+          .toList()
+      );
   
       if ("LIKES".equalsIgnoreCase(sortOption)) {
         list.sort(Comparator.comparingInt(BoardSummaryResponseDto::getLikeCount).reversed());
