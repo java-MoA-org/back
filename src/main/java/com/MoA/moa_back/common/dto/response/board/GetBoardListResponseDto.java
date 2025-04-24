@@ -15,10 +15,36 @@ import lombok.Getter;
 public class GetBoardListResponseDto extends ResponseDto {
   private List<BoardSummaryResponseDto> boardList;
   private Integer totalPages;
+  private long totalElements;
+  private int currentPage;
+  private int currentSection;
+  private int totalSection;
+  private List<Integer> pageList;
 
-  public static ResponseEntity<GetBoardListResponseDto> success(List<BoardSummaryResponseDto> boardList, int totalPages) {
-    GetBoardListResponseDto body = new GetBoardListResponseDto(boardList, totalPages);
+  public GetBoardListResponseDto(List<BoardSummaryResponseDto> boardList, Integer totalPages, long totalElements) {
+    this.boardList = boardList;
+    this.totalPages = totalPages;
+    this.totalElements = totalElements;
+    this.currentPage = 0;
+    this.currentSection = 0;
+    this.totalSection = 0;
+    this.pageList = null;
+  }
+
+  public static ResponseEntity<GetBoardListResponseDto> success(
+    List<BoardSummaryResponseDto> boardList,
+    int totalPages,
+    long totalElements,
+    int currentPage,
+    int currentSection,
+    int totalSection,
+    List<Integer> pageList
+  ) {
+    GetBoardListResponseDto body = new GetBoardListResponseDto(
+      boardList, totalPages, totalElements,
+      currentPage, currentSection, totalSection, pageList
+    );
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
-  
 }
+

@@ -9,6 +9,7 @@ import com.MoA.moa_back.common.dto.request.auth.EmailCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.EmailCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.IdCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.auth.PatchPasswordRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCheckRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.PhoneNumberCodeVerifyRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignInRequestDto;
@@ -18,6 +19,7 @@ import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
 import com.MoA.moa_back.service.AuthService;
 import com.MoA.moa_back.service.ImageService;
 
@@ -29,7 +31,10 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -68,6 +73,8 @@ public class AuthController {
         ResponseEntity<ResponseDto> response = authService.verifyEmailCode(dto);
         return response;
     }
+
+    
     
     
 
@@ -106,18 +113,35 @@ public class AuthController {
         return responseEntity;
     }
 
+    @PostMapping("/sign-out")
+    public ResponseEntity<ResponseDto> signOut(@AuthenticationPrincipal String userId, HttpServletResponse response) {
+        ResponseEntity<ResponseDto> responseEntity = authService.signOut(response);
+        
+        return responseEntity;
+    }
+    
+
     @PostMapping("/refresh")
     public ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         ResponseEntity<? super TokenRefreshResponseDto> responseEntity = authService.refreshToken(request, response);
         return responseEntity;
     }
     
-    @PostMapping("/sign-out")
-    public ResponseEntity<ResponseDto> signOut(HttpServletResponse response) {
-        
-        ResponseEntity<ResponseDto> responseDto = authService.signOut(response);
-        
-        return responseDto;
+    @PostMapping("/find-id/email/verify/require")
+    public ResponseEntity<? super EmailVerifyResponseDto> emailVerify(@RequestBody EmailCheckRequestDto requestDto) {
+        ResponseEntity<? super EmailVerifyResponseDto> responseEntity = authService.verifyEmail(requestDto);
+        return responseEntity;
     }
     
+    @PostMapping("/find-id/email/verify")
+    public ResponseEntity<? super FindIdResponseDto> findIdEmailVerify(@RequestBody EmailCodeVerifyRequestDto requestBody) {
+        ResponseEntity<? super FindIdResponseDto> response = authService.verifyEmailVC(requestBody);
+        return response;
+    }
+
+    @PatchMapping("/{userId}/password")
+    public ResponseEntity<ResponseDto> patchUserPassword(@RequestBody PatchPasswordRequestDto requestBody, @PathVariable("userId") String userId){
+        ResponseEntity<ResponseDto> response = authService.patchPassword(requestBody, userId);
+        return response;
+    }
 }

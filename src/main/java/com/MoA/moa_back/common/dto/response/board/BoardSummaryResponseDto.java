@@ -1,6 +1,8 @@
 package com.MoA.moa_back.common.dto.response.board;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.MoA.moa_back.common.enums.BoardTagType;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -23,4 +25,5 @@ public class BoardSummaryResponseDto {
   private String writerId;
   private Integer likeCount;
   private Integer commentCount;
+  private List<String> images = new ArrayList<>();
 }

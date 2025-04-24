@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     
         String refreshToken = jwtProvider.createRefreshToken(userId);
         Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-        refreshCookie.setHttpOnly(true);
+        refreshCookie.setHttpOnly(false);
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(60 * 60 * 24); // 1일
         response.addCookie(refreshCookie);
@@ -70,6 +70,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
       userIdCookie.setPath("/");
       userIdCookie.setHttpOnly(false);
       userIdCookie.setMaxAge(60 * 60);
+
+      String userPassword = (String) attributes.get("userPassword");
+      Cookie userPasswordCookie = new Cookie("userPassword", userPassword);
+      userPasswordCookie.setPath("/");
+      userPasswordCookie.setHttpOnly(false);
+      userPasswordCookie.setMaxAge(60 * 60);
       
       String userNickname = (String) attributes.get("userNickname");
       Cookie userNicknameCookie = new Cookie("userNickname", userNickname);
@@ -85,6 +91,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
       response.addCookie(joinTypeCookie);
       response.addCookie(userIdCookie);
+      response.addCookie(userPasswordCookie);
       response.addCookie(userNicknameCookie);
       response.addCookie(profileImageCookie);
 
