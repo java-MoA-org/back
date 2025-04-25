@@ -5,9 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 
-
-import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.SignUpRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.enums.UserRole; 
 
 import jakarta.persistence.Entity;
@@ -53,7 +52,7 @@ public class UserEntity {
   }
 
   // 🔧 수정 파트
-  public void patch(PatchUserInfoRequestDto dto, PasswordEncoder passwordEncoder) {
+  public void patch(PatchUserInfoRequestDto dto) {
     if (dto.getUserNickname() != null && !dto.getUserNickname().equals(this.userNickname)) {
       this.userNickname = dto.getUserNickname();
     }
@@ -70,11 +69,6 @@ public class UserEntity {
       if (!dto.getProfileImage().equals(this.profileImage)) {
         this.profileImage = dto.getProfileImage();
       }
-    }
-    // 새 비밀번호가 null/공백이 아니고, 기존 암호화된 비밀번호와 다를 때만 변경
-    if (dto.getUserPassword() != null && !dto.getUserPassword().isBlank()) {
-      String encodedNewPassword = passwordEncoder.encode(dto.getUserPassword());
-      this.userPassword = encodedNewPassword;
     }
   }
 

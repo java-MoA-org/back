@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PatchPasswordUserPageRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PatchUserInfoRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PostPasswordVerifyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.mypage.GetUserPageResponseDto;
 import com.MoA.moa_back.common.dto.response.user.GetUserInfoResponseDto;
@@ -89,6 +92,27 @@ public class UserPageServiceImplement implements UserPageService {
             }
       }
 
+      @Override
+    public ResponseEntity<? super GetUserInfoResponseDto> getUserInfo(String userId) {
+        try{
+         // 1. 유저 정보 조회
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        if (userEntity == null) return ResponseDto.noExistUser();
+
+        // 2. 관심사 조회
+        UserInterestsEntity userInterestsEntity = userInterestsRepository.findByUserId(userEntity.getUserId());
+
+        // 3. VO로 매핑
+        UserInfoVO userInfoVO = new UserInfoVO(userEntity, userInterestsEntity);
+
+        return GetUserInfoResponseDto.success(userInfoVO);
+        
+    }catch(Exception e){
+        e.printStackTrace();
+        return ResponseDto.databaseError();
+    }
+    }
+
     @Override
     public ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userId) {
         try{
@@ -101,13 +125,7 @@ public class UserPageServiceImplement implements UserPageService {
                 if (isExist) return ResponseDto.existUserNickname();
             }
     
-            // 비밀번호 변경 조건 검증
-            if (dto.getUserPassword() != null && !dto.getUserPassword().isBlank()) {
-                if (dto.getCurrentPassword() == null || !passwordEncoder.matches(dto.getCurrentPassword(), userEntity.getUserPassword())) {
-                    return ResponseDto.noPermission(); // 현재 비밀번호가 틀림
-                }
-            }
-            userEntity.patch(dto, passwordEncoder);
+            userEntity.patch(dto);
             userRepository.save(userEntity);
             
         }catch(Exception e){
@@ -129,24 +147,40 @@ public class UserPageServiceImplement implements UserPageService {
         return ResponseDto.success(HttpStatus.OK);
     }
 
+    
+
     @Override
-    public ResponseEntity<? super GetUserInfoResponseDto> getUserInfo(String userId) {
+    public ResponseEntity<ResponseDto> passwordVerify(PostPasswordVerifyRequestDto dto, String userId) {
         try{
-         // 1. 유저 정보 조회
-        UserEntity userEntity = userRepository.findByUserId(userId);
-        if (userEntity == null) return ResponseDto.noExistUser();
+            UserEntity user = userRepository.findByUserId(userId);
+            if(user==null) return ResponseDto.authorizationFail("권한이 없습니다");
 
-        // 2. 관심사 조회
-        UserInterestsEntity userInterestsEntity = userInterestsRepository.findByUserId(userEntity.getUserId());
+            boolean isMatch = passwordEncoder.matches(dto.getUserPassword(), user.getUserPassword());
+            if (!isMatch)
+                return ResponseDto.passwordNotRight(); //
 
-        // 3. VO로 매핑
-        UserInfoVO userInfoVO = new UserInfoVO(userEntity, userInterestsEntity);
-
-        return GetUserInfoResponseDto.success(userInfoVO);
-        
-    }catch(Exception e){
-        e.printStackTrace();
-        return ResponseDto.databaseError();
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<ResponseDto> patchPasswordChange(PatchPasswordUserPageRequestDto dto, String userId) {
+        try{
+            UserEntity user = userRepository.findByUserId(userId);
+            if (user == null) return ResponseDto.noExistUser();
+        if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getUserPassword()))
+            return ResponseDto.passwordNotRight();
+
+            user.setUserPassword(passwordEncoder.encode(dto.getUserPassword()));
+            userRepository.save(user);
+
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
     }
 }

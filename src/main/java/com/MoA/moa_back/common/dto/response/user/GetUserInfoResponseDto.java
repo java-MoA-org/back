@@ -22,6 +22,7 @@ public class GetUserInfoResponseDto extends ResponseDto{
     private UserInterestsEntity userInterests;
     private String userProfileImage;
     private String userIntroduce;
+    private String joinType;
     
 
     private GetUserInfoResponseDto(UserInfoVO userInfoVO) {
@@ -30,6 +31,7 @@ public class GetUserInfoResponseDto extends ResponseDto{
         this.userPhoneNumber = userInfoVO.getUserPhoneNumber();
         this.userIntroduce = userInfoVO.getUserIntroduce();
         this.userProfileImage = userInfoVO.getUserProfileImage();
+        this.joinType = userInfoVO.getJoinType();
         
     }
 

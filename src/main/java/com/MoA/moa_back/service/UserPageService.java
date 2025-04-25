@@ -2,8 +2,10 @@ package com.MoA.moa_back.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.MoA.moa_back.common.dto.request.PatchUserInfoRequestDto;
 import com.MoA.moa_back.common.dto.request.auth.NicknameCheckRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PatchPasswordUserPageRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PatchUserInfoRequestDto;
+import com.MoA.moa_back.common.dto.request.user.PostPasswordVerifyRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.mypage.GetUserPageResponseDto;
 import com.MoA.moa_back.common.dto.response.user.GetUserInfoResponseDto;
@@ -20,4 +22,6 @@ public interface UserPageService {
   // 회원정보 수정 
   ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userId);
   ResponseEntity<ResponseDto> nicknameCheck(NicknameCheckRequestDto dto);
+  ResponseEntity<ResponseDto> passwordVerify(PostPasswordVerifyRequestDto dto, String userId);
+  ResponseEntity<ResponseDto> patchPasswordChange(PatchPasswordUserPageRequestDto dto, String userId);
 } 
