@@ -5,6 +5,8 @@ import com.MoA.moa_back.common.entity.UserInterestsEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,7 @@ public class UserInfoVO {
     private String userPhoneNumber;
     private String userProfileImage;
     private String userIntroduce;
+    private String joinType;
 
     private UserInterestsEntity userInterests;
 
@@ -29,6 +32,7 @@ public class UserInfoVO {
         this.userPhoneNumber = userEntity.getUserPhoneNumber();
         this.userProfileImage = userEntity.getProfileImage();
         this.userIntroduce = userEntity.getUserIntroduce();
+        this.joinType = userEntity.getJoinType();
 
         this.userInterests = userInterestsEntity;
     }
