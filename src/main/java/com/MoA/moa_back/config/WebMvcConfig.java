@@ -8,6 +8,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig  implements WebMvcConfigurer{
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+      
+        registry.addResourceHandler("/images/board/**")
+        .addResourceLocations("file:///D:/upload/board-images/");
+
+        registry.addResourceHandler("/images/daily/**")
+              .addResourceLocations("file:///D:/upload/daily-images/");
+
+        registry.addResourceHandler("/images/usedtrade/**")
+              .addResourceLocations("file:///D:/upload/usedtrade-images/");
+
         registry.addResourceHandler("/profile/file/**")
                 .addResourceLocations("file:///D:/upload/profile/");
     }
