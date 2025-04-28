@@ -22,12 +22,22 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 
 @Component
+@Getter
 public class JwtProvider {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    private int ADMIN_EXPIRE_MIN_TIME = 60 * 24;
+    private int ADMIN_EXPIRE_SEC_TIME = 60 * 60 * 24;
+    private int USER_EXPIRE_MIN_TIME = 30;
+    private int USER_EXPIRE_SEC_TIME = 60 * 30;
+    private int REFRESH_EXPIRE_MIN_TIME = 60 * 24;
+    private int REFRESH_EXPIRE_SEC_TIME = 60 * 60 * 24;
+
 
     private String generateToken(String value, long minutes) {
         Date expiration = Date.from(Instant.now().plus(minutes, ChronoUnit.MINUTES));
@@ -86,13 +96,13 @@ public class JwtProvider {
         System.out.println(userRole);
         if(userRole.equals(UserRole.ADMIN)){
             System.out.println("admin logined");
-            return generateToken(userId, 60 * 24);
+            return generateToken(userId, USER_EXPIRE_MIN_TIME);
         }
-        return generateToken(userId, 30);
+        return generateToken(userId, USER_EXPIRE_MIN_TIME);
     }
     
     public String createRefreshToken(String userId) {
-        return generateToken(userId, 60 * 24); // 1일
+        return generateToken(userId, ADMIN_EXPIRE_MIN_TIME); // 1일
     }
 
     public String validate(String jwt){
