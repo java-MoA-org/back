@@ -33,10 +33,13 @@ public class GetBoardResponseDto extends ResponseDto {
 
   private List<BoardCommentVO> comments;
 
+  private List<String> imageUrls;
+
   public static GetBoardResponseDto of(
     BoardEntity board,
     int likeCount,
-    List<BoardCommentVO> commentList
+    List<BoardCommentVO> commentList,
+    List<String> imageUrls
   ) {
     return new GetBoardResponseDto(
       board.getBoardSequence(),
@@ -47,17 +50,18 @@ public class GetBoardResponseDto extends ResponseDto {
       board.getViews(),
       board.getUserId(),
       likeCount,
-      commentList
+      commentList,
+      imageUrls
     );
   }
 
   public static ResponseEntity<GetBoardResponseDto> success(
     BoardEntity board,
     int likeCount,
-    List<BoardCommentVO> commentList
+    List<BoardCommentVO> commentList,
+    List<String> imageUrls
   ) {
-    GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList);
+    GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList, imageUrls);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
-  
 }

@@ -28,4 +28,6 @@ public interface ResponseCode {
 
     String NO_EXIST_USER = "NEU";
     String TOKEN_TIME_OUT = "TTO";
+
+    String PASSWORD_NOT_RIGHT = "PNR";
   }

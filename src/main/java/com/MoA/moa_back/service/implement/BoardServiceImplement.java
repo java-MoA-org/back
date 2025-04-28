@@ -148,25 +148,29 @@ public class BoardServiceImplement implements BoardService {
   @Override
   public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence) {
     try {
+
       BoardEntity boardEntity = boardRepository.findById(boardSequence).orElse(null);
       if (boardEntity == null) return ResponseDto.noExistBoard();
-
+  
       boardEntity.setViews(boardEntity.getViews() + 1);
       boardRepository.save(boardEntity);
-
+  
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
-
+  
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
       List<BoardCommentVO> commentList = commentEntities.stream()
         .map(BoardCommentVO::new)
         .toList();
-
-      return GetBoardResponseDto.success(boardEntity, likeCount, commentList);
+  
+      List<String> imageUrls = boardEntity.getImages();
+  
+      return GetBoardResponseDto.success(boardEntity, likeCount, commentList, imageUrls);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+  
 
   // method: 게시글 수정 (작성자만 가능) //
   @Override

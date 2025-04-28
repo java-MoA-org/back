@@ -49,6 +49,10 @@
                     .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.PATCH,"/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/profile/file/**").permitAll()
+
+                    .requestMatchers("/api/v1/images/**").permitAll()
+                    .requestMatchers("/images/**").permitAll()
+
                     .requestMatchers("/oauth2/**").permitAll()
 
                     .requestMatchers(HttpMethod.GET, "/api/v1/notice/**").permitAll()

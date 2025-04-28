@@ -134,4 +134,8 @@ public class ResponseDto {
         ResponseDto body = new ResponseDto(ResponseCode.NO_EXIST_NOTICE, ResponseMessage.NO_EXIST_NOTICE);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+    public static ResponseEntity<ResponseDto> passwordNotRight() {
+        ResponseDto body = new ResponseDto(ResponseCode.PASSWORD_NOT_RIGHT, ResponseMessage.PASSWORD_NOT_RIGHT);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
 }
