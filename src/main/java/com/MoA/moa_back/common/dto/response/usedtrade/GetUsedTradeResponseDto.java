@@ -33,7 +33,7 @@ public class GetUsedTradeResponseDto extends ResponseDto {
   private Integer views;
   private ItemTypeTag itemTypeTag;
   private UsedItemStatusTag usedItemStatusTag;
-  private String price;
+  private Integer price;
   private String location;
   private String detailLocation;
   private TransactionStatus transactionStatus;

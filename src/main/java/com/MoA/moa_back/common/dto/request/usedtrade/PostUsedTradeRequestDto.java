@@ -38,8 +38,8 @@ public class PostUsedTradeRequestDto {
   @NotNull
   private UsedItemStatusTag usedItemStatusTag; // 물건 상태 enum
 
-  @NotBlank
-  private String price;
+  @NotNull
+  private Integer price;
 
   private String location;
 
