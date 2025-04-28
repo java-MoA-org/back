@@ -251,11 +251,11 @@ public class AuthServiceImplement implements AuthService {
 
             Cookie accessCookie = null;
             Cookie refreshCookie = null;
-            if(userRole.equals("ADMIN")){
+            if(userRole.equals(UserRole.ADMIN)){
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
-                accessCookie.setMaxAge(60 * 60*24);
+                accessCookie.setMaxAge(60);
 
                 refreshCookie = new Cookie("refreshToken", refreshToken);
                 refreshCookie.setHttpOnly(false);
@@ -314,7 +314,7 @@ public class AuthServiceImplement implements AuthService {
             response.addCookie(cookie);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(userRole.equals("ADMIN")) expiration = 60 * 60 * 24;
+        if(userRole.equals("ADMIN")) expiration = 60*60*24;
 
         String newAccessToken = jwtProvider.createAccessToken(userId,userRole);
         TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken, expiration);
