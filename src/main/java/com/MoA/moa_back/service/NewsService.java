@@ -97,7 +97,7 @@ public class NewsService {
                     return news;
                 });
 
-                if (tasks.size() >= 7) break;
+                if (tasks.size() >= 5) break;
             }
 
             ExecutorService executor = Executors.newFixedThreadPool(7);
