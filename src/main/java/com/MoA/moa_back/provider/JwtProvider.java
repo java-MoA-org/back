@@ -83,9 +83,10 @@ public class JwtProvider {
     }
     
     public String createAccessToken(String userId, UserRole userRole) {
-
-        if(userRole.equals("ADMIN")){
-            return generateToken(userId, 60 * 24);
+        System.out.println(userRole);
+        if(userRole.equals(UserRole.ADMIN)){
+            System.out.println("admin logined");
+            return generateToken(userId, 1);
         }
         return generateToken(userId, 30);
     }
