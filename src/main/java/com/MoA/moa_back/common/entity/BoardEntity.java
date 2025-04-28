@@ -29,7 +29,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BoardEntity {
+public class  BoardEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

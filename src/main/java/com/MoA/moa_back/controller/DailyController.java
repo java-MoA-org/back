@@ -35,7 +35,7 @@ public class DailyController {
   }
 
   // API: 일상 게시글 목록 조회 (페이지네이션) //
-  @GetMapping("/{pageNumber}")
+  @GetMapping("/list/{pageNumber}")
   public ResponseEntity<? super GetDailyListResponseDto> getDailyList(
     @PathVariable("pageNumber") Integer pageNumber,
     @RequestParam(name = "sortOption", defaultValue = "LATEST") String sortOption

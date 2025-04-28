@@ -33,9 +33,12 @@ public class DailyEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer dailySequence;
+  
   private String userId;
+
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime creationDate;
+
   private String location;
   private String detailLocation;
   private String title;
