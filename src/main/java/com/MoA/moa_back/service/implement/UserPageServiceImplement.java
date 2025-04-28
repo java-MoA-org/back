@@ -82,9 +82,11 @@ public class UserPageServiceImplement implements UserPageService {
 
                 // 6. 자기소개 조회
                 String userIntroduce = user.getUserIntroduce();
+                // 7. 프로필 사진 조회
+                String userProfileImage = user.getProfileImage();
     
-                // 5. 응답 반환
-                return GetUserPageResponseDto.success(boards, dailys, trades, interests, userIntroduce);
+                // 8. 응답 반환
+                return GetUserPageResponseDto.success(boards, dailys, trades, interests, userIntroduce, userProfileImage);
     
             } catch (Exception e) {
                 e.printStackTrace();
@@ -125,6 +127,7 @@ public class UserPageServiceImplement implements UserPageService {
                 boolean isExist = userRepository.existsByUserNickname(dto.getUserNickname());
                 if (isExist) return ResponseDto.existUserNickname();
             }
+            
     
             userEntity.patch(dto);
             userInterestsEntity.patch(dto);
