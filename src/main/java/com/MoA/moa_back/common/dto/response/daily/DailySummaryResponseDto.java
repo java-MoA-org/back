@@ -1,6 +1,8 @@
 package com.MoA.moa_back.common.dto.response.daily;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -22,4 +24,5 @@ public class DailySummaryResponseDto {
   private Integer views;
   private Integer likeCount; 
   private Integer commentCount;
+  private List<String> images = new ArrayList<>();
 }
