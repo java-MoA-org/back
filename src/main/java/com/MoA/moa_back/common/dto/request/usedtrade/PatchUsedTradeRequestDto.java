@@ -15,7 +15,7 @@ public class PatchUsedTradeRequestDto {
 
   private String title;
   private String content;
-  private String price;
+  private Integer price;
   private String location;
   private String detailLocation;
   private List<String> imageList;

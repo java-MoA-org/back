@@ -1,5 +1,6 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -53,76 +54,94 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   public ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeListByTag(String tag, Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
-
-      Sort sort;
-      switch (sortOption.toUpperCase()) {
-        case "LIKES":
-          sort = Sort.by(Sort.Order.desc("tradeSequence"));
-          break;
-        case "VIEWS":
-          sort = Sort.by(Sort.Order.desc("views"));
-          break;
-        default:
-          sort = Sort.by(
-            Sort.Order.desc("creationDate"),
-            Sort.Order.desc("tradeSequence")
-          );
-          break;
-      }
-
+      int pageCountPerSection = 5;
+  
+      Sort sort = resolveSortOption(sortOption);
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
-
-      ItemTypeTag itemTypeTag = null;
-      if (!"ALL".equalsIgnoreCase(tag)) {
-        try {
-          itemTypeTag = ItemTypeTag.valueOf(tag);
-        } catch (IllegalArgumentException e) {
-          return ResponseDto.invalidTag();
-        }
-      }
-
+  
+      ItemTypeTag itemTypeTag = resolveTag(tag);
+  
       Page<UsedTradeEntity> page = (itemTypeTag == null)
         ? usedTradeRepository.findAll(pageable)
         : usedTradeRepository.findByItemTypeTag(itemTypeTag, pageable);
-
+  
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
         return ResponseDto.invalidPageNumber();
       }
-
+  
       List<UsedTradeSummaryResponseDto> list = page.stream()
-        .map(entity -> {
-          int likeCount = usedTradeLikeRepository.countByTradeSequence(entity.getTradeSequence());
-          UserEntity user = userRepository.findByUserId(entity.getUserId());
-
-          return new UsedTradeSummaryResponseDto(
-            entity.getTradeSequence(),
-            entity.getViews(),
-            likeCount,
-            entity.getCreationDate(),
-            entity.getImages(),
-            entity.getTitle(),
-            user.getUserId(),
-            entity.getLocation(),
-            entity.getUsedItemStatusTag().name(),
-            user.getProfileImage(),
-            user.getUserNickname()
-          );
-        })
+        .map(this::buildUsedTradeSummaryResponseDto)
         .toList();
-
-      if (sortOption.equalsIgnoreCase("LIKES")) {
-        list = list.stream()
-          .sorted((a, b) -> b.getLikeCount() - a.getLikeCount())
-          .toList();
+  
+      if ("LIKES".equalsIgnoreCase(sortOption)) {
+        list.sort(Comparator.comparingInt(UsedTradeSummaryResponseDto::getLikeCount).reversed());
       }
-
-      return ResponseEntity.status(HttpStatus.OK).body(new GetUsedTradeListResponseDto(list, page.getTotalPages()));
-
+  
+      // 페이징 정보
+      int currentPage = pageable.getPageNumber();
+      int currentSection = PageUtil.getCurrentSection(currentPage, pageCountPerSection);
+      int totalSection = PageUtil.getTotalSection(page.getTotalPages(), pageCountPerSection);
+      List<Integer> pageList = PageUtil.getPageList(currentPage, page.getTotalPages(), pageCountPerSection);
+  
+      // 성공 응답 반환
+      return GetUsedTradeListResponseDto.success(
+        list,
+        page.getTotalPages(),
+        page.getTotalElements(),
+        currentPage + 1,
+        currentSection,
+        totalSection,
+        pageList
+      );
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+  
+  private Sort resolveSortOption(String sortOption) {
+    switch (sortOption.toUpperCase()) {
+      case "LIKES":
+        return Sort.by(Sort.Order.desc("tradeSequence"));
+      case "VIEWS":
+        return Sort.by(Sort.Order.desc("views"));
+      default:
+        return Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("tradeSequence"));
+    }
+  }
+  
+  private ItemTypeTag resolveTag(String tag) {
+    if (!"ALL".equalsIgnoreCase(tag)) {
+      try {
+        return ItemTypeTag.valueOf(tag);
+      } catch (IllegalArgumentException e) {
+        return null;
+      }
+    }
+    return null;
+  }
+  
+  private UsedTradeSummaryResponseDto buildUsedTradeSummaryResponseDto(UsedTradeEntity entity) {
+    int likeCount = usedTradeLikeRepository.countByTradeSequence(entity.getTradeSequence());
+    UserEntity user = userRepository.findByUserId(entity.getUserId());
+  
+    return new UsedTradeSummaryResponseDto(
+      entity.getTradeSequence(),
+      entity.getViews(),
+      likeCount,
+      entity.getCreationDate(),
+      entity.getImages(),
+      entity.getTitle(),
+      user.getUserId(),
+      entity.getLocation(),
+      entity.getUsedItemStatusTag().name(),
+      user.getProfileImage(),
+      user.getUserNickname(),
+      entity.getPrice()
+    );
+  }
+  
 
   // method: 중고거래 게시글 상세 조회 + 조회수 증가 //
   @Override
@@ -209,12 +228,13 @@ public class UsedTradeServiceImplement implements UsedTradeService {
             entity.getLocation(),
             entity.getUsedItemStatusTag().toString(),
             profileImage,
-            nickname
+            nickname,
+            entity.getPrice()
           );
         })
         .toList();
 
-      return ResponseEntity.status(HttpStatus.OK).body(new GetUsedTradeListResponseDto(list, page.getTotalPages()));
+      return ResponseEntity.status(HttpStatus.OK).body(new GetUsedTradeListResponseDto(list, pageNumber, pageSize));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
