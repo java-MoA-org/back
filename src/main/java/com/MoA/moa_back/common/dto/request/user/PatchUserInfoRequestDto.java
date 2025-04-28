@@ -21,10 +21,12 @@ public class PatchUserInfoRequestDto {
     private String userIntroduce;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{3}-[0-9]{4}-[0-9]{4}$")
-    private String userPhoneNumber;
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
+    private String userEmail;
 
     // 프로필 이미지 변경
-    @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$")
-    private String profileImage;
+    // @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$") 
+    // private String profileImage;
+
+    private Interests userInterests;
 }
