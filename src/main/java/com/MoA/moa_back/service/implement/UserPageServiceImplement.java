@@ -117,6 +117,7 @@ public class UserPageServiceImplement implements UserPageService {
     public ResponseEntity<ResponseDto> patchUserInfo(PatchUserInfoRequestDto dto, String userId) {
         try{
             UserEntity userEntity = userRepository.findByUserId(userId);
+            UserInterestsEntity userInterestsEntity = userInterestsRepository.findByUserId(userId);
             if (userEntity == null) return ResponseDto.noExistUser();
 
             // 닉네임 변경 검증
@@ -126,7 +127,9 @@ public class UserPageServiceImplement implements UserPageService {
             }
     
             userEntity.patch(dto);
+            userInterestsEntity.patch(dto);
             userRepository.save(userEntity);
+            userInterestsRepository.save(userInterestsEntity);
             
         }catch(Exception e){
             e.printStackTrace();

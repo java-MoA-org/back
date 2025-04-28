@@ -37,6 +37,26 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole = UserRole.USER; // 기본값 USER로 추가
 
+  // 🔧 수정 파트
+  public void patch(PatchUserInfoRequestDto dto) {
+    if (dto.getUserNickname() != null && !dto.getUserNickname().equals(this.userNickname)) {
+      this.userNickname = dto.getUserNickname();
+    }
+    // 자기소개가 null이 아니고, 기존 값과 다를 때만 변경
+    if (dto.getUserIntroduce() != null && !dto.getUserIntroduce().equals(this.userIntroduce)) {
+      this.userIntroduce = dto.getUserIntroduce();
+    }
+    // 이메일이 null이 아니고, 기존 값과 다를 때만 변경
+    if (dto.getUserEmail() != null && !dto.getUserEmail().equals(this.userEmail)) {
+      this.userEmail = dto.getUserEmail();
+    }
+    // 프로필 사진이 null이 아니고, 기존 값과 다를 때만 변경
+    // if (dto.getProfileImage() != null) {
+    //   if (!dto.getProfileImage().equals(this.profileImage)) {
+    //     this.profileImage = dto.getProfileImage();
+    //   }
+    // }
+  }
     // 회원가입용 생성자
     public UserEntity(SignUpRequestDto dto) {
         this.userId = dto.getUserId();
@@ -48,22 +68,6 @@ public class UserEntity {
         this.userPhoneNumber = dto.getUserPhoneNumber();
         this.userIntroduce = dto.getUserIntroduce();
         this.userRole = UserRole.USER; // 기본 USER 권한
-    }
-
-    // 🔧 유저 정보 수정
-    public void patch(PatchUserInfoRequestDto dto) {
-        if (dto.getUserNickname() != null && !dto.getUserNickname().equals(this.userNickname)) {
-            this.userNickname = dto.getUserNickname();
-        }
-        if (dto.getUserIntroduce() != null && !dto.getUserIntroduce().equals(this.userIntroduce)) {
-            this.userIntroduce = dto.getUserIntroduce();
-        }
-        if (dto.getUserPhoneNumber() != null && !dto.getUserPhoneNumber().equals(this.userPhoneNumber)) {
-            this.userPhoneNumber = dto.getUserPhoneNumber();
-        }
-        if (dto.getProfileImage() != null && !dto.getProfileImage().equals(this.profileImage)) {
-            this.profileImage = dto.getProfileImage();
-        }
     }
 
     // 현재 사용자 권한 반환
