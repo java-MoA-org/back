@@ -62,23 +62,11 @@ public class DailyServiceImplement implements DailyService {
   public ResponseEntity<? super GetDailyListResponseDto> getDailyBoardList(Integer pageNumber, String sortOption) {
     try {
       int pageSize = 10;
+      int pageCountPerSection = 5;
   
-      Sort sort;
-      switch (sortOption.toUpperCase()) {
-        case "LIKES":
-          sort = Sort.by(Sort.Order.desc("dailySequence"));
-          break;
-        case "VIEWS":
-          sort = Sort.by(Sort.Order.desc("views"));
-          break;
-        default: // LATEST
-          sort = Sort.by(
-            Sort.Order.desc("creationDate"),
-            Sort.Order.desc("dailySequence")
-          );
-      }
-  
+      Sort sort = resolveSortOption(sortOption);
       Pageable pageable = PageUtil.createPageable(pageNumber, pageSize, sort);
+  
       Page<DailyEntity> page = dailyRepository.findAll(pageable);
   
       if (PageUtil.isInvalidPageIndex(pageable.getPageNumber(), page.getTotalPages())) {
@@ -102,7 +90,8 @@ public class DailyServiceImplement implements DailyService {
             nickname,
             entity.getViews(),
             likeCount,
-            commentCount
+            commentCount,
+            entity.getImages()
           );
         })
         .sorted((a, b) -> {
@@ -113,14 +102,37 @@ public class DailyServiceImplement implements DailyService {
         })
         .toList();
   
-      GetDailyListResponseDto responseBody = new GetDailyListResponseDto(list, page.getTotalPages());
+      int currentPage = pageable.getPageNumber(); // 0-based
+      int currentSection = PageUtil.getCurrentSection(currentPage, pageCountPerSection);
+      int totalSection = PageUtil.getTotalSection(page.getTotalPages(), pageCountPerSection);
+      List<Integer> pageList = PageUtil.getPageList(currentPage, page.getTotalPages(), pageCountPerSection);
+  
+      GetDailyListResponseDto responseBody = new GetDailyListResponseDto(
+        list,
+        page.getTotalPages(),
+        page.getTotalElements(),
+        currentPage + 1,  // 1-based page index
+        currentSection,
+        totalSection,
+        pageList
+      );
       return ResponseEntity.status(HttpStatus.OK).body(responseBody);
   
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+  }
 
+  private Sort resolveSortOption(String sortOption) {
+    switch (sortOption.toUpperCase()) {
+      case "LIKES":
+        return Sort.by(Sort.Order.desc("dailySequence"));
+      case "VIEWS":
+        return Sort.by(Sort.Order.desc("views"));
+      default:
+        return Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("dailySequence"));
+    }
   }
   
   // method: 일상 게시글 상세 조회 + 조회수 증가 //
@@ -226,13 +238,13 @@ public class DailyServiceImplement implements DailyService {
             nickname,
             entity.getViews(),
             likeCount,
-            commentCount
+            commentCount,
+            entity.getImages()
           );
         })
         .toList();
   
-      GetDailyListResponseDto responseBody = new GetDailyListResponseDto(list, page.getTotalPages());
-      return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+      return ResponseEntity.ok(new GetDailyListResponseDto(list, pageNumber, pageSize));
   
     } catch (Exception e) {
       e.printStackTrace();

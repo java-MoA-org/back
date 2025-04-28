@@ -50,6 +50,9 @@
                     .requestMatchers(HttpMethod.PATCH,"/api/v1/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/profile/file/**").permitAll()
 
+                    .requestMatchers("/api/v1/user/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/user/search").permitAll()
+
                     .requestMatchers("/api/v1/images/**").permitAll()
                     .requestMatchers("/images/**").permitAll()
 
@@ -57,6 +60,7 @@
 
                     .requestMatchers(HttpMethod.GET, "/api/v1/notice/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/notice").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.PATCH, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/**").hasAuthority("ADMIN")
                     

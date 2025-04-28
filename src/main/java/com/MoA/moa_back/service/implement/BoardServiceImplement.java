@@ -83,7 +83,7 @@ public class BoardServiceImplement implements BoardService {
         list.sort(Comparator.comparingInt(BoardSummaryResponseDto::getLikeCount).reversed());
       }
   
-      int currentPage = pageable.getPageNumber(); // 0-based
+      int currentPage = pageable.getPageNumber();
       int currentSection = PageUtil.getCurrentSection(currentPage, pageCountPerSection);
       int totalSection = PageUtil.getTotalSection(page.getTotalPages(), pageCountPerSection);
       List<Integer> pageList = PageUtil.getPageList(currentPage, page.getTotalPages(), pageCountPerSection);
@@ -92,7 +92,7 @@ public class BoardServiceImplement implements BoardService {
         list,
         page.getTotalPages(),
         page.getTotalElements(),
-        currentPage + 1,  // 1-based page index
+        currentPage + 1,
         currentSection,
         totalSection,
         pageList

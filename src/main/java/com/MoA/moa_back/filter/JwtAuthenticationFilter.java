@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/board") ||
                 path.startsWith("/notice") ||
                 path.startsWith("/used-trade") ||
+                path.startsWith("/daily") ||
                 path.startsWith("/news") ||
                 path.startsWith("/home")) {
 
