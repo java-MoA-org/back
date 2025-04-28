@@ -86,7 +86,7 @@ public class JwtProvider {
         System.out.println(userRole);
         if(userRole.equals(UserRole.ADMIN)){
             System.out.println("admin logined");
-            return generateToken(userId, 1);
+            return generateToken(userId, 60 * 24);
         }
         return generateToken(userId, 30);
     }

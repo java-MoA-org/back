@@ -255,7 +255,7 @@ public class AuthServiceImplement implements AuthService {
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
-                accessCookie.setMaxAge(60);
+                accessCookie.setMaxAge(60 * 60 * 30);
 
                 refreshCookie = new Cookie("refreshToken", refreshToken);
                 refreshCookie.setHttpOnly(false);
