@@ -260,7 +260,6 @@ public class BoardServiceImplement implements BoardService {
       return ResponseDto.databaseError();
     }
   }
-  
 
   // method: 게시글에 좋아요를 누르거나 취소 //
   @Override

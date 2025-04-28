@@ -29,9 +29,7 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String registration = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
-
         
-
         Map<String, Object> attributes = oAuth2User.getAttributes();
         
         String userNickname, userEmail, userPhoneNumber, profileImage;

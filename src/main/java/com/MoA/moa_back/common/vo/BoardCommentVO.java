@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.MoA.moa_back.common.entity.BoardCommentEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 
@@ -13,7 +14,10 @@ public class BoardCommentVO {
 
   private Integer commentSequence;
   private String commentWriterId;
+
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime commentWriteDate;
+  
   private String comment;
 
   public BoardCommentVO(BoardCommentEntity boardCommentEntity) {
