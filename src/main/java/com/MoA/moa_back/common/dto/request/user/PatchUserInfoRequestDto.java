@@ -25,8 +25,9 @@ public class PatchUserInfoRequestDto {
     private String userEmail;
 
     // 프로필 이미지 변경
-    // @Pattern(regexp = "^https?://.+\\.(?i)(jpg|jpeg|png|gif|bmp|webp)$") 
-    // private String profileImage;
+    @Pattern(regexp = ".*\\.(jpg|jpeg|png|gif|bmp|webp)$|^data:image\\/(jpg|jpeg|png|gif|bmp|webp);base64,.*")
+    private String profileImage;
+
 
     private Interests userInterests;
 }

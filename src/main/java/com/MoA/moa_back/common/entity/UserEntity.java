@@ -50,7 +50,7 @@ public class UserEntity {
     if (dto.getUserEmail() != null && !dto.getUserEmail().equals(this.userEmail)) {
       this.userEmail = dto.getUserEmail();
     }
-    // 프로필 사진이 null이 아니고, 기존 값과 다를 때만 변경
+    // // 프로필 사진이 null이 아니고, 기존 값과 다를 때만 변경
     // if (dto.getProfileImage() != null) {
     //   if (!dto.getProfileImage().equals(this.profileImage)) {
     //     this.profileImage = dto.getProfileImage();

@@ -23,10 +23,11 @@ public class GetUserPageResponseDto extends ResponseDto {
   private List<UsedTradeSummaryVO> tradeBoards;
   private UserInterestVO interests;
   private String userIntroduce;
+  private String userProfileImage;
 
 
-      public static ResponseEntity<GetUserPageResponseDto> success(List<BoardSummaryVO> boards, List<DailySummaryVO> dailyBoards, List<UsedTradeSummaryVO> tradeBoards, UserInterestVO interests, String userIntroduce) {
-        GetUserPageResponseDto body = new GetUserPageResponseDto(boards, dailyBoards, tradeBoards, interests, userIntroduce);
+      public static ResponseEntity<GetUserPageResponseDto> success(List<BoardSummaryVO> boards, List<DailySummaryVO> dailyBoards, List<UsedTradeSummaryVO> tradeBoards, UserInterestVO interests, String userIntroduce, String userProfileImage) {
+        GetUserPageResponseDto body = new GetUserPageResponseDto(boards, dailyBoards, tradeBoards, interests, userIntroduce, userProfileImage);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
 }
