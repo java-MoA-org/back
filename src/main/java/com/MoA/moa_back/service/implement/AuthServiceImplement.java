@@ -255,22 +255,22 @@ public class AuthServiceImplement implements AuthService {
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
-                accessCookie.setMaxAge(60 * 60 * 24);
+                accessCookie.setMaxAge(jwtProvider.getADMIN_EXPIRE_SEC_TIME());
 
                 refreshCookie = new Cookie("refreshToken", refreshToken);
                 refreshCookie.setHttpOnly(false);
                 refreshCookie.setPath("/");
-                refreshCookie.setMaxAge(60 * 60 * 24);
+                refreshCookie.setMaxAge(jwtProvider.getREFRESH_EXPIRE_SEC_TIME());
             }else{
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
-                accessCookie.setMaxAge(60 * 30);
+                accessCookie.setMaxAge(jwtProvider.getUSER_EXPIRE_SEC_TIME());
     
                 refreshCookie = new Cookie("refreshToken", refreshToken);
                 refreshCookie.setHttpOnly(false);
                 refreshCookie.setPath("/");
-                refreshCookie.setMaxAge(60 * 60 * 24);
+                refreshCookie.setMaxAge(jwtProvider.getREFRESH_EXPIRE_SEC_TIME());
             }
             
             response.addCookie(refreshCookie);
@@ -305,7 +305,7 @@ public class AuthServiceImplement implements AuthService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         UserRole userRole = userRepository.findByUserId(userId).getUserRole();
-        int expiration = 60 * 30;
+        int expiration = jwtProvider.getUSER_EXPIRE_SEC_TIME();
         if (userId == null) {
             Cookie cookie = new Cookie("refreshToken", null);
             cookie.setHttpOnly(false);
@@ -314,7 +314,7 @@ public class AuthServiceImplement implements AuthService {
             response.addCookie(cookie);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(userRole.equals("ADMIN")) expiration = 60*60*24;
+        if(userRole.equals(UserRole.ADMIN)) expiration = jwtProvider.getADMIN_EXPIRE_SEC_TIME();
 
         String newAccessToken = jwtProvider.createAccessToken(userId,userRole);
         TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken, expiration);
