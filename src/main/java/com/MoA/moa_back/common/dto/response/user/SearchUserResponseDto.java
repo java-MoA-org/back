@@ -1,4 +1,3 @@
-// src/main/java/com/MoA/moa_back/common/dto/response/user/SearchUserResponseDto.java
 package com.MoA.moa_back.common.dto.response.user;
 
 import lombok.AllArgsConstructor;

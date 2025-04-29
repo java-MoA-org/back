@@ -21,11 +21,10 @@ public class UserServiceImplement implements UserService {
     public SearchUserResponseDto searchUser(String keyword) {
         List<UserEntity> users = userRepository.findByUserNicknameContaining(keyword);
 
-        // 프로필 이미지 절대 URL로 변환
         List<SearchUserItem> userList = users.stream()
                 .map(user -> new SearchUserItem(
-                    user.getUserNickname(), 
-                    user.getUserProfileImage()
+                    user.getUserNickname(),
+                    user.getUserProfileImage() 
                 ))
                 .collect(Collectors.toList());
 
