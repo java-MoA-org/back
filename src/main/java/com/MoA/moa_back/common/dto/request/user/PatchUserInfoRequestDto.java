@@ -28,6 +28,6 @@ public class PatchUserInfoRequestDto {
     @Pattern(regexp = ".*\\.(jpg|jpeg|png|gif|bmp|webp)$|^data:image\\/(jpg|jpeg|png|gif|bmp|webp);base64,.*")
     private String profileImage;
 
-
+    @NotNull
     private Interests userInterests;
 }
