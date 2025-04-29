@@ -102,12 +102,14 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   
   private Sort resolveSortOption(String sortOption) {
     switch (sortOption.toUpperCase()) {
-      case "LIKES":
-        return Sort.by(Sort.Order.desc("tradeSequence"));
-      case "VIEWS":
-        return Sort.by(Sort.Order.desc("views"));
+      case "PRICE_LOW":
+        return Sort.by(Sort.Order.asc("price"));
+      case "PRICE_HIGH":
+        return Sort.by(Sort.Order.desc("price"));
+      case "LATEST":
+        return Sort.by(Sort.Order.desc("creationDate"));
       default:
-        return Sort.by(Sort.Order.desc("creationDate"), Sort.Order.desc("tradeSequence"));
+        return Sort.by(Sort.Order.desc("creationDate"));
     }
   }
   
@@ -138,7 +140,8 @@ public class UsedTradeServiceImplement implements UsedTradeService {
       entity.getUsedItemStatusTag().name(),
       user.getProfileImage(),
       user.getUserNickname(),
-      entity.getPrice()
+      entity.getPrice(),
+      entity.getItemTypeTag().name()
     );
   }
   
@@ -229,7 +232,8 @@ public class UsedTradeServiceImplement implements UsedTradeService {
             entity.getUsedItemStatusTag().toString(),
             profileImage,
             nickname,
-            entity.getPrice()
+            entity.getPrice(),
+            entity.getItemTypeTag().name()
           );
         })
         .toList();
