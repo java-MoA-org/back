@@ -14,9 +14,9 @@ import com.MoA.moa_back.service.UserPageImageService;
 @Service
 public class UserPageImageServiceImplement implements UserPageImageService{
 
-    @Value("${file.path}")
+    @Value("${file.userpage.path}")
     private String filePath;
-    @Value("${file.url}")
+    @Value("${file.userpage.url}")
     private String fileUrl;
 
     @Override

@@ -123,7 +123,7 @@ public class UserPageServiceImplement implements UserPageService {
             if (userEntity == null) return ResponseDto.noExistUser();
 
             // 닉네임 변경 검증
-            if (dto.getUserNickname() != null && !dto.getUserNickname().equals(userEntity.getUserNickname())) {
+            if (!dto.getUserNickname().equals(userEntity.getUserNickname())) {
                 boolean isExist = userRepository.existsByUserNickname(dto.getUserNickname());
                 if (isExist) return ResponseDto.existUserNickname();
             }
