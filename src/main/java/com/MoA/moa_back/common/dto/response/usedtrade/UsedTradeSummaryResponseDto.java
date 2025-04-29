@@ -26,4 +26,5 @@ public class UsedTradeSummaryResponseDto {
   private String profileImage;
   private String userNickname;
   private Integer price;
+  private String itemTypeTag;
 }
