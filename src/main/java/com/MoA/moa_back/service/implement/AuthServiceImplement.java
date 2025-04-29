@@ -27,9 +27,11 @@ import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.UserInfoResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.entity.UserInterestsEntity;
 import com.MoA.moa_back.common.enums.UserRole;
+import com.MoA.moa_back.common.vo.UserInterestVO;
 import com.MoA.moa_back.provider.JwtProvider;
 import com.MoA.moa_back.repository.UserInterestsRepository;
 import com.MoA.moa_back.repository.UserRepository;
@@ -314,7 +316,10 @@ public class AuthServiceImplement implements AuthService {
             response.addCookie(cookie);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(userRole.equals(UserRole.ADMIN)) expiration = jwtProvider.getADMIN_EXPIRE_SEC_TIME();
+        if(userRole.equals(UserRole.ADMIN)) {
+            System.out.println("Admin Extended");
+            expiration = jwtProvider.getADMIN_EXPIRE_SEC_TIME();
+        }
 
         String newAccessToken = jwtProvider.createAccessToken(userId,userRole);
         TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken, expiration);
@@ -382,6 +387,25 @@ public class AuthServiceImplement implements AuthService {
             return ResponseDto.databaseError();
         }
         return ResponseDto.success(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<? super UserInfoResponseDto> getUserInfo(String userId) {
+        
+        UserEntity user = null;
+        UserInterestsEntity userInterestsEntity = null;
+        UserInterestVO userInterestVO = null;
+
+        try {
+            user = userRepository.findByUserId(userId);
+            userInterestsEntity = userInterestsRepository.findByUserId(userId);
+            userInterestVO = new UserInterestVO(userInterestsEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return UserInfoResponseDto.success(user, userInterestVO);
     }
 
 
