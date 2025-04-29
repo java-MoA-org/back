@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 🔓 인증 없이 접근 허용할 경로들
             if (path.startsWith("/profile/file/") ||
-            path.startsWith("/api/v1/user-page/images/file/upload") ||
+                path.startsWith("/api/v1/user-page/images/file/upload") ||
                 path.startsWith("/board") ||
                 path.startsWith("/notice") ||
                 path.startsWith("/used-trade") ||
