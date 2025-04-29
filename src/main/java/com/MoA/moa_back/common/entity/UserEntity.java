@@ -65,4 +65,4 @@ public class UserEntity {
         }
         return "http://localhost:4000/profile/file/" + this.profileImage;
     }
-}
+}//테스트 
