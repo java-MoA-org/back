@@ -17,6 +17,7 @@ import com.MoA.moa_back.common.dto.response.auth.EmailVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.UserInfoResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,4 +37,5 @@ public interface AuthService {
     ResponseEntity<? super EmailVerifyResponseDto> verifyEmail(EmailCheckRequestDto requestDto);
     ResponseEntity<? super FindIdResponseDto> verifyEmailVC(EmailCodeVerifyRequestDto requestDto);
     ResponseEntity<ResponseDto> patchPassword(PatchPasswordRequestDto requestDto, String userId);
+    ResponseEntity<? super UserInfoResponseDto> getUserInfo(String userId);
 }

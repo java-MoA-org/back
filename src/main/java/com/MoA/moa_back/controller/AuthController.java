@@ -20,6 +20,7 @@ import com.MoA.moa_back.common.dto.response.auth.PhoneNumberVerifyResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.SignInResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.TokenRefreshResponseDto;
 import com.MoA.moa_back.common.dto.response.auth.FindIdResponseDto;
+import com.MoA.moa_back.common.dto.response.auth.UserInfoResponseDto;
 import com.MoA.moa_back.service.AuthService;
 import com.MoA.moa_back.service.ImageService;
 
@@ -37,6 +38,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @RestController
@@ -144,4 +147,13 @@ public class AuthController {
         ResponseEntity<ResponseDto> response = authService.patchPassword(requestBody, userId);
         return response;
     }
+
+    @GetMapping("/userInfo")
+    public ResponseEntity<? super UserInfoResponseDto> getUserInfo(@AuthenticationPrincipal String userId) {
+        ResponseEntity<? super UserInfoResponseDto> response = authService.getUserInfo(userId);
+        System.out.println(response.getBody());
+        return response;
+    }
+    
+    
 }
