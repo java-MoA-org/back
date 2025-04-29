@@ -227,11 +227,11 @@ public class AuthServiceImplement implements AuthService {
                 userInterestsRepository.save(interestsEntity);
             }
 
-            return ResponseDto.success(HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.databaseError();
         }
+        return ResponseDto.success(HttpStatus.CREATED);
     }
 
     @Override

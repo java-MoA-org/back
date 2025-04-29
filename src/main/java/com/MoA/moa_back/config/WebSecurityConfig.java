@@ -71,6 +71,9 @@
                     .requestMatchers("/api/news/**").permitAll()
                     .requestMatchers("/api/v1/user-page/boards/*").permitAll()
                     .requestMatchers("/api/v1/user-page/images/file/**").permitAll()
+
+                    .requestMatchers(HttpMethod.POST,"/api/v1/alert/*").authenticated()
+
                     .requestMatchers("/home/**").permitAll()
                     .anyRequest().authenticated()
                 )
