@@ -89,8 +89,8 @@ public class OAuth2ServiceImplement extends DefaultOAuth2UserService{
             userId = userEntity.getUserId();
             userRole = userEntity.getUserRole();
             String accessToken = jwtProvider.createAccessToken(userId, userRole);
-        
             elements.put("accessToken", accessToken);
+
             customOAuth2User = new CustomOAuth2User(userId, elements, true);
         }
         

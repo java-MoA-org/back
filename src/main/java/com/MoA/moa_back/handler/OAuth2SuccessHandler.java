@@ -52,10 +52,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         refreshCookie.setPath("/");
         refreshCookie.setMaxAge(60 * 60 * 24); // 1일
         response.addCookie(refreshCookie);
-      
+        response.addCookie(cookie);
+        response.sendRedirect(oAuthClientMain);
 
-      response.addCookie(cookie);
-      response.sendRedirect(oAuthClientMain);
+        System.out.println(response);
     }
     // description: 회원가입 X //
     else {      

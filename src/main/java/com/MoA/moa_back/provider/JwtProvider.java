@@ -109,6 +109,8 @@ public class JwtProvider {
         String userId = null;
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         try {
+            System.out.println("검증할 JWT: " + jwt);
+
             userId = Jwts.parserBuilder()
                          .setSigningKey(key)
                          .build()
