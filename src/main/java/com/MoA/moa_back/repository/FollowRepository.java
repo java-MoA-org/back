@@ -12,4 +12,5 @@ import com.MoA.moa_back.common.entity.FollowId;
 public interface FollowRepository extends JpaRepository<FollowEntity, FollowId> {
   List<FollowEntity> findByFollower(String userId);
   List<FollowEntity> findByFollowee(String userId);
+  FollowEntity findByFollowerAndFollowee(String FollowerId, String FolloweeId);
 }
