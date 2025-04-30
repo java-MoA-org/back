@@ -1,10 +1,13 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.Follow.GetFollowResponseDto;
 import com.MoA.moa_back.common.entity.FollowEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.repository.FollowRepository;
@@ -27,20 +30,38 @@ public class FollowServiceImplement implements FollowService{
     try{
       UserEntity user = userRepository.findByUserNickname(followeeNickname);
 
-      // pathvariable로 받은 닉네임을 꺼내서 userid를 받아 followeeid를 변경
-      // dto.setFolloweeId(user.getUserId());
-      // dto.setFollowerId(userId);
       if(user.getUserId().equals(followerUserId)){
         return ResponseDto.validationFail();
       }
       
-      FollowEntity followEntity = new FollowEntity(user.getUserId(), followerUserId);
-      followRepository.save(followEntity);
+      // FollowEntity 
+      FollowEntity followEntity = followRepository.findByFollowerAndFollowee(followerUserId, user.getUserId());
+      if(followEntity == null){
+        followEntity = new FollowEntity(followerUserId, user.getUserId());
+        followRepository.save(followEntity);
+      }else{
+        followRepository.delete(followEntity);
+      }
     }catch(Exception e){
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
     return ResponseDto.success(HttpStatus.CREATED);
+  }
+
+  @Override
+  public ResponseEntity<? super GetFollowResponseDto> getFollow(String userPageNickname) {
+    try{
+      UserEntity user = userRepository.findByUserNickname(userPageNickname);
+      if(user == null) return ResponseDto.noExistUser();
+      List<FollowEntity> followers = followRepository.findByFollower(user.getUserId()); 
+      List<FollowEntity> followees = followRepository.findByFollowee(user.getUserId());
+      
+      return GetFollowResponseDto.success(followers, followees);
+    }catch(Exception e){
+      e.printStackTrace();
+      return ResponseDto.databaseError();
+    }
   }
   
 }

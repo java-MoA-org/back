@@ -12,7 +12,7 @@ import lombok.Getter;
 public class ResponseDto {
     private String code;
     private String message;
-    private Object data; 
+    private Object data;
 
     // 기본 생성자
     protected ResponseDto() {
