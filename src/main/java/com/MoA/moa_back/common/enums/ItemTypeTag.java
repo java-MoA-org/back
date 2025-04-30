@@ -1,5 +1,7 @@
 package com.MoA.moa_back.common.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 // 중고거래 상품 타입 태그 //
 public enum ItemTypeTag {
   ELECTRONICS("전자기기"),
@@ -21,4 +23,14 @@ public enum ItemTypeTag {
     return displayName;
   }
 
+  @JsonCreator
+  public static ItemTypeTag from(String input) {
+    for (ItemTypeTag tag : values()) {
+      if (tag.name().equalsIgnoreCase(input) || tag.displayName.equals(input)) {
+        return tag;
+      }
+    }
+    throw new IllegalArgumentException("Unknown itemTypeTag: " + input);
+  }
 }
+
