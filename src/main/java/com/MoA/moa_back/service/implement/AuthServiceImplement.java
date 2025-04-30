@@ -253,17 +253,20 @@ public class AuthServiceImplement implements AuthService {
 
             Cookie accessCookie = null;
             Cookie refreshCookie = null;
+
+            
             if(userRole.equals(UserRole.ADMIN)){
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
                 accessCookie.setMaxAge(jwtProvider.getADMIN_EXPIRE_SEC_TIME());
-
+                
                 refreshCookie = new Cookie("refreshToken", refreshToken);
                 refreshCookie.setHttpOnly(false);
                 refreshCookie.setPath("/");
                 refreshCookie.setMaxAge(jwtProvider.getREFRESH_EXPIRE_SEC_TIME());
             }else{
+                System.out.println("log3 userRole : " + userRole);
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
@@ -273,10 +276,14 @@ public class AuthServiceImplement implements AuthService {
                 refreshCookie.setHttpOnly(false);
                 refreshCookie.setPath("/");
                 refreshCookie.setMaxAge(jwtProvider.getREFRESH_EXPIRE_SEC_TIME());
+
             }
             
             response.addCookie(refreshCookie);
             response.addCookie(accessCookie);
+            System.out.println("accessToken Set-Cookie 헤더: " + accessCookie.toString());
+
+
             
         } catch (Exception e) {
             e.printStackTrace();
