@@ -37,7 +37,7 @@ public class FollowServiceImplement implements FollowService{
       // FollowEntity 
       FollowEntity followEntity = followRepository.findByFollowerAndFollowee(followerUserId, user.getUserId());
       if(followEntity == null){
-        followEntity = new FollowEntity(followerUserId, user.getUserId());
+        followEntity = new FollowEntity(user.getUserId(), followerUserId);
         followRepository.save(followEntity);
       }else{
         followRepository.delete(followEntity);

@@ -13,8 +13,8 @@ import lombok.Getter;
 
 @Getter
 public class GetFollowResponseDto extends ResponseDto{
-  private List<String> followers;
-  private List<String> followees;
+  private List<String> followers; // 자신을 팔로우 하는
+  private List<String> followees; // 자신이 팔로우 하는
 
   private GetFollowResponseDto(List<FollowEntity> followers, List<FollowEntity> followees){
     this.followers = new ArrayList<>(); 
