@@ -281,11 +281,40 @@ public class BoardServiceImplement implements BoardService {
       } else {
         boardLikeRepository.deleteByBoardSequenceAndUserId(boardSequence, userId);
       }
+      int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
+    
+      boolean liked = !hasLiked;
 
-      return ResponseDto.success(HttpStatus.OK);
+      return ResponseDto.success(HttpStatus.OK, new LikeData(likeCount, liked));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
+    }
+  }
+
+  public class LikeData {
+    private int likeCount;
+    private boolean liked;
+
+    public LikeData(int likeCount, boolean liked) {
+      this.likeCount = likeCount;
+      this.liked = liked;
+    }
+
+    public int getLikeCount() {
+      return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+      this.likeCount = likeCount;
+    }
+
+    public boolean isLiked() {
+      return liked;
+    }
+
+    public void setLiked(boolean liked) {
+      this.liked = liked;
     }
   }
 
