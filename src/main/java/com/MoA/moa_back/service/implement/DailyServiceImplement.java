@@ -256,11 +256,11 @@ public class DailyServiceImplement implements DailyService {
   @Override
   public ResponseEntity<ResponseDto> putDailyBoardLikeCount(Integer dailySequence, String userId) {
     try {
-      boolean exists = dailyRepository.existsByDailySequence(dailySequence);
-      if (!exists) return ResponseDto.noExistDaily();
+      boolean existDaily = dailyRepository.existsByDailySequence(dailySequence);
+      if (!existDaily) return ResponseDto.noExistDaily();
 
-      boolean liked = dailyLikeRepository.existsByDailySequenceAndUserId(dailySequence, userId);
-      if (liked) {
+      boolean hasLiked = dailyLikeRepository.existsByDailySequenceAndUserId(dailySequence, userId);
+      if (hasLiked) {
         dailyLikeRepository.deleteByDailySequenceAndUserId(dailySequence, userId);
       } else {
         DailyLikeEntity like = new DailyLikeEntity();
@@ -268,11 +268,40 @@ public class DailyServiceImplement implements DailyService {
         like.setUserId(userId);
         dailyLikeRepository.save(like);
       }
+      int likeCount = dailyLikeRepository.countByDailySequence(dailySequence);
+    
+      boolean liked = !hasLiked;
 
-      return ResponseDto.success(HttpStatus.OK);
+      return ResponseDto.success(HttpStatus.OK, new LikeData(likeCount, liked));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
+    }
+  }
+
+  public class LikeData {
+    private int likeCount;
+    private boolean liked;
+
+    public LikeData(int likeCount, boolean liked) {
+      this.likeCount = likeCount;
+      this.liked = liked;
+    }
+
+    public int getLikeCount() {
+      return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+      this.likeCount = likeCount;
+    }
+
+    public boolean isLiked() {
+      return liked;
+    }
+
+    public void setLiked(boolean liked) {
+      this.liked = liked;
     }
   }
 

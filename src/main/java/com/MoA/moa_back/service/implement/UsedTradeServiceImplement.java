@@ -268,11 +268,11 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   @Override
   public ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId) {
     try {
-      boolean exists = usedTradeRepository.existsByTradeSequence(tradeSequence);
-      if (!exists) return ResponseDto.noExistUsedTrade();
+      boolean existTrade = usedTradeRepository.existsByTradeSequence(tradeSequence);
+      if (!existTrade) return ResponseDto.noExistUsedTrade();
 
-      boolean liked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
-      if (liked) {
+      boolean hasLiked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
+      if (hasLiked) {
         usedTradeLikeRepository.deleteByTradeSequenceAndUserId(tradeSequence, userId);
       } else {
         UsedTradeLikeEntity like = new UsedTradeLikeEntity();
@@ -280,11 +280,41 @@ public class UsedTradeServiceImplement implements UsedTradeService {
         like.setUserId(userId);
         usedTradeLikeRepository.save(like);
       }
+      int likeCount = usedTradeLikeRepository.countByTradeSequence(tradeSequence);
+    
+      boolean liked = !hasLiked;
 
-      return ResponseDto.success(HttpStatus.OK);
+      return ResponseDto.success(HttpStatus.OK, new LikeData(likeCount, liked));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+
+  public class LikeData {
+    private int likeCount;
+    private boolean liked;
+
+    public LikeData(int likeCount, boolean liked) {
+      this.likeCount = likeCount;
+      this.liked = liked;
+    }
+
+    public int getLikeCount() {
+      return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+      this.likeCount = likeCount;
+    }
+
+    public boolean isLiked() {
+      return liked;
+    }
+
+    public void setLiked(boolean liked) {
+      this.liked = liked;
+    }
+  }
+
 }
