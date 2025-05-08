@@ -3,6 +3,7 @@ package com.MoA.moa_back.common.entity;
 import java.time.LocalDateTime;
 
 import com.MoA.moa_back.common.dto.request.alert.CommentAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.LikeAlertRequestDto;
 import com.MoA.moa_back.common.enums.AlertType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity(name="alert")
 @Table(name="alert")
@@ -22,6 +24,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AlertEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +35,22 @@ public class AlertEntity {
   private LocalDateTime creationDate;
   private String link;
   private boolean isRead;
-  private AlertType type;
+  private String type;
 
-  public AlertEntity(CommentAlertRequestDto alertRequestDto, String userNickname, String writerId){
+  public AlertEntity(CommentAlertRequestDto alertRequestDto, String userNickname, String writerId, String alertType){
     this.userId = writerId;
     this.content = userNickname + "님의 댓글 : " + alertRequestDto.getComment();
     this.creationDate = LocalDateTime.now();
-    this.link = "localhost:3000/"+alertRequestDto.getBoardType() +"/"+ alertRequestDto.getSequence();
-    this.type = AlertType.COMMENT;
+    this.link = alertRequestDto.getBoardType() +"/"+ alertRequestDto.getSequence();
+    this.type = alertType;
+  }
+
+  public AlertEntity(LikeAlertRequestDto alertRequestDto, String userNickname, String writerId, String alertType){
+    this.userId = writerId;
+    this.content = userNickname + "님이 좋아요를 누르셨습니다.";
+    this.creationDate = LocalDateTime.now();
+    this.link = alertRequestDto.getBoardType() + "/" + alertRequestDto.getSequence();
+    this.type = alertType;
   }
 }
 

@@ -30,4 +30,7 @@ public interface ResponseCode {
     String TOKEN_TIME_OUT = "TTO";
 
     String PASSWORD_NOT_RIGHT = "PNR";
+
+    String SAME_USER = "SUR";
+    String CANCLE_LIKE = "CL";
   }
