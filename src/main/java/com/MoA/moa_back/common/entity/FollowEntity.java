@@ -1,6 +1,5 @@
 package com.MoA.moa_back.common.entity;
 
-import com.MoA.moa_back.common.dto.request.Follow.PostFollowRequestDto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

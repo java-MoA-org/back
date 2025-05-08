@@ -24,5 +24,5 @@ public interface UserPageService {
   ResponseEntity<ResponseDto> nicknameCheck(NicknameCheckRequestDto dto);
   ResponseEntity<ResponseDto> passwordVerify(PostPasswordVerifyRequestDto dto, String userId);
   ResponseEntity<ResponseDto> patchPasswordChange(PatchPasswordUserPageRequestDto dto, String userId);
-  
+
 } 
