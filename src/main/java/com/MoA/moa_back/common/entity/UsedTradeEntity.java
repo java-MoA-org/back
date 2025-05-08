@@ -56,7 +56,7 @@ public class UsedTradeEntity {
 
   @Column(nullable = false)
   private Integer views = 0;
-  
+
   private String userId;
   private String title;
   private String content;
@@ -74,8 +74,8 @@ public class UsedTradeEntity {
     this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
-    this.transactionStatus = TransactionStatus.ON_SALE; // 기본값: 판매중
+    this.images = new ArrayList<>();
+    this.transactionStatus = TransactionStatus.ON_SALE;
   }
 
   public void patch(PatchUsedTradeRequestDto dto) {
@@ -84,13 +84,13 @@ public class UsedTradeEntity {
     this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
   }
-  
 
-  // 판매완료로 상태 변경
   public void markAsSold() {
     this.transactionStatus = TransactionStatus.SOLD_OUT;
   }
 
+  public void addImages(List<String> imageUrls) {
+    this.images.addAll(imageUrls);
+  }
 }

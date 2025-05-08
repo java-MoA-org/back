@@ -1,5 +1,8 @@
 package com.MoA.moa_back.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,10 +20,11 @@ public class ImageUploadController {
   private final ImageUploadService imageUploadService;
 
   @PostMapping("/upload")
-  public ResponseEntity<ResponseDto> uploadImage(
-    @RequestParam("file") MultipartFile file,
+  public ResponseEntity<ResponseDto> uploadImages(
+    @RequestParam("file") List<MultipartFile> files,
     @RequestParam(value = "type", defaultValue = "board") String type
   ) {
-    return imageUploadService.uploadImage(file, type);
+    List<String> urls = imageUploadService.uploadImages(files, type);
+    return ResponseDto.success(HttpStatus.OK, urls);
   }
 }

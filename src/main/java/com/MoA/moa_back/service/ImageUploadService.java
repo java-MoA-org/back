@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -96,5 +98,20 @@ public class ImageUploadService {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
+  }
+
+  public List<String> uploadImages(List<MultipartFile> files, String type) {
+    List<String> uploadedImageUrls = new ArrayList<>();
+    
+    for (MultipartFile file : files) {
+      ResponseEntity<ResponseDto> uploadResponse = uploadImage(file, type);
+      if (uploadResponse.getStatusCode() == HttpStatus.OK) {
+        String uploadedImageUrl = (String) uploadResponse.getBody().getData();
+        uploadedImageUrls.add(uploadedImageUrl);
+      } else {
+        uploadedImageUrls.add(null);
+      }
+    }
+    return uploadedImageUrls;
   }
 }

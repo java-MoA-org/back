@@ -1,8 +1,11 @@
 package com.MoA.moa_back.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
@@ -22,11 +25,16 @@ public class UsedTradeController {
   private final UsedTradeService usedTradeService;
 
   // API: 중고거래 게시글 작성 //
-  @PostMapping({"", "/"})
+  @PostMapping(path = {"", "/"}, consumes = "multipart/form-data")
   public ResponseEntity<ResponseDto> postUsedTrade(
-    @RequestBody @Valid PostUsedTradeRequestDto requestBody,
+    @RequestPart("dto") @Valid PostUsedTradeRequestDto requestBody,
+    @RequestPart("imageList") List<MultipartFile> imageList,
     @AuthenticationPrincipal String userId
   ) {
+    System.out.println("Received DTO: " + requestBody);
+    System.out.println("Received images count: " + imageList.size());
+
+    requestBody.setImageList(imageList);
     ResponseEntity<ResponseDto> respons = usedTradeService.postUsedTrade(requestBody, userId);
     return respons;
   }
@@ -52,12 +60,14 @@ public class UsedTradeController {
   }
 
   // API: 중고거래 게시글 수정 //
-  @PatchMapping("/{tradeSequence}")
+  @PatchMapping(path = "/{tradeSequence}", consumes = "multipart/form-data")
   public ResponseEntity<ResponseDto> patchUsedTrade(
-    @RequestBody @Valid PatchUsedTradeRequestDto requestBody,
     @PathVariable("tradeSequence") Integer tradeSequence,
+    @RequestPart("dto") @Valid PatchUsedTradeRequestDto requestBody,
+    @RequestPart(value = "imageList", required = false) List<MultipartFile> imageList,
     @AuthenticationPrincipal String userId
   ) {
+    requestBody.setImageList(imageList);
     ResponseEntity<ResponseDto> respons = usedTradeService.patchUsedTrade(requestBody, tradeSequence, userId);
     return respons;
   }

@@ -3,6 +3,8 @@ package com.MoA.moa_back.common.dto.request.usedtrade;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.MoA.moa_back.common.enums.ItemTypeTag;
 import com.MoA.moa_back.common.enums.UsedItemStatusTag;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -46,7 +48,5 @@ public class PostUsedTradeRequestDto {
   private String detailLocation;
 
   @Size(min = 1)
-  private List<String> imageList;
-  
-
+  private List<MultipartFile> imageList;
 }
