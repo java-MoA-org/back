@@ -281,7 +281,6 @@ public class AuthServiceImplement implements AuthService {
             
             response.addCookie(refreshCookie);
             response.addCookie(accessCookie);
-            System.out.println("accessToken Set-Cookie 헤더: " + accessCookie.toString());
 
 
             
@@ -305,6 +304,7 @@ public class AuthServiceImplement implements AuthService {
 
     @Override
     public ResponseEntity<? super TokenRefreshResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("refreshed");
         String refreshToken = jwtProvider.extractRefreshToken(request);
         String userId = null;
         try {

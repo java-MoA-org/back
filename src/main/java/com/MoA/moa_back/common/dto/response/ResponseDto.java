@@ -138,4 +138,14 @@ public class ResponseDto {
         ResponseDto body = new ResponseDto(ResponseCode.PASSWORD_NOT_RIGHT, ResponseMessage.PASSWORD_NOT_RIGHT);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
+
+    public static ResponseEntity<ResponseDto> sameUser() {
+        ResponseDto body = new ResponseDto(ResponseCode.SAME_USER, ResponseMessage.SAME_USER);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    public static ResponseEntity<ResponseDto> cancleLike(){
+        ResponseDto body = new ResponseDto(ResponseCode.CANCLE_LIKE, ResponseMessage.CANCLE_LIKE);
+        return ResponseEntity.status(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS).body(body);
+    }
 }

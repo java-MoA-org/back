@@ -29,4 +29,7 @@ public interface ResponseMessage {
     String TOKEN_TIME_OUT = "Token Time Out";
 
     String PASSWORD_NOT_RIGHT = "Password Not Right";
+
+    String SAME_USER = "Same User";
+    String CANCLE_LIKE = "Cancle Like";
   }
