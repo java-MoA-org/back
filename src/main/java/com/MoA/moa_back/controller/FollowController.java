@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
+import com.MoA.moa_back.common.dto.response.Follow.GetFollowInfoResponseDto;
 import com.MoA.moa_back.common.dto.response.Follow.GetFollowResponseDto;
 import com.MoA.moa_back.service.FollowService;
 
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FollowController {
 
-  private final FollowService followSevice;
+  private final FollowService followService;
 
   @PostMapping("/{nickname}")
   public ResponseEntity<ResponseDto> postFollow(
@@ -29,7 +30,7 @@ public class FollowController {
     @AuthenticationPrincipal String userId,
     @PathVariable("nickname") String followeeNickname
   ){
-    ResponseEntity<ResponseDto> response = followSevice.postFollow(userId, followeeNickname);
+    ResponseEntity<ResponseDto> response = followService.postFollow(userId, followeeNickname);
     return response;
   }
 
@@ -38,7 +39,16 @@ public class FollowController {
     @AuthenticationPrincipal String userId,
     @PathVariable("nickname") String UserPageNickname
   ){
-    ResponseEntity<? super GetFollowResponseDto> response = followSevice.getFollow(UserPageNickname);
+    ResponseEntity<? super GetFollowResponseDto> response = followService.getFollow(UserPageNickname);
+    return response;
+  }
+
+  @GetMapping("/number/info/{nickname}")
+  public ResponseEntity<? super GetFollowInfoResponseDto> getFollowInfo(
+    @AuthenticationPrincipal String userId,
+    @PathVariable("nickname") String UserPageNickname
+  ){
+    ResponseEntity<? super GetFollowInfoResponseDto> response = followService.getFollowInfo(userId, UserPageNickname);
     return response;
   }
 }
