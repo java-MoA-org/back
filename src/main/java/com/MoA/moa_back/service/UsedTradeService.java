@@ -1,6 +1,9 @@
 package com.MoA.moa_back.service;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
@@ -14,16 +17,17 @@ public interface UsedTradeService {
   ResponseEntity<ResponseDto> postUsedTrade(PostUsedTradeRequestDto dto, String userId);
   // method: 게시판(태그) 별 게시글 목록 조회 (페이징)//
   ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeListByTag(String tag, Integer pageNumber, String sortOption);
-  // method: 일상 게시글 상세 조회 및 조회수 증가 //
+  // method: 중고거래 게시글 상세 조회 및 조회수 증가 //
   ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(Integer tradeSequence);
-  // method: 일상 게시글 수정 //
+  // method: 중고거래 게시글 수정 //
   ResponseEntity<ResponseDto> patchUsedTrade(PatchUsedTradeRequestDto dto, Integer tradeSequence, String userId);
-  // method: 일상 게시글 삭제 //
+  // method: 중고거래 게시글 삭제 //
   ResponseEntity<ResponseDto> deleteUsedTrade(Integer tradeSequence, String userId);
   // method: 중고거래글 (태그) 별 제목 검색 //
   ResponseEntity<? super GetUsedTradeListResponseDto> searchUsedTradeList(String tag, String keyword, Integer pageNumber);
+  // method: 중고거래 게시글에 이미지 업로드 //
+  ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files);
 
   // method: 특정 게시글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId);
-
 }
