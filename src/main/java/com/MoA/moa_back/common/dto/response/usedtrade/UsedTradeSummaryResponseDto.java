@@ -27,4 +27,5 @@ public class UsedTradeSummaryResponseDto {
   private String userNickname;
   private Integer price;
   private String itemTypeTag;
+  private String transactionStatus;
 }

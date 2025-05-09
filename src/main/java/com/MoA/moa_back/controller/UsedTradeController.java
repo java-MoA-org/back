@@ -103,4 +103,13 @@ public class UsedTradeController {
     return response;
   }
 
+  // API: 중고거래 게시글 찜하기 or 취소하기 //
+  @PatchMapping("/{tradeSequence}/status")
+  public ResponseEntity<ResponseDto> patchTransactionStatus(
+    @PathVariable Integer tradeSequence
+  ) {
+    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence);
+    return response;
+  }
+
 }
