@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.MoA.moa_back.common.dto.request.alert.FollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.Follow.GetFollowInfoResponseDto;
 import com.MoA.moa_back.common.dto.response.Follow.GetFollowResponseDto;
@@ -17,6 +18,7 @@ import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.repository.FollowRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.FollowService;
+import com.MoA.moa_back.service.AlertService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,15 +26,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FollowServiceImplement implements FollowService{
 
-
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final AlertService alertService;
 
 // 팔로우 클릭 시
   @Override
   public ResponseEntity<ResponseDto> postFollow(String followerUserId, String followeeNickname) {
     try{
       UserEntity user = userRepository.findByUserNickname(followeeNickname);
+      UserEntity follower = userRepository.findByUserId(followerUserId);
 
       if(user.getUserId().equals(followerUserId)){
         return ResponseDto.validationFail();
@@ -43,6 +46,8 @@ public class FollowServiceImplement implements FollowService{
       if(followEntity == null){
         followEntity = new FollowEntity(user.getUserId(), followerUserId);
         followRepository.save(followEntity);
+
+        alertService.followAlertPost(new FollowAlertRequestDto(user.getUserId(), follower.getUserNickname()));
       }else{
         followRepository.delete(followEntity);
       }
