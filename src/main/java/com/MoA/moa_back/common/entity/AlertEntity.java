@@ -3,6 +3,7 @@ package com.MoA.moa_back.common.entity;
 import java.time.LocalDateTime;
 
 import com.MoA.moa_back.common.dto.request.alert.CommentAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.FollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.request.alert.LikeAlertRequestDto;
 import com.MoA.moa_back.common.enums.AlertType;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -51,6 +52,15 @@ public class AlertEntity {
     this.creationDate = LocalDateTime.now();
     this.link = alertRequestDto.getBoardType() + "/" + alertRequestDto.getSequence();
     this.type = alertType;
+  }
+
+  public AlertEntity(FollowAlertRequestDto followAlertRequestDto){
+    System.out.println("userId:"+followAlertRequestDto.getUserId());
+    this.userId = followAlertRequestDto.getUserId();
+    this.content = followAlertRequestDto.getFollowerNickname() + "님이 팔로우 하셨습니다.";
+    this.creationDate = LocalDateTime.now();
+    this.link = "userpage/"+followAlertRequestDto.getFollowerNickname();
+    this.type = AlertType.FOLLOW.toString();
   }
 }
 

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.MoA.moa_back.common.dto.request.alert.CommentAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.FollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.request.alert.LikeAlertRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.alert.GetAlertResponseDto;
@@ -132,6 +133,20 @@ public class AlertServiceImplement implements AlertService{
     }
 
     @Override
+    public ResponseEntity<ResponseDto> followAlertPost(FollowAlertRequestDto followAlertRequestDto) {
+        
+        AlertEntity alertEntity = null;
+        try {
+            alertEntity = new AlertEntity(followAlertRequestDto);
+            alertRepository.save(alertEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseDto.success(HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity<ResponseDto> readAlertPatch(Integer alertId, String userId) {
         
         try {
@@ -189,6 +204,8 @@ public class AlertServiceImplement implements AlertService{
         }
         return ResponseDto.success(HttpStatus.OK);
     }
+
+    
 
     
     

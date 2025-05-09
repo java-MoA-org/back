@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     boolean existed = oAuth2User.isExisted();
 
     
-    // description: 회원가입 O //
+    // 회원가입이 되어있는 경우
     if (existed) {
         String accessToken = (String) attributes.get("accessToken");
         Cookie cookie = new Cookie("accessToken", accessToken);
@@ -57,7 +57,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         System.out.println(response);
     }
-    // description: 회원가입 X //
+    // 회원가입이 되어있지 않은 경우
     else {      
       String joinType = (String) attributes.get("joinType");
       Cookie joinTypeCookie = new Cookie("joinType", joinType);
