@@ -107,9 +107,10 @@ public class JwtProvider {
 
     public String validate(String jwt){
         String userId = null;
+        System.out.println("🔍 [JWT 토큰 디버깅] 입력 토큰: " + jwt);
         Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         try {
-            System.out.println("검증할 JWT: " + jwt);
+            System.out.println("🔐 [JWT 검증 시도] 토큰: " + jwt);
 
             userId = Jwts.parserBuilder()
                          .setSigningKey(key)
@@ -117,9 +118,13 @@ public class JwtProvider {
                          .parseClaimsJws(jwt)
                          .getBody()
                          .getSubject();
+
+            System.out.println("✅ [JWT 유효] userId: " + userId);
         } catch (ExpiredJwtException e) {
+            System.out.println("❌ [JWT 만료] " + e.getMessage());
             throw new CustomJwtException("토큰이 만료되었습니다.", JwtErrorCode.EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("❌ [JWT 무효] " + e.getMessage());
             throw new CustomJwtException("유효하지 않은 토큰입니다.", JwtErrorCode.INVALID);
         }
         return userId;

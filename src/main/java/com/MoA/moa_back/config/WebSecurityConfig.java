@@ -72,8 +72,11 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/user-page/boards/*").permitAll()
                     .requestMatchers("/api/v1/user-page/images/file/**").permitAll()
                     .requestMatchers("/api/v1/follow/**").permitAll()
+                    .requestMatchers("/api/message/**").authenticated()
 
                     .requestMatchers("/api/v1/alert/**").authenticated()
+                    .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/api/user/*/profile").permitAll() 
 
                 .requestMatchers("/home/**").permitAll()
                 .anyRequest().authenticated()

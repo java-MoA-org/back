@@ -55,7 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/used-trade") ||
                 path.startsWith("/daily") ||
                 path.startsWith("/news") ||
-                path.startsWith("/home")) {
+                path.startsWith("/home") ||
+                (path.startsWith("/api/user/") && path.endsWith("/profile"))) {
 
                 filterChain.doFilter(request, response);
                 return;
@@ -63,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // token 추출
             String token = getToken(request);
+            System.out.println("[🔐 JWT 필터] Authorization 헤더: " + request.getHeader("Authorization"));
             if (token == null) {
                 System.out.println("token이 비었습니다.");
                 filterChain.doFilter(request, response);
@@ -70,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String userId = jwtProvider.validate(token);
+            System.out.println("[🔐 JWT 필터] 검증된 userId: " + userId);
             if (userId == null) {
                 System.out.println("token으로 가져온 id가 없습니다.");
                 filterChain.doFilter(request, response);
@@ -77,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             UserEntity userEntity = userRepository.findByUserId(userId);
+            System.out.println("[🔐 JWT 필터] 불러온 유저 닉네임: " + (userEntity != null ? userEntity.getUserNickname() : "null"));
             if (userEntity == null) {
                 System.out.println("id로 찾은 유저가 없습니다.");
                 filterChain.doFilter(request, response);
