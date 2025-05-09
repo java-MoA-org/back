@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 // class: JWT Bearer Token 인증 처리를 위한 필터 //
 // description: 필터 처리로 인증이 완료되면 접근 주체의 값에는 userId가 주입 //
 
+// 모든 요청마다 1회 실행, jwt 토큰이 있으면 사용자 인증
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -45,6 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String path = request.getRequestURI();
 
             // 인증 없이 접근 허용할 경로들
+            // @AuthenticationPrincipal이 막힘.
             if (path.startsWith("/api/v1/auth/refresh") ||
                 path.startsWith("/profile/file/") ||
                 path.startsWith("/api/v1/user-page/images/file/upload") ||
@@ -59,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
+            // token 추출
             String token = getToken(request);
             if (token == null) {
                 System.out.println("token이 비었습니다.");
@@ -84,10 +87,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userRole = userEntity.getUserRole().name();
             List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(userRole);
 
+            // 인증 정보 생성 및 저장
             AbstractAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userId, null, authorities);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
             securityContext.setAuthentication(authenticationToken);
             SecurityContextHolder.setContext(securityContext);
@@ -99,6 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
     
+    // 요청 헤더에서 토큰 추출
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         boolean hasAuthorization = StringUtils.hasText(authorization);

@@ -30,43 +30,49 @@ public class AlertController {
     
     private final AlertService alertService;
 
+    // 유저 알림 가져오기
     @GetMapping("")
     public ResponseEntity<? super GetAlertResponseDto> getMethodName(@AuthenticationPrincipal String userId) {
         ResponseEntity<? super GetAlertResponseDto> response = alertService.getAlert(userId);
         return response;
     }
     
-
+    // 댓글 알림 생성
     @PostMapping("/comment")
     public ResponseEntity<ResponseDto> commentAlert(@RequestBody CommentAlertRequestDto requestDto, @AuthenticationPrincipal String userId) {
         ResponseEntity<ResponseDto> response = alertService.commentAlertPost(requestDto, userId);
         return response;
     }
 
+    // 좋아요 알림 생성
     @PostMapping("/like")
     public ResponseEntity<ResponseDto> likeAlert(@RequestBody LikeAlertRequestDto requestDto, @AuthenticationPrincipal String userId) {
         ResponseEntity<ResponseDto> response = alertService.likeAlertPost(requestDto, userId);
         return response;
     }
     
+    // 알림 읽기
     @PatchMapping("/read/{alertId}")
     public ResponseEntity<ResponseDto> readAlert(@PathVariable Integer alertId, @AuthenticationPrincipal String userId) {
         ResponseEntity<ResponseDto> response = alertService.readAlertPatch(alertId, userId);
         return response;
     }
 
+    // 모든 알림 읽기
     @PatchMapping("/readAll")
     public ResponseEntity<ResponseDto> readAllAlert(@AuthenticationPrincipal String userId){
         ResponseEntity<ResponseDto> response = alertService.readAllAlertPatch(userId);
         return response;
     }
 
+    // 알림 삭제
     @DeleteMapping("/delete/{alertId}")
     public ResponseEntity<ResponseDto> deleteAlert(@PathVariable("alertId") Integer alertId, @AuthenticationPrincipal String userId){
         ResponseEntity<ResponseDto> response = alertService.deleteAlert(alertId, userId);
         return response;
     }
 
+    // 모든 알림 삭제
     @DeleteMapping("/deleteAll")
     public ResponseEntity<ResponseDto> deleteAllAlert(@AuthenticationPrincipal String userId){
         ResponseEntity<ResponseDto> response = alertService.deleteAlertAll(userId);
