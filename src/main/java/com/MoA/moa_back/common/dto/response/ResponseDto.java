@@ -1,5 +1,7 @@
 package com.MoA.moa_back.common.dto.response;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -40,6 +42,14 @@ public class ResponseDto {
         body.data = data;
         return ResponseEntity.status(status).body(body);
     }
+
+    // 성공 응답 - list 포함
+    public static ResponseEntity<ResponseDto> success(HttpStatus status, List<String> data) {
+      ResponseDto body = new ResponseDto();
+      body.data = data;
+      return ResponseEntity.status(status).body(body);
+    }
+  
 
     public static ResponseEntity<ResponseDto> validationFail() {
         ResponseDto body = new ResponseDto(ResponseCode.VALIDATION_FAIL, ResponseMessage.VALIDATION_FAIL);
@@ -137,5 +147,15 @@ public class ResponseDto {
     public static ResponseEntity<ResponseDto> passwordNotRight() {
         ResponseDto body = new ResponseDto(ResponseCode.PASSWORD_NOT_RIGHT, ResponseMessage.PASSWORD_NOT_RIGHT);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    public static ResponseEntity<ResponseDto> sameUser() {
+        ResponseDto body = new ResponseDto(ResponseCode.SAME_USER, ResponseMessage.SAME_USER);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    public static ResponseEntity<ResponseDto> cancleLike(){
+        ResponseDto body = new ResponseDto(ResponseCode.CANCLE_LIKE, ResponseMessage.CANCLE_LIKE);
+        return ResponseEntity.status(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS).body(body);
     }
 }

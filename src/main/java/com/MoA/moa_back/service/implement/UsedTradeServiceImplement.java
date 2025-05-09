@@ -1,7 +1,9 @@
 package com.MoA.moa_back.service.implement;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
@@ -24,6 +27,7 @@ import com.MoA.moa_back.common.util.PageUtil;
 import com.MoA.moa_back.repository.UsedTradeLikeRepository;
 import com.MoA.moa_back.repository.UsedTradeRepository;
 import com.MoA.moa_back.repository.UserRepository;
+import com.MoA.moa_back.service.ImageUploadService;
 import com.MoA.moa_back.service.UsedTradeService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,12 +39,19 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   private final UsedTradeRepository usedTradeRepository;
   private final UsedTradeLikeRepository usedTradeLikeRepository;
   private final UserRepository userRepository;
+  private final ImageUploadService imageUploadService;
 
   // method: 중고거래 게시글 작성 //
   @Override
   public ResponseEntity<ResponseDto> postUsedTrade(PostUsedTradeRequestDto dto, String userId) {
     try {
       UsedTradeEntity usedTradeEntity = new UsedTradeEntity(dto, userId);
+  
+      if (dto.getImageList() != null && !dto.getImageList().isEmpty()) {
+        List<String> uploadedImageUrls = imageUploadService.uploadImages(dto.getImageList(), "usedtrade");
+        usedTradeEntity.addImages(uploadedImageUrls);
+      }
+  
       usedTradeRepository.save(usedTradeEntity);
       return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
@@ -174,12 +185,20 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     try {
       UsedTradeEntity entity = usedTradeRepository.findById(tradeSequence).orElse(null);
       if (entity == null) return ResponseDto.noExistUsedTrade();
-
       if (!entity.getUserId().equals(userId)) return ResponseDto.noPermission();
-
-      entity.patch(dto);
+  
+      entity.setTitle(dto.getTitle());
+      entity.setContent(dto.getContent());
+      entity.setPrice(dto.getPrice());
+      entity.setLocation(dto.getLocation());
+      entity.setDetailLocation(dto.getDetailLocation());
+  
+      if (dto.getImageList() != null && !dto.getImageList().isEmpty()) {
+        List<String> uploadedImageUrls = imageUploadService.uploadImages(dto.getImageList(), "usedtrade");
+        entity.addImages(uploadedImageUrls);
+      }
+  
       usedTradeRepository.save(entity);
-
       return ResponseDto.success(HttpStatus.OK);
     } catch (Exception e) {
       e.printStackTrace();
@@ -264,15 +283,43 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
+  // method: 중고거래 게시글에 이미지 업로드 //
+  @Override
+  public ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files) {
+
+    Optional<UsedTradeEntity> usedTradeEntityOptional = usedTradeRepository.findById(tradeSequence);
+    if (!usedTradeEntityOptional.isPresent()) {
+      return ResponseDto.noExistUsedTrade();
+    }
+
+    List<String> uploadedImageUrls = new ArrayList<>();
+
+    for (MultipartFile file : files) {
+      ResponseEntity<ResponseDto> uploadResponse = imageUploadService.uploadImage(file, "usedtrade");
+      if (uploadResponse.getStatusCode() != HttpStatus.OK) {
+        return uploadResponse;
+      }
+
+      String uploadedImageUrl = (String) uploadResponse.getBody().getData();
+      uploadedImageUrls.add(uploadedImageUrl);
+    }
+
+    UsedTradeEntity usedTradeEntity = usedTradeEntityOptional.get();
+    usedTradeEntity.getImages().addAll(uploadedImageUrls);
+    usedTradeRepository.save(usedTradeEntity);
+
+    return ResponseDto.success(HttpStatus.OK, uploadedImageUrls);
+  }
+
   // method: 중고거래 게시글 찜 추가 또는 취소 //
   @Override
   public ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId) {
     try {
-      boolean exists = usedTradeRepository.existsByTradeSequence(tradeSequence);
-      if (!exists) return ResponseDto.noExistUsedTrade();
+      boolean existTrade = usedTradeRepository.existsByTradeSequence(tradeSequence);
+      if (!existTrade) return ResponseDto.noExistUsedTrade();
 
-      boolean liked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
-      if (liked) {
+      boolean hasLiked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
+      if (hasLiked) {
         usedTradeLikeRepository.deleteByTradeSequenceAndUserId(tradeSequence, userId);
       } else {
         UsedTradeLikeEntity like = new UsedTradeLikeEntity();
@@ -280,11 +327,41 @@ public class UsedTradeServiceImplement implements UsedTradeService {
         like.setUserId(userId);
         usedTradeLikeRepository.save(like);
       }
+      int likeCount = usedTradeLikeRepository.countByTradeSequence(tradeSequence);
+    
+      boolean liked = !hasLiked;
 
-      return ResponseDto.success(HttpStatus.OK);
+      return ResponseDto.success(HttpStatus.OK, new LikeData(likeCount, liked));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
   }
+
+  public class LikeData {
+    private int likeCount;
+    private boolean liked;
+
+    public LikeData(int likeCount, boolean liked) {
+      this.likeCount = likeCount;
+      this.liked = liked;
+    }
+
+    public int getLikeCount() {
+      return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+      this.likeCount = likeCount;
+    }
+
+    public boolean isLiked() {
+      return liked;
+    }
+
+    public void setLiked(boolean liked) {
+      this.liked = liked;
+    }
+  }
+
 }

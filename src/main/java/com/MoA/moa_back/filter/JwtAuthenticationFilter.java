@@ -44,8 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String path = request.getRequestURI();
 
-            // 🔓 인증 없이 접근 허용할 경로들
-            if (path.startsWith("/profile/file/") ||
+            // 인증 없이 접근 허용할 경로들
+            if (path.startsWith("/api/v1/auth/refresh") ||
+                path.startsWith("/profile/file/") ||
                 path.startsWith("/api/v1/user-page/images/file/upload") ||
                 path.startsWith("/board") ||
                 path.startsWith("/notice") ||
@@ -60,18 +61,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String token = getToken(request);
             if (token == null) {
+                System.out.println("token이 비었습니다.");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String userId = jwtProvider.validate(token);
             if (userId == null) {
+                System.out.println("token으로 가져온 id가 없습니다.");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             UserEntity userEntity = userRepository.findByUserId(userId);
             if (userEntity == null) {
+                System.out.println("id로 찾은 유저가 없습니다.");
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -80,7 +84,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String userRole = userEntity.getUserRole().name();
             List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(userRole);
 
-            // 인증 정보 SecurityContext에 주입
             AbstractAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userId, null, authorities);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -95,8 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-    // 헤더에서 Bearer 토큰 추출
+    
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         boolean hasAuthorization = StringUtils.hasText(authorization);

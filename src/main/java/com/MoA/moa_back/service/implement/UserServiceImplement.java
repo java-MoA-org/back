@@ -21,7 +21,7 @@ public class UserServiceImplement implements UserService {
 
     private final UserRepository userRepository;
 
-    // ✅ 닉네임 기반 유저 검색
+    // 닉네임 기반 유저 검색
     @Override
     public SearchUserResponseDto searchUser(String keyword) {
         List<UserEntity> users = userRepository.findByUserNicknameContaining(keyword);
@@ -37,7 +37,7 @@ public class UserServiceImplement implements UserService {
         return new SearchUserResponseDto(true, "검색 성공", userList);
     }
 
-    // ✅ userId 기반 유저 정보 조회
+    // userId 기반 유저 정보 조회
     @Override
     public ResponseEntity<? super GetUserInfoResponseDto> getUserInfoById(String userId) {
         UserEntity userEntity = userRepository.findByUserId(userId);
@@ -49,7 +49,7 @@ public class UserServiceImplement implements UserService {
         return GetUserInfoResponseDto.success(userInfoVO);
     }
 
-    // ✅ userId 기반 프로필 이미지 경로 반환
+    // userId 기반 프로필 이미지 경로 반환
     @Override
     public String getUserProfileImagePath(String userId) {
         UserEntity user = userRepository.findByUserId(userId);
@@ -57,7 +57,7 @@ public class UserServiceImplement implements UserService {
         return user.getUserProfileImage();
     }
 
-    // ✅ userId 기반 닉네임 반환
+    // userId 기반 닉네임 반환
     @Override
     public String getUserNickname(String userId) {
         UserEntity user = userRepository.findByUserId(userId);
