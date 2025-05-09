@@ -17,6 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetUserInfoResponseDto extends ResponseDto{
+    private String userId;
     private String userNickname;
     private String userEmail;
     private UserInterestsEntity userInterests;
@@ -26,13 +27,13 @@ public class GetUserInfoResponseDto extends ResponseDto{
     
 
     private GetUserInfoResponseDto(UserInfoVO userInfoVO) {
+        this.userId = userInfoVO.getUserId();
         this.userNickname = userInfoVO.getUserNickname();
         this.userInterests = userInfoVO.getUserInterests();
         this.userEmail = userInfoVO.getUserEmail();
         this.userIntroduce = userInfoVO.getUserIntroduce();
         this.userProfileImage = userInfoVO.getUserProfileImage();
         this.joinType = userInfoVO.getJoinType();
-        
     }
 
     public static ResponseEntity<GetUserInfoResponseDto> success(UserInfoVO userInfoVO){

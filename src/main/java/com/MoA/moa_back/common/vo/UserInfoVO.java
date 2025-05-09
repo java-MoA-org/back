@@ -32,5 +32,6 @@ public class UserInfoVO {
         this.joinType = userEntity.getJoinType();
 
         this.userInterests = userInterestsEntity;
+
     }
 }
