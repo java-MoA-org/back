@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
-@EntityListeners(AuditingEntityListener.class) // ✅ JPA Auditing 활성화
+@EntityListeners(AuditingEntityListener.class) // JPA Auditing 활성화
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,7 +29,7 @@ public class NotificationEntity {
 
     private int views = 0;
 
-    @CreatedDate // ✅ 생성 시 자동 날짜 저장
+    @CreatedDate // 생성 시 자동 날짜 저장
     @Column(nullable = false, updatable = false)
     private LocalDateTime creationDate;
 }
