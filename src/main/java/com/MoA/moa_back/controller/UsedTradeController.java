@@ -25,15 +25,12 @@ public class UsedTradeController {
   private final UsedTradeService usedTradeService;
 
   // API: 중고거래 게시글 작성 //
-  @PostMapping(path = {"", "/"}, consumes = "multipart/form-data")
+  @PostMapping(path = {"", "/"})
   public ResponseEntity<ResponseDto> postUsedTrade(
     @RequestPart("dto") @Valid PostUsedTradeRequestDto requestBody,
     @RequestPart("imageList") List<MultipartFile> imageList,
     @AuthenticationPrincipal String userId
   ) {
-    System.out.println("Received DTO: " + requestBody);
-    System.out.println("Received images count: " + imageList.size());
-
     requestBody.setImageList(imageList);
     ResponseEntity<ResponseDto> respons = usedTradeService.postUsedTrade(requestBody, userId);
     return respons;
@@ -100,6 +97,25 @@ public class UsedTradeController {
     @AuthenticationPrincipal String userId
   ) {
     ResponseEntity<ResponseDto> response = usedTradeService.putUsedTradeLikeCount(tradeSequence, userId);
+    return response;
+  }
+
+  // API: 중고거래 거래상태 변경 //
+  @PatchMapping("/{tradeSequence}/status")
+  public ResponseEntity<ResponseDto> patchTransactionStatus(
+    @PathVariable Integer tradeSequence
+  ) {
+    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence);
+    return response;
+  }
+
+  // API: 중고거래글 수정 이미지 업로드 //
+  @PostMapping("/{tradeSequence}/images")
+  public ResponseEntity<ResponseDto> uploadUsedTradeImages(
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @RequestParam("files") List<MultipartFile> files
+  ) {
+    ResponseEntity<ResponseDto> response = usedTradeService.uploadUsedTradeImage(tradeSequence, files);
     return response;
   }
 

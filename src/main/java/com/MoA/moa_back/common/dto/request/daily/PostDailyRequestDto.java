@@ -26,13 +26,14 @@ public class PostDailyRequestDto {
   private String title;
 
   @NotBlank
-  @Size(max=2000)
+  @Size(max=4000)
   private String content;
 
   private String location;
 
   private String detailLocation;
 
+  @Size(min=1, max=5)
   private List<String> imageList;
 
 }

@@ -65,7 +65,7 @@ public class  BoardEntity {
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
     this.tag = dto.getTag() != null ? dto.getTag() : BoardTagType.FREE;
-    this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
+    this.images = dto.getImageList();
   }
 
   public void patch(PatchBoardRequestDto dto) {
@@ -73,7 +73,7 @@ public class  BoardEntity {
     this.content = dto.getContent();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.images = dto.getImageList() != null ? dto.getImageList() : new ArrayList<>();
+    this.images = dto.getImageList();
   }
   
 }

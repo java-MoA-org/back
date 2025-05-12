@@ -23,6 +23,7 @@ import com.MoA.moa_back.common.entity.UsedTradeEntity;
 import com.MoA.moa_back.common.entity.UsedTradeLikeEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.common.enums.ItemTypeTag;
+import com.MoA.moa_back.common.enums.TransactionStatus;
 import com.MoA.moa_back.common.util.PageUtil;
 import com.MoA.moa_back.repository.UsedTradeLikeRepository;
 import com.MoA.moa_back.repository.UsedTradeRepository;
@@ -41,7 +42,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   private final UserRepository userRepository;
   private final ImageUploadService imageUploadService;
 
-  // method: 중고거래 게시글 작성 //
+  // method: 중고거래글 작성 //
   @Override
   public ResponseEntity<ResponseDto> postUsedTrade(PostUsedTradeRequestDto dto, String userId) {
     try {
@@ -60,7 +61,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
-  // method: 중고거래 게시글 목록 조회 최신순 좋아요순 정렬 가능 (태그기준, 페이징) //
+  // method: 중고거래글 목록 조회 최신순 좋아요순 정렬 가능 (태그기준, 페이징) //
   @Override
   public ResponseEntity<? super GetUsedTradeListResponseDto> getUsedTradeListByTag(String tag, Integer pageNumber, String sortOption) {
     try {
@@ -88,13 +89,11 @@ public class UsedTradeServiceImplement implements UsedTradeService {
         list.sort(Comparator.comparingInt(UsedTradeSummaryResponseDto::getLikeCount).reversed());
       }
   
-      // 페이징 정보
       int currentPage = pageable.getPageNumber();
       int currentSection = PageUtil.getCurrentSection(currentPage, pageCountPerSection);
       int totalSection = PageUtil.getTotalSection(page.getTotalPages(), pageCountPerSection);
       List<Integer> pageList = PageUtil.getPageList(currentPage, page.getTotalPages(), pageCountPerSection);
   
-      // 성공 응답 반환
       return GetUsedTradeListResponseDto.success(
         list,
         page.getTotalPages(),
@@ -152,12 +151,13 @@ public class UsedTradeServiceImplement implements UsedTradeService {
       user.getProfileImage(),
       user.getUserNickname(),
       entity.getPrice(),
-      entity.getItemTypeTag().name()
+      entity.getItemTypeTag().name(),
+      entity.getTransactionStatus().name()
     );
   }
   
 
-  // method: 중고거래 게시글 상세 조회 + 조회수 증가 //
+  // method: 중고거래글 상세 조회 + 조회수 증가 //
   @Override
   public ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(Integer tradeSequence) {
     try {
@@ -179,7 +179,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
-  // method: 중고거래 게시글 수정 (작성자만 가능) //
+  // method: 중고거래글 수정 (작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> patchUsedTrade(PatchUsedTradeRequestDto dto, Integer tradeSequence, String userId) {
     try {
@@ -252,7 +252,8 @@ public class UsedTradeServiceImplement implements UsedTradeService {
             profileImage,
             nickname,
             entity.getPrice(),
-            entity.getItemTypeTag().name()
+            entity.getItemTypeTag().name(),
+            entity.getTransactionStatus().name()
           );
         })
         .toList();
@@ -264,7 +265,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
-  // method: 중고거래 게시글 삭제 (작성자만 가능) //
+  // method: 중고거래글 삭제 (작성자만 가능) //
   @Override
   public ResponseEntity<ResponseDto> deleteUsedTrade(Integer tradeSequence, String userId) {
     try {
@@ -283,7 +284,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
-  // method: 중고거래 게시글에 이미지 업로드 //
+  // method: 중고거래글 수정 이미지 업로드 //
   @Override
   public ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files) {
 
@@ -311,7 +312,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     return ResponseDto.success(HttpStatus.OK, uploadedImageUrls);
   }
 
-  // method: 중고거래 게시글 찜 추가 또는 취소 //
+  // method: 중고거래글 찜 추가 또는 취소 //
   @Override
   public ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId) {
     try {
@@ -364,4 +365,31 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
+  // method: 거래 상태 변경 (판매중 -> 판매완료 / 판매완료 -> 판매중) //
+  @Override
+  public ResponseEntity<ResponseDto> patchTransactionStatus(Integer tradeSequence) {
+    try {
+      UsedTradeEntity tradeEntity = usedTradeRepository.findById(tradeSequence)
+        .orElseThrow(() -> new RuntimeException("거래글을 찾을 수 없습니다."));
+  
+    if (tradeEntity.getTransactionStatus() == TransactionStatus.ON_SALE) {
+      tradeEntity.setTransactionStatus(TransactionStatus.SOLD_OUT);
+    }
+
+    else if (tradeEntity.getTransactionStatus() == TransactionStatus.SOLD_OUT) {
+      tradeEntity.setTransactionStatus(TransactionStatus.RESERVED);
+    }
+
+    else if (tradeEntity.getTransactionStatus() == TransactionStatus.RESERVED) {
+      tradeEntity.setTransactionStatus(TransactionStatus.ON_SALE);
+    }
+  
+    usedTradeRepository.save(tradeEntity);
+  
+    return ResponseDto.success(HttpStatus.OK, tradeEntity.getTransactionStatus().name());
+    } catch (Exception e) {
+      e.printStackTrace();
+    return ResponseDto.databaseError();
+    }
+  }
 }

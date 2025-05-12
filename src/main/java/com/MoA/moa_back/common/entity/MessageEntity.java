@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MessageEntity {
 
     @Id
