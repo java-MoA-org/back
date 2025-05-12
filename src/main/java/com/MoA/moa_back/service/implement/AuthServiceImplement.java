@@ -266,7 +266,6 @@ public class AuthServiceImplement implements AuthService {
                 refreshCookie.setPath("/");
                 refreshCookie.setMaxAge(jwtProvider.getREFRESH_EXPIRE_SEC_TIME());
             }else{
-                System.out.println("log3 userRole : " + userRole);
                 accessCookie = new Cookie("accessToken", accessToken);
                 accessCookie.setHttpOnly(false);
                 accessCookie.setPath("/");
