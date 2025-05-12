@@ -1,8 +1,11 @@
 package com.MoA.moa_back.service;
 
 import com.MoA.moa_back.common.entity.MessageEntity;
+import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.message.GetMessageRoomListResponseDto;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 
 public interface MessageService {
 
@@ -26,4 +29,7 @@ public interface MessageService {
 
     // 사용자가 특정 채팅방을 숨기기 위한 메서드 (소프트 삭제)
     void hideChatRoom(String userId, String partnerId);
+
+    // 사용자 아이디 기반 내 메시지 개수 조회
+    ResponseEntity<? super ResponseDto> getNewMessageCount(String userId);
 }

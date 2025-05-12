@@ -47,4 +47,8 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     List<MessageEntity> findBySenderIdAndReceiverIdAndVisibleToSenderTrueOrSenderIdAndReceiverIdAndVisibleToReceiverTrueOrderByTimestampAsc(
         String senderId1, String receiverId1, String senderId2, String receiverId2
     );
+
+
+    Integer countByReceiverIdAndIsRead(String receiverId,boolean isRead);
+
 }
