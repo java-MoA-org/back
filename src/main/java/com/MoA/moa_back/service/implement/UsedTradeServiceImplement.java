@@ -284,7 +284,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
     }
   }
 
-  // method: 중고거래글 이미지 업로드 //
+  // method: 중고거래글 수정 이미지 업로드 //
   @Override
   public ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files) {
 

@@ -28,15 +28,16 @@ public class PostBoardRequestDto {
   private String title;
 
   @NotBlank
-  @Size(max=2000)
+  @Size(max=4000)
   private String content;
 
   private String location;
 
   private String detailLocation;
 
+  @Size(max=5)
   private List<String> imageList;
-  
+
   @NotNull 
   private BoardTagType tag;
 

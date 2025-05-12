@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,33 +45,43 @@ public class ImageUploadService {
   @Value("${file.profile-url}")
   private String profileUrl;
 
-  public ResponseEntity<ResponseDto> uploadImage(MultipartFile file, String type) {
-    String savePath;
-    String accessUrl;
+  private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+  private String getSavePath(String type) {
     switch (type.toLowerCase()) {
       case "daily":
-        savePath = dailyPath;
-        accessUrl = dailyUrl;
-        break;
+        return dailyPath;
       case "usedtrade":
-        savePath = usedTradePath;
-        accessUrl = usedTradeUrl;
-        break;
+        return usedTradePath;
       case "profile":
-        savePath = profilePath;
-        accessUrl = profileUrl;
-        break;
+        return profilePath;
       case "board":
       default:
-        savePath = boardPath;
-        accessUrl = boardUrl;
-        break;
+        return boardPath;
     }
+  }
+
+  private String getAccessUrl(String type) {
+    switch (type.toLowerCase()) {
+      case "daily":
+        return dailyUrl;
+      case "usedtrade":
+        return usedTradeUrl;
+      case "profile":
+        return profileUrl;
+      case "board":
+      default:
+        return boardUrl;
+    }
+  }
+
+  public ResponseEntity<ResponseDto> uploadImage(MultipartFile file, String type) {
+    String savePath = getSavePath(type);
+    String accessUrl = getAccessUrl(type);
 
     try {
       String originalFileName = file.getOriginalFilename();
-      if (originalFileName == null) {
+      if (originalFileName == null || originalFileName.isEmpty()) {
         return ResponseDto.validationFail();
       }
 
@@ -78,8 +90,7 @@ public class ImageUploadService {
         return ResponseDto.validationFail();
       }
 
-      long maxSize = 10 * 1024 * 1024;
-      if (file.getSize() > maxSize) {
+      if (file.getSize() > MAX_FILE_SIZE) {
         return ResponseDto.validationFail();
       }
 
@@ -102,7 +113,7 @@ public class ImageUploadService {
 
   public List<String> uploadImages(List<MultipartFile> files, String type) {
     List<String> uploadedImageUrls = new ArrayList<>();
-    
+
     for (MultipartFile file : files) {
       ResponseEntity<ResponseDto> uploadResponse = uploadImage(file, type);
       if (uploadResponse.getStatusCode() == HttpStatus.OK) {
@@ -112,6 +123,21 @@ public class ImageUploadService {
         uploadedImageUrls.add(null);
       }
     }
+
     return uploadedImageUrls;
   }
+
+  public Resource getImageFile(String fileName, String type) {
+
+    String savePath = getSavePath(type);
+
+    Path filePath = Paths.get(savePath + fileName);
+
+    File file = filePath.toFile();
+    if (!file.exists()) {
+      return null;
+    }
+    return new FileSystemResource(file);
+  }
+
 }
