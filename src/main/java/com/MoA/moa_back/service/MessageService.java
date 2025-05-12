@@ -32,4 +32,7 @@ public interface MessageService {
 
     // 사용자 아이디 기반 내 메시지 개수 조회
     ResponseEntity<? super ResponseDto> getNewMessageCount(String userId);
+
+    // 메시지 가리기
+    ResponseEntity<ResponseDto> hideMessage(Integer messageNumber, String userId);
 }

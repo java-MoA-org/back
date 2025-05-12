@@ -169,4 +169,32 @@ public class MessageServiceImplement implements MessageService {
             .status(HttpStatus.OK)
             .body(newMessageCount);
     }
+
+    @Override
+    public ResponseEntity<ResponseDto> hideMessage(Integer messageNumber, String userId) {
+        
+        Long index = messageNumber.longValue();
+        System.out.println("삭제하려는 인덱스 : "+ index);
+        System.out.println("삭제하려는 유저 : " + userId);
+        try {
+            MessageEntity message = messageRepository.findById(index)
+            .orElseThrow(() -> new RuntimeException("메시지를 찾을 수 없습니다."));
+            System.out.println(message.toString());
+            if(message.getSenderId().equals(userId)){
+                message.setVisibleToSender(false);
+                messageRepository.save(message);
+            }
+            if(message.getReceiverId().equals(userId)){
+                message.setVisibleToReceiver(false);
+                messageRepository.save(message);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+
+        return ResponseDto.success(HttpStatus.OK);
+    }
 }

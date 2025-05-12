@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class MessageEntity {
 
     @Id

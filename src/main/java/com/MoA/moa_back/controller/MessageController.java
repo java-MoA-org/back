@@ -1,6 +1,7 @@
 package com.MoA.moa_back.controller;
 
 import com.MoA.moa_back.common.entity.MessageEntity;
+import com.MoA.moa_back.common.dto.request.message.HideMessageRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.message.GetMessageRoomListResponseDto;
 import com.MoA.moa_back.service.MessageService;
@@ -12,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -83,6 +87,16 @@ public class MessageController {
         ResponseEntity<? super ResponseDto> response = messageService.getNewMessageCount(userId);
         System.out.println("response : " + response);
 
+        return response;
+    }
+    
+    // 메시지 가리기
+    @PostMapping("/hide")
+    public ResponseEntity<ResponseDto> hideMessage(@RequestBody HideMessageRequestDto hideMessageRequestDto, @AuthenticationPrincipal String userId) {
+        
+        ResponseEntity<ResponseDto> response = messageService.hideMessage(hideMessageRequestDto.getMessageNumber(), userId);
+        System.out.println(response.toString());
+        
         return response;
     }
     
