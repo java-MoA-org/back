@@ -31,11 +31,19 @@ public class MessageEntity {
     private String imageUrl;
 
     @Column(name = "type")
-    private String type;  // "TEXT" or "IMAGE"
+    private String type; // "TEXT" or "IMAGE"
 
     @CreationTimestamp
     private LocalDateTime timestamp;
 
     @Column(name = "is_read", nullable = false)
     private boolean isRead;
+
+    // 소프트 DELETE 연관 :해당 메시지를 보낸 사용자에게 보여질지 여부
+    @Column(name = "visible_to_sender", nullable = false)
+    private boolean visibleToSender = true;
+
+    // 소프트 DELETE 연관 :해당 메시지를 받은 사용자에게 보여질지 여부
+    @Column(name = "visible_to_receiver", nullable = false)
+    private boolean visibleToReceiver = true;
 }
