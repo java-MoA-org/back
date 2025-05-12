@@ -35,10 +35,10 @@ public class PostUsedTradeRequestDto {
   private String content;
 
   @NotNull
-  private ItemTypeTag itemTypeTag; // 물건 타입 enum
+  private ItemTypeTag itemTypeTag;
 
   @NotNull
-  private UsedItemStatusTag usedItemStatusTag; // 물건 상태 enum
+  private UsedItemStatusTag usedItemStatusTag;
 
   @NotNull
   private Integer price;

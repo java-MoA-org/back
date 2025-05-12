@@ -86,10 +86,6 @@ public class UsedTradeEntity {
     this.detailLocation = dto.getDetailLocation();
   }
 
-  public void markAsSold() {
-    this.transactionStatus = TransactionStatus.SOLD_OUT;
-  }
-
   public void addImages(List<String> imageUrls) {
     this.images.addAll(imageUrls);
   }

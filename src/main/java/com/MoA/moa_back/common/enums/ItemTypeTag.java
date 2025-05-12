@@ -1,6 +1,7 @@
 package com.MoA.moa_back.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 // 중고거래 상품 타입 태그 //
 public enum ItemTypeTag {
@@ -19,18 +20,19 @@ public enum ItemTypeTag {
     this.displayName = displayName;
   }
 
+  @JsonValue
   public String getDisplayName() {
     return displayName;
   }
 
   @JsonCreator
-  public static ItemTypeTag from(String input) {
+  public static ItemTypeTag from(String value) {
     for (ItemTypeTag tag : values()) {
-      if (tag.name().equalsIgnoreCase(input) || tag.displayName.equals(input)) {
+      if (tag.displayName.equals(value) || tag.name().equals(value)) {
         return tag;
       }
     }
-    throw new IllegalArgumentException("Unknown itemTypeTag: " + input);
+    throw new IllegalArgumentException("Unknown itemTypeTag: " + value);
   }
 }
 
