@@ -27,11 +27,11 @@ public class PostUsedTradeRequestDto {
   private LocalDateTime creationDate;
 
   @NotBlank
-  @Size(max = 50)
+  @Size(max=50)
   private String title;
 
   @NotBlank
-  @Size(max = 2000)
+  @Size(max=500)
   private String content;
 
   @NotNull
@@ -47,6 +47,6 @@ public class PostUsedTradeRequestDto {
 
   private String detailLocation;
 
-  @Size(min = 1)
+  @Size(min=1, max=5)
   private List<MultipartFile> imageList;
 }
