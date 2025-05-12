@@ -1,7 +1,9 @@
 package com.MoA.moa_back.service.implement;
 
 import com.MoA.moa_back.common.entity.MessageEntity;
+import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.repository.MessageRepository;
+import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.MessageService;
 import lombok.RequiredArgsConstructor;
