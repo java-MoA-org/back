@@ -1,7 +1,9 @@
 package com.MoA.moa_back.service.implement;
 
 import com.MoA.moa_back.common.entity.MessageEntity;
+import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.repository.MessageRepository;
+import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 public class MessageServiceImplement implements MessageService {
 
     private final MessageRepository messageRepository;
+    private final UserRepository userRepository;
 
     @Override
     public MessageEntity saveMessage(MessageEntity message) {
@@ -77,9 +80,9 @@ public class MessageServiceImplement implements MessageService {
             LocalDateTime timestamp = lastMsg.getTimestamp();
             boolean unread = messageRepository.existsByReceiverIdAndSenderIdAndIsReadFalse(userId, partnerId);
 
-            // TODO: 사용자 서비스와 연동하여 실제 닉네임과 프로필 이미지 조회
-            String nickname = "닉네임";
-            String profileImage = "";
+            UserEntity partnerUser = userRepository.findByUserId(partnerId);
+            String nickname = partnerUser.getUserNickname();
+            String profileImage = partnerUser.getProfileImage();
 
             result.add(GetMessageRoomListResponseDto.builder()
                 .partnerId(partnerId)
