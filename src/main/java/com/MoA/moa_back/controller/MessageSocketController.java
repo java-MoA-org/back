@@ -19,6 +19,18 @@ public class MessageSocketController {
     @MessageMapping("/chat.send") // /app/chat.send 로 클라이언트에서 publish
     public void sendMessage(MessageEntity message) {
 
+        // 읽음 처리 전용 메시지일 경우
+        if ("READ".equals(message.getType())) {
+            messageService.markMessagesAsRead(message.getSenderId(), message.getReceiverId());
+
+            // 수신자에게 읽음 표시 메시지 전송
+            messagingTemplate.convertAndSend(
+                "/topic/messages/" + message.getReceiverId(),
+                message
+            );
+            return;
+        }
+
         // timestamp 수동 설정
         message.setTimestamp(LocalDateTime.now());
 

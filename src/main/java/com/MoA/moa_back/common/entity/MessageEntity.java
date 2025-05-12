@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @Entity
 @Table(name = "message")
 @Getter
@@ -37,6 +39,7 @@ public class MessageEntity {
     private LocalDateTime timestamp;
 
     @Column(name = "is_read", nullable = false)
+    @JsonProperty("isRead")
     private boolean isRead;
 
     // 소프트 DELETE 연관 :해당 메시지를 보낸 사용자에게 보여질지 여부
