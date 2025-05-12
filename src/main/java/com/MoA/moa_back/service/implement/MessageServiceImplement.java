@@ -7,10 +7,15 @@ import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.MessageService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.message.GetMessageRoomListResponseDto;
 import com.MoA.moa_back.common.entity.UserEntity; 
 import java.util.ArrayList;
@@ -148,5 +153,20 @@ public class MessageServiceImplement implements MessageService {
             }
             messageRepository.save(msg); // 변경 저장
         }
+    }
+
+    @Override
+    public ResponseEntity<? super ResponseDto> getNewMessageCount(String userId) {
+        String newMessageCount = "";
+
+        try {
+            newMessageCount = messageRepository.countByReceiverIdAndIsRead(userId, false).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(newMessageCount);
     }
 }

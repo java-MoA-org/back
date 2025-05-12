@@ -1,14 +1,18 @@
 package com.MoA.moa_back.controller;
 
 import com.MoA.moa_back.common.entity.MessageEntity;
+import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.message.GetMessageRoomListResponseDto;
 import com.MoA.moa_back.service.MessageService;
 import com.MoA.moa_back.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -69,4 +73,17 @@ public class MessageController {
             return ResponseEntity.status(401).body("JWT 인증 실패 또는 서버 오류");
         }
     }
+
+    // 새 메시지 개수 조회
+    @GetMapping("/get-alert")
+    public ResponseEntity<? super ResponseDto> getnewMessageCount(@AuthenticationPrincipal String userId) {
+        // System.out.println("authentication : " + authentication);
+        // String userId = (String) authentication.getPrincipal();
+        System.out.println("userId : "+userId);
+        ResponseEntity<? super ResponseDto> response = messageService.getNewMessageCount(userId);
+        System.out.println("response : " + response);
+
+        return response;
+    }
+    
 }
