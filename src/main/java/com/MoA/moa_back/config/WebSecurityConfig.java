@@ -80,6 +80,7 @@ public class WebSecurityConfig {
                     
                     .requestMatchers("/api/news/**").permitAll()
                     .requestMatchers("/api/v1/user-page/**").authenticated()
+                    .requestMatchers("/api/v1/images/file/**").permitAll()
                     .requestMatchers("/api/v1/follow/**").authenticated()
                     .requestMatchers("/api/message/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/api/message/hide-room/**").authenticated()
