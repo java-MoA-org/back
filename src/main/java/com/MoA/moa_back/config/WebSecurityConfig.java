@@ -76,6 +76,8 @@ public class WebSecurityConfig {
 
                     .requestMatchers("/api/v1/daily/**").permitAll()
                     .requestMatchers("/api/v1/used-trade/**").permitAll()
+
+                    
                     .requestMatchers("/api/news/**").permitAll()
                     .requestMatchers("/api/v1/user-page/**").authenticated()
                     .requestMatchers("/api/v1/follow/**").authenticated()
