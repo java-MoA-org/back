@@ -29,5 +29,5 @@ public interface UsedTradeService {
   ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId);
 
   // method: 거래 상태 변경 (판매중 -> 판매완료 / 판매완료 -> 판매중) //
-  ResponseEntity<ResponseDto> patchTransactionStatus(Integer tradeSequence);
+  ResponseEntity<ResponseDto> patchTransactionStatus(Integer tradeSequence,String updateStatus);
 }
