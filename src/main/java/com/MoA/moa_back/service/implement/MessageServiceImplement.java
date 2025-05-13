@@ -4,7 +4,6 @@ import com.MoA.moa_back.common.entity.MessageEntity;
 import com.MoA.moa_back.common.entity.UserEntity;
 import com.MoA.moa_back.repository.MessageRepository;
 import com.MoA.moa_back.repository.UserRepository;
-import com.MoA.moa_back.repository.UserRepository;
 import com.MoA.moa_back.service.MessageService;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +16,6 @@ import java.util.List;
 
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.message.GetMessageRoomListResponseDto;
-import com.MoA.moa_back.common.entity.UserEntity; 
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 
@@ -85,6 +83,7 @@ public class MessageServiceImplement implements MessageService {
                 .lastMessage(lastMessage)
                 .timestamp(timestamp)
                 .unread(unread)
+                .messageType(lastMsg.getType().name())
                 .build());
         }
 
@@ -122,6 +121,7 @@ public class MessageServiceImplement implements MessageService {
                 .lastMessage(lastMessage)
                 .timestamp(timestamp)
                 .unread(unread)
+                .messageType(lastMsg.getType().name())
                 .build());
         }
 

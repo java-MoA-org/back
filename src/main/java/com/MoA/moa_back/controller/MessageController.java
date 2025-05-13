@@ -9,9 +9,7 @@ import com.MoA.moa_back.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.MoA.moa_back.common.dto.request.message.MessageReadRequestDto;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +35,7 @@ public class MessageController {
     @GetMapping("/{userId}/{partnerId}")
     public List<MessageEntity> getMessageHistory(@PathVariable String userId, @PathVariable String partnerId) {
         List<MessageEntity> messages = messageService.getMessagesBetween(userId, partnerId);
-        messageService.markMessagesAsRead(userId, partnerId); // 읽음 처리
+        messageService.markMessagesAsRead(userId, partnerId); // ✅ 읽음 처리
         return messages;
     }
 
@@ -60,9 +58,10 @@ public class MessageController {
     // 채팅방 숨김 처리
     @DeleteMapping("/hide-room/{userId}/{partnerId}")
     public ResponseEntity<?> hideChatRoom(
-            @PathVariable String userId,
-            @PathVariable String partnerId,
-            @RequestHeader("Authorization") String authorization) {
+        @PathVariable String userId,
+        @PathVariable String partnerId,
+        @RequestHeader("Authorization") String authorization
+    ) {
         try {
             String token = authorization.replace("Bearer ", "");
             String validatedUserId = jwtProvider.validate(token);
@@ -100,23 +99,4 @@ public class MessageController {
         return response;
     }
     
-
-    @PostMapping("/read")
-    public ResponseEntity<?> markMessagesAsRead(
-            @RequestHeader("Authorization") String authorization,
-            @RequestBody MessageReadRequestDto requestDto) {
-        try {
-            String token = authorization.replace("Bearer ", "");
-            String userId = jwtProvider.validate(token);
-
-            if (!userId.equals(requestDto.getUserId())) {
-                return ResponseEntity.status(403).body("권한이 없습니다.");
-            }
-
-            messageService.markMessagesAsRead(requestDto.getUserId(), requestDto.getPartnerId());
-            return ResponseEntity.ok().body("읽음 처리 완료");
-        } catch (Exception e) {
-            return ResponseEntity.status(401).body("JWT 인증 실패 또는 서버 오류");
-        }
-    }
 }

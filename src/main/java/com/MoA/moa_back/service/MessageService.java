@@ -35,4 +35,6 @@ public interface MessageService {
 
     // 메시지 가리기
     ResponseEntity<ResponseDto> hideMessage(Integer messageNumber, String userId);
+
+    
 }

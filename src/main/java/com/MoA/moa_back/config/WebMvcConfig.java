@@ -8,17 +8,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig  implements WebMvcConfigurer{
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-      
+        String os = System.getProperty("os.name").toLowerCase();
+        String basePath = os.contains("win")
+            ? "file:///D:/upload/"
+            : "file:/Users/seo._b2/upload/";
+
         registry.addResourceHandler("/images/board/**")
-        .addResourceLocations("file:///D:/upload/board-images/");
+                .addResourceLocations(basePath + "board-images/");
 
         registry.addResourceHandler("/images/daily/**")
-              .addResourceLocations("file:///D:/upload/daily-images/");
+                .addResourceLocations(basePath + "daily-images/");
 
         registry.addResourceHandler("/images/usedtrade/**")
-              .addResourceLocations("file:///D:/upload/usedtrade-images/");
+                .addResourceLocations(basePath + "usedtrade-images/");
 
         registry.addResourceHandler("/profile/file/**")
-                .addResourceLocations("file:///D:/upload/profile/");
+                .addResourceLocations(basePath + "profile/");
+
+        registry.addResourceHandler("/images/message/**")
+                .addResourceLocations(basePath + "message/");
     }
 }

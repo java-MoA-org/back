@@ -56,6 +56,7 @@ public class WebSecurityConfig {
 
                 .requestMatchers("/api/v1/images/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
+                .requestMatchers("/images/message/**").permitAll()
 
                 .requestMatchers("/oauth2/**").permitAll()
 
@@ -75,6 +76,9 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/follow/**").permitAll()
                     .requestMatchers("/api/message/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/api/message/hide-room/**").authenticated()
+
+                    
+                    .requestMatchers("/api/upload-image").permitAll()
 
                     .requestMatchers("/api/v1/alert/**").authenticated()
                     .requestMatchers("/ws/**").permitAll()
