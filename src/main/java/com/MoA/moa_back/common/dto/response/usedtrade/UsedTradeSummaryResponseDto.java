@@ -1,6 +1,7 @@
 package com.MoA.moa_back.common.dto.response.usedtrade;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -17,8 +18,8 @@ public class UsedTradeSummaryResponseDto {
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime creationDate;
-  
-  private List<String> images;
+
+  private List<String> images = new ArrayList<>();
   private String title;
   private String writerId;
   private String location;
