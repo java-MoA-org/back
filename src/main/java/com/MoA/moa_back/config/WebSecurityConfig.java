@@ -69,9 +69,8 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/daily/**").permitAll()
                     .requestMatchers("/api/v1/used-trade/**").permitAll()
                     .requestMatchers("/api/news/**").permitAll()
-                    .requestMatchers("/api/v1/user-page/boards/*").permitAll()
-                    .requestMatchers("/api/v1/user-page/images/file/**").permitAll()
-                    .requestMatchers("/api/v1/follow/**").permitAll()
+                    .requestMatchers("/api/v1/user-page/**").authenticated()
+                    .requestMatchers("/api/v1/follow/**").authenticated()
                     .requestMatchers("/api/message/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/api/message/hide-room/**").authenticated()
 
