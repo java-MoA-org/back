@@ -46,10 +46,5 @@ public class PostUsedTradeRequestDto {
   private String detailLocation;
 
   @Size(min=1, max=5)
-<<<<<<< HEAD
-  private List<MultipartFile> imageList;
-}
-=======
   private List<String> imageList;
 }
->>>>>>> beddba8a51dbc9003b06c8f6fa2aec1995cde6a3
