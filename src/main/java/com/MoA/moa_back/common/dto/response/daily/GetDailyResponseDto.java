@@ -30,12 +30,14 @@ public class GetDailyResponseDto extends ResponseDto {
   private Integer views;
   private Integer likeCount;
   private List<DailyCommentVO> comments;
+  private Boolean liked;
 
   public static GetDailyResponseDto of(
     DailyEntity daily,
     int likeCount,
     List<DailyCommentVO> commentList,
-    UserEntity user
+    UserEntity user,
+    Boolean liked
   ) {
     return new GetDailyResponseDto(
       daily.getDailySequence(),
@@ -46,7 +48,8 @@ public class GetDailyResponseDto extends ResponseDto {
       user.getUserNickname(),
       daily.getViews(),
       likeCount,
-      commentList
+      commentList,
+      liked
     );
   }
 
@@ -54,9 +57,10 @@ public class GetDailyResponseDto extends ResponseDto {
     DailyEntity daily,
     int likeCount,
     List<DailyCommentVO> commentList,
-    UserEntity user
+    UserEntity user,
+    Boolean liked
   ) {
-    GetDailyResponseDto body = GetDailyResponseDto.of(daily, likeCount, commentList, user);
+    GetDailyResponseDto body = GetDailyResponseDto.of(daily, likeCount, commentList, user, liked);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
   

@@ -152,7 +152,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
 
   // method: 중고거래글 상세 조회 + 조회수 증가 //
   @Override
-  public ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(Integer tradeSequence) {
+  public ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(Integer tradeSequence, String userId) {
     try {
       UsedTradeEntity entity = usedTradeRepository.findById(tradeSequence).orElse(null);
       if (entity == null) return ResponseDto.noExistUsedTrade();
@@ -165,7 +165,9 @@ public class UsedTradeServiceImplement implements UsedTradeService {
 
       boolean hasChatRoom = false;
 
-      return GetUsedTradeResponseDto.success(entity, user, likeCount, hasChatRoom);
+      boolean liked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
+
+      return GetUsedTradeResponseDto.success(entity, user, likeCount, hasChatRoom, liked);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();

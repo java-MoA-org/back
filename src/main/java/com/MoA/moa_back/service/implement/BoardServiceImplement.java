@@ -146,7 +146,7 @@ public class BoardServiceImplement implements BoardService {
   
   // method: 게시글 상세 조회 + 조회수 증가 //
   @Override
-  public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence) {
+  public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(Integer boardSequence, String userId) {
     try {
 
       BoardEntity boardEntity = boardRepository.findById(boardSequence).orElse(null);
@@ -156,6 +156,7 @@ public class BoardServiceImplement implements BoardService {
       boardRepository.save(boardEntity);
   
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
+      boolean liked = boardLikeRepository.existsByBoardSequenceAndUserId(boardSequence, userId);
   
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
       List<BoardCommentVO> commentList = commentEntities.stream()
@@ -164,7 +165,7 @@ public class BoardServiceImplement implements BoardService {
   
       List<String> imageUrls = boardEntity.getImages();
   
-      return GetBoardResponseDto.success(boardEntity, likeCount, commentList, imageUrls);
+      return GetBoardResponseDto.success(boardEntity, likeCount, commentList, imageUrls, liked);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
