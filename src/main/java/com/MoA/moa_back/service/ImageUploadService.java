@@ -27,7 +27,7 @@ public class ImageUploadService {
   @Value("${file.daily-image-path}")
   private String dailyPath;
 
-  @Value("${file.usedtrade-image-path}")
+  @Value("${file.used-trade-image-path}")
   private String usedTradePath;
 
   @Value("${file.profile-path}")
@@ -39,7 +39,7 @@ public class ImageUploadService {
   @Value("${file.daily-image-url}")
   private String dailyUrl;
 
-  @Value("${file.usedtrade-image-url}")
+  @Value("${file.used-trade-image-url}")
   private String usedTradeUrl;
 
   @Value("${file.profile-url}")
@@ -51,7 +51,7 @@ public class ImageUploadService {
     switch (type.toLowerCase()) {
       case "daily":
         return dailyPath;
-      case "usedtrade":
+      case "used-trade":
         return usedTradePath;
       case "profile":
         return profilePath;
@@ -65,7 +65,7 @@ public class ImageUploadService {
     switch (type.toLowerCase()) {
       case "daily":
         return dailyUrl;
-      case "usedtrade":
+      case "used-trade":
         return usedTradeUrl;
       case "profile":
         return profileUrl;

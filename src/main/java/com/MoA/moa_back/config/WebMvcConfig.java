@@ -19,8 +19,8 @@ public class WebMvcConfig  implements WebMvcConfigurer{
         registry.addResourceHandler("/images/daily/**")
                 .addResourceLocations(basePath + "daily-images/");
 
-        registry.addResourceHandler("/images/usedtrade/**")
-                .addResourceLocations(basePath + "usedtrade-images/");
+        registry.addResourceHandler("/images/used-trade/**")
+              .addResourceLocations("file:///D:/upload/used-trade-images/");
 
         registry.addResourceHandler("/profile/file/**")
                 .addResourceLocations(basePath + "profile/");

@@ -1,5 +1,6 @@
 package com.MoA.moa_back.common.vo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class DailyCommentVO {
   private String commentWriterId;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private String commentWriteDate;
+  private LocalDateTime commentWriteDate;
 
   private String comment;
   private String profileImage;
@@ -24,7 +25,7 @@ public class DailyCommentVO {
   public DailyCommentVO(DailyCommentEntity dailyCommentEntity, UserEntity userEntity) {
     this.commentSequence = dailyCommentEntity.getCommentSequence();
     this.commentWriterId = dailyCommentEntity.getUserId();
-    this.commentWriteDate = dailyCommentEntity.getCreationDate().toString();
+    this.commentWriteDate = dailyCommentEntity.getCreationDate();
     this.comment = dailyCommentEntity.getDailyComment();
     this.profileImage = userEntity.getProfileImage();
     this.writerNickname = userEntity.getUserNickname();

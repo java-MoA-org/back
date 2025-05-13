@@ -50,8 +50,8 @@ public class UsedTradeEntity {
   private TransactionStatus transactionStatus;
 
   @ElementCollection
-  @CollectionTable(name = "used_trade_images", joinColumns = @JoinColumn(name = "trade_sequence"))
-  @Column(name = "image_url")
+  @CollectionTable(name="used_trade_images", joinColumns = @JoinColumn(name="trade_sequence"))
+  @Column(name="image_url")
   private List<String> images = new ArrayList<>();
 
   @Column(nullable = false)
@@ -74,7 +74,7 @@ public class UsedTradeEntity {
     this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
-    this.images = new ArrayList<>();
+    this.images = dto.getImageList();
     this.transactionStatus = TransactionStatus.ON_SALE;
   }
 
@@ -84,9 +84,7 @@ public class UsedTradeEntity {
     this.price = dto.getPrice();
     this.location = dto.getLocation();
     this.detailLocation = dto.getDetailLocation();
+    this.images = dto.getImageList();
   }
 
-  public void addImages(List<String> imageUrls) {
-    this.images.addAll(imageUrls);
-  }
 }

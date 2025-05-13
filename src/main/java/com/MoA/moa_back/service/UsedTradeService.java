@@ -3,7 +3,6 @@ package com.MoA.moa_back.service;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
@@ -25,8 +24,6 @@ public interface UsedTradeService {
   ResponseEntity<ResponseDto> deleteUsedTrade(Integer tradeSequence, String userId);
   // method: 중고거래글 (태그) 별 제목 검색 //
   ResponseEntity<? super GetUsedTradeListResponseDto> searchUsedTradeList(String tag, String keyword, Integer pageNumber);
-  // method: 중고거래글에 이미지 업로드 //
-  ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files);
 
   // method: 특정 중고거래글 좋아요 누르거나 취소 //
   ResponseEntity<ResponseDto> putUsedTradeLikeCount(Integer tradeSequence, String userId);

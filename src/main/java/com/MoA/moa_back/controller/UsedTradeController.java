@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
@@ -27,11 +26,9 @@ public class UsedTradeController {
   // API: 중고거래 게시글 작성 //
   @PostMapping(path = {"", "/"})
   public ResponseEntity<ResponseDto> postUsedTrade(
-    @RequestPart("dto") @Valid PostUsedTradeRequestDto requestBody,
-    @RequestPart("imageList") List<MultipartFile> imageList,
+    @RequestBody @Valid PostUsedTradeRequestDto requestBody,
     @AuthenticationPrincipal String userId
   ) {
-    requestBody.setImageList(imageList);
     ResponseEntity<ResponseDto> respons = usedTradeService.postUsedTrade(requestBody, userId);
     return respons;
   }
@@ -57,14 +54,12 @@ public class UsedTradeController {
   }
 
   // API: 중고거래 게시글 수정 //
-  @PatchMapping(path = "/{tradeSequence}", consumes = "multipart/form-data")
+  @PatchMapping("/{tradeSequence}")
   public ResponseEntity<ResponseDto> patchUsedTrade(
+    @RequestBody @Valid PatchUsedTradeRequestDto requestBody,
     @PathVariable("tradeSequence") Integer tradeSequence,
-    @RequestPart("dto") @Valid PatchUsedTradeRequestDto requestBody,
-    @RequestPart(value = "imageList", required = false) List<MultipartFile> imageList,
     @AuthenticationPrincipal String userId
   ) {
-    requestBody.setImageList(imageList);
     ResponseEntity<ResponseDto> respons = usedTradeService.patchUsedTrade(requestBody, tradeSequence, userId);
     return respons;
   }
@@ -106,16 +101,6 @@ public class UsedTradeController {
     @PathVariable Integer tradeSequence
   ) {
     ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence);
-    return response;
-  }
-
-  // API: 중고거래글 수정 이미지 업로드 //
-  @PostMapping("/{tradeSequence}/images")
-  public ResponseEntity<ResponseDto> uploadUsedTradeImages(
-    @PathVariable("tradeSequence") Integer tradeSequence,
-    @RequestParam("files") List<MultipartFile> files
-  ) {
-    ResponseEntity<ResponseDto> response = usedTradeService.uploadUsedTradeImage(tradeSequence, files);
     return response;
   }
 

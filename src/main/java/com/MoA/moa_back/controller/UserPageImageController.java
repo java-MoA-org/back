@@ -3,6 +3,7 @@ package com.MoA.moa_back.controller;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,7 @@ import com.MoA.moa_back.service.UserPageImageService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/user-page/images/file")
+@RequestMapping("/api/v1/images/file")
 @RequiredArgsConstructor
 public class UserPageImageController {
 
@@ -24,6 +25,7 @@ public class UserPageImageController {
   @PostMapping("/upload")
     public String upload(
         @RequestParam("file") MultipartFile file // @RequestParam에 file이라고 적으면 key자리에 file 적기
+        // @AuthenticationPrincipal String userId
     ) {
         String url = userPageImageService.upload(file);
         return url;
@@ -31,7 +33,8 @@ public class UserPageImageController {
 
     @GetMapping(value = "/{fileName}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE})
     public Resource getImageFile(
-        @PathVariable("fileName") String fileName
+        @PathVariable("fileName") String fileName,
+        @AuthenticationPrincipal String userId
     ) {
         Resource resource = userPageImageService.getImageFile(fileName);
         return resource;
