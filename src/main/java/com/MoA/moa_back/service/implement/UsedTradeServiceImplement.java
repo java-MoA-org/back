@@ -323,7 +323,7 @@ public class UsedTradeServiceImplement implements UsedTradeService {
 
   // method: 거래 상태 변경 (판매중 -> 판매완료 / 판매완료 -> 판매중) //
   @Override
-  public ResponseEntity<ResponseDto> patchTransactionStatus(Integer tradeSequence) {
+  public ResponseEntity<ResponseDto> patchTransactionStatus(Integer tradeSequence, String updateStatus) {
     try {
       UsedTradeEntity tradeEntity = usedTradeRepository.findById(tradeSequence)
         .orElseThrow(() -> new RuntimeException("거래글을 찾을 수 없습니다."));

@@ -50,10 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (path.startsWith("/api/v1/auth/refresh") ||
                 path.startsWith("/profile/file/") ||
                 path.startsWith("/api/v1/user-page/images/file/upload") ||
-                // path.startsWith("/board") ||
                 path.startsWith("/notice") ||
-                path.startsWith("/used-trade") ||
-                path.startsWith("/daily") ||
                 path.startsWith("/news") ||
                 path.startsWith("/home") ||
                 (path.startsWith("/api/user/") && path.endsWith("/profile"))) {
