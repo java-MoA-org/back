@@ -280,8 +280,6 @@ public class AuthServiceImplement implements AuthService {
             
             response.addCookie(refreshCookie);
             response.addCookie(accessCookie);
-
-
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -320,6 +318,7 @@ public class AuthServiceImplement implements AuthService {
             cookie.setPath("/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
+            System.out.println("user extended");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if(userRole.equals(UserRole.ADMIN)) {
@@ -328,6 +327,13 @@ public class AuthServiceImplement implements AuthService {
         }
 
         String newAccessToken = jwtProvider.createAccessToken(userId,userRole);
+
+        Cookie accessCookie = new Cookie("accessToken", newAccessToken);
+                accessCookie.setHttpOnly(false);
+                accessCookie.setPath("/");
+                accessCookie.setMaxAge(expiration);
+        response.addCookie(accessCookie);
+
         TokenRefreshResponseDto body = TokenRefreshResponseDto.success(newAccessToken, expiration);
         return ResponseEntity.ok(body);
     }
