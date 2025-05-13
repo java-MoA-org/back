@@ -62,6 +62,7 @@ public class UserPageServiceImplement implements UserPageService {
                 // 1. 유저 정보 조회
                 UserEntity user = userRepository.findByUserNickname(userNickname);
                 if (user == null) return ResponseDto.noExistUser();
+                // 1.5. 유저 아이디 조회
                 String userId = user.getUserId();
     
                 // 2. 게시판(익명) 리스트
@@ -84,9 +85,9 @@ public class UserPageServiceImplement implements UserPageService {
                 String userIntroduce = user.getUserIntroduce();
                 // 7. 프로필 사진 조회
                 String userProfileImage = user.getProfileImage();
-    
+
                 // 8. 응답 반환
-                return GetUserPageResponseDto.success(boards, dailys, trades, interests, userIntroduce, userProfileImage);
+                return GetUserPageResponseDto.success(boards, dailys, trades, interests, userIntroduce, userProfileImage, userId);
     
             } catch (Exception e) {
                 e.printStackTrace();
