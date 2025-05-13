@@ -27,6 +27,7 @@ public class NotificationEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Builder.Default
     private int views = 0;
 
     @CreatedDate // 생성 시 자동 날짜 저장

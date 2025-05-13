@@ -9,7 +9,6 @@ import com.MoA.moa_back.provider.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;

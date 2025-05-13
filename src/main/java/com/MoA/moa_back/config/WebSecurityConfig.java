@@ -56,6 +56,8 @@ public class WebSecurityConfig {
 
                 .requestMatchers("/api/v1/images/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
+                .requestMatchers("/images/message/**").permitAll()
+                .requestMatchers("/profile/file/**").permitAll()
 
                 .requestMatchers("/oauth2/**").permitAll()
 
@@ -64,6 +66,10 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/**").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/api/message/read").authenticated()
+                    
+                    
+                    
                     
                     .requestMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
@@ -82,6 +88,9 @@ public class WebSecurityConfig {
                     .requestMatchers("/api/v1/follow/**").authenticated()
                     .requestMatchers("/api/message/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE, "/api/message/hide-room/**").authenticated()
+
+                    
+                    .requestMatchers("/api/upload-image").permitAll()
 
                     .requestMatchers("/api/v1/alert/**").authenticated()
                     .requestMatchers("/ws/**").permitAll()

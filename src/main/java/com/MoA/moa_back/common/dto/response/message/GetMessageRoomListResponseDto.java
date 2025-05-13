@@ -20,4 +20,5 @@ public class GetMessageRoomListResponseDto {
     private String lastMessage;     // 마지막 메시지 내용 -> 리스트에 사용 
     private LocalDateTime timestamp; // 마지막 메시지 시간
     private boolean unread;         // 읽지 않은 메시지 여부
+    private String messageType;
 }
