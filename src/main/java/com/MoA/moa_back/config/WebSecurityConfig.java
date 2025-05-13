@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/**").hasAuthority("ADMIN")
                     
                     .requestMatchers("/api/v1/board/**").permitAll()
+                    .requestMatchers(HttpMethod.POST,"api/v1/board").authenticated()
                     .requestMatchers("/api/v1/daily/**").permitAll()
                     .requestMatchers("/api/v1/used-trade/**").permitAll()
                     .requestMatchers("/api/news/**").permitAll()
