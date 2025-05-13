@@ -57,6 +57,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/v1/images/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
                 .requestMatchers("/images/message/**").permitAll()
+                .requestMatchers("/profile/file/**").permitAll()
 
                 .requestMatchers("/oauth2/**").permitAll()
 
@@ -66,6 +67,9 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/api/message/read").authenticated()
+                    
+                    
+                    
                     
                     .requestMatchers("/api/v1/board/**").permitAll()
                     .requestMatchers("/api/v1/daily/**").permitAll()
