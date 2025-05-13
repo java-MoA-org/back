@@ -32,8 +32,6 @@ public class BoardController {
   
   private final BoardService boardService;
 
-  
-
   // API: 게시글 작성 //
   @PostMapping({"", "/"})
   public ResponseEntity<ResponseDto> postBoard(
