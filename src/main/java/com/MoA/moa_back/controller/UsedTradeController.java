@@ -47,9 +47,10 @@ public class UsedTradeController {
   // API: 중고거래 게시글 상세 조회 (조회수 증가 포함) //
   @GetMapping("/{tradeSequence}")
   public ResponseEntity<? super GetUsedTradeResponseDto> getUsedTradeDetail(
-    @PathVariable("tradeSequence") Integer tradeSequence
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<? super GetUsedTradeResponseDto> respons = usedTradeService.getUsedTradeDetail(tradeSequence);
+    ResponseEntity<? super GetUsedTradeResponseDto> respons = usedTradeService.getUsedTradeDetail(tradeSequence, userId);
     return respons;
   }
 
@@ -102,7 +103,7 @@ public class UsedTradeController {
     @RequestBody String updateStatus,
     @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence);
+    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence, updateStatus);
     return response;
   }
 

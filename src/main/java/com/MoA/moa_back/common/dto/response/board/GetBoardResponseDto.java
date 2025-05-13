@@ -34,12 +34,14 @@ public class GetBoardResponseDto extends ResponseDto {
   private List<BoardCommentVO> comments;
 
   private List<String> imageUrls;
+  private Boolean liked;
 
   public static GetBoardResponseDto of(
     BoardEntity board,
     int likeCount,
     List<BoardCommentVO> commentList,
-    List<String> imageUrls
+    List<String> imageUrls,
+    Boolean liked
   ) {
     return new GetBoardResponseDto(
       board.getBoardSequence(),
@@ -51,7 +53,8 @@ public class GetBoardResponseDto extends ResponseDto {
       board.getUserId(),
       likeCount,
       commentList,
-      imageUrls
+      imageUrls,
+      liked
     );
   }
 
@@ -59,9 +62,10 @@ public class GetBoardResponseDto extends ResponseDto {
     BoardEntity board,
     int likeCount,
     List<BoardCommentVO> commentList,
-    List<String> imageUrls
+    List<String> imageUrls,
+    Boolean liked
   ) {
-    GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList, imageUrls);
+    GetBoardResponseDto body = GetBoardResponseDto.of(board, likeCount, commentList, imageUrls, liked);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
 }

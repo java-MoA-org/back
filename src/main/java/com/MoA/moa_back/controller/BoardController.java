@@ -56,9 +56,10 @@ public class BoardController {
   // API: 게시글 상세보기 + 조회수 증가 //
   @GetMapping("/{boardSequence}")
   public ResponseEntity<? super GetBoardResponseDto> getBoardDetail(
-    @PathVariable("boardSequence") Integer boardSequence
+    @PathVariable("boardSequence") Integer boardSequence,
+    @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<? super GetBoardResponseDto> response = boardService.getBoardDetail(boardSequence);
+    ResponseEntity<? super GetBoardResponseDto> response = boardService.getBoardDetail(boardSequence, userId);
     return response;
   }
 
