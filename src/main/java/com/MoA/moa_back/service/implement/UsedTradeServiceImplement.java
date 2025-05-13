@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;
 import com.MoA.moa_back.common.dto.request.usedtrade.PostUsedTradeRequestDto;
@@ -47,12 +46,6 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   public ResponseEntity<ResponseDto> postUsedTrade(PostUsedTradeRequestDto dto, String userId) {
     try {
       UsedTradeEntity usedTradeEntity = new UsedTradeEntity(dto, userId);
-  
-      if (dto.getImageList() != null && !dto.getImageList().isEmpty()) {
-        List<String> uploadedImageUrls = imageUploadService.uploadImages(dto.getImageList(), "usedtrade");
-        usedTradeEntity.addImages(uploadedImageUrls);
-      }
-  
       usedTradeRepository.save(usedTradeEntity);
       return ResponseDto.success(HttpStatus.CREATED);
     } catch (Exception e) {
@@ -183,22 +176,13 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   @Override
   public ResponseEntity<ResponseDto> patchUsedTrade(PatchUsedTradeRequestDto dto, Integer tradeSequence, String userId) {
     try {
-      UsedTradeEntity entity = usedTradeRepository.findById(tradeSequence).orElse(null);
-      if (entity == null) return ResponseDto.noExistUsedTrade();
-      if (!entity.getUserId().equals(userId)) return ResponseDto.noPermission();
+      UsedTradeEntity tradeEntity = usedTradeRepository.findByTradeSequence(tradeSequence);
+      if (tradeEntity == null) return ResponseDto.noExistUsedTrade();
+      if (!tradeEntity.getUserId().equals(userId)) return ResponseDto.noPermission();
   
-      entity.setTitle(dto.getTitle());
-      entity.setContent(dto.getContent());
-      entity.setPrice(dto.getPrice());
-      entity.setLocation(dto.getLocation());
-      entity.setDetailLocation(dto.getDetailLocation());
-  
-      if (dto.getImageList() != null && !dto.getImageList().isEmpty()) {
-        List<String> uploadedImageUrls = imageUploadService.uploadImages(dto.getImageList(), "usedtrade");
-        entity.addImages(uploadedImageUrls);
-      }
-  
-      usedTradeRepository.save(entity);
+      tradeEntity.patch(dto);
+      usedTradeRepository.save(tradeEntity);
+
       return ResponseDto.success(HttpStatus.OK);
     } catch (Exception e) {
       e.printStackTrace();
@@ -282,34 +266,6 @@ public class UsedTradeServiceImplement implements UsedTradeService {
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-  }
-
-  // method: 중고거래글 수정 이미지 업로드 //
-  @Override
-  public ResponseEntity<ResponseDto> uploadUsedTradeImage(Integer tradeSequence, List<MultipartFile> files) {
-
-    Optional<UsedTradeEntity> usedTradeEntityOptional = usedTradeRepository.findById(tradeSequence);
-    if (!usedTradeEntityOptional.isPresent()) {
-      return ResponseDto.noExistUsedTrade();
-    }
-
-    List<String> uploadedImageUrls = new ArrayList<>();
-
-    for (MultipartFile file : files) {
-      ResponseEntity<ResponseDto> uploadResponse = imageUploadService.uploadImage(file, "usedtrade");
-      if (uploadResponse.getStatusCode() != HttpStatus.OK) {
-        return uploadResponse;
-      }
-
-      String uploadedImageUrl = (String) uploadResponse.getBody().getData();
-      uploadedImageUrls.add(uploadedImageUrl);
-    }
-
-    UsedTradeEntity usedTradeEntity = usedTradeEntityOptional.get();
-    usedTradeEntity.getImages().addAll(uploadedImageUrls);
-    usedTradeRepository.save(usedTradeEntity);
-
-    return ResponseDto.success(HttpStatus.OK, uploadedImageUrls);
   }
 
   // method: 중고거래글 찜 추가 또는 취소 //
