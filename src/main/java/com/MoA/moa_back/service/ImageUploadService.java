@@ -86,7 +86,7 @@ public class ImageUploadService {
       }
 
       String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")).toLowerCase();
-      if (!fileExtension.equals(".jpg") && !fileExtension.equals(".png")) {
+      if (!fileExtension.equals(".jpg") && !fileExtension.equals(".jpeg") && !fileExtension.equals(".png")) {
         return ResponseDto.validationFail();
       }
 
