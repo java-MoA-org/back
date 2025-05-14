@@ -1,31 +1,44 @@
 package com.MoA.moa_back.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebMvcConfig  implements WebMvcConfigurer{
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Value("${file.board-image-path}")
+    private String boardImagePath;
+
+    @Value("${file.daily-image-path}")
+    private String dailyImagePath;
+
+    @Value("${file.usedtrade-image-path}")
+    private String usedTradeImagePath;
+
+    @Value("${file.profile-path}")
+    private String profilePath;
+
+    @Value("${file.message-image-path}")
+    private String messageImagePath;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String os = System.getProperty("os.name").toLowerCase();
-        String basePath = os.contains("win")
-            ? "file:///D:/upload/"
-            : "file:/Users/seo._b2/upload/";
-
         registry.addResourceHandler("/images/board/**")
-                .addResourceLocations(basePath + "board-images/");
+                .addResourceLocations("file:" + boardImagePath);
 
         registry.addResourceHandler("/images/daily/**")
-                .addResourceLocations(basePath + "daily-images/");
+                .addResourceLocations("file:" + dailyImagePath);
 
         registry.addResourceHandler("/images/used-trade/**")
-              .addResourceLocations("file:///D:/upload/used-trade-images/");
+                .addResourceLocations("file:" + usedTradeImagePath);
 
         registry.addResourceHandler("/profile/file/**")
-                .addResourceLocations(basePath + "profile/");
+                .addResourceLocations("file:" + profilePath);
 
         registry.addResourceHandler("/images/message/**")
-                .addResourceLocations(basePath + "message/");
+                .addResourceLocations("file:" + messageImagePath);
     }
 }
+
