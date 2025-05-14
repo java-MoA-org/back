@@ -20,22 +20,29 @@ public class BoardCommentVO {
   
   private String comment;
 
-  public BoardCommentVO(BoardCommentEntity boardCommentEntity) {
+  private boolean isAuthor;
+  private boolean isAnonymous;
+
+  public BoardCommentVO(BoardCommentEntity boardCommentEntity, String postWriterId) {
     this.commentSequence = boardCommentEntity.getCommentSequence();
     this.commentWriterId = boardCommentEntity.getUserId();
     this.commentWriteDate = boardCommentEntity.getCreationDate();
     this.comment = boardCommentEntity.getBoardComment();
+    this.isAuthor = boardCommentEntity.getUserId().equals(postWriterId);
+    this.isAnonymous = !boardCommentEntity.getUserId().equals(postWriterId);
   }
 
-  public static List<BoardCommentVO> getList(List<BoardCommentEntity> boardCommentEntities) {
+  public static List<BoardCommentVO> getList(List<BoardCommentEntity> boardCommentEntities, String postWriterId) {
     List<BoardCommentVO> list = new ArrayList<>();
+    int anonymousCount = 1;
 
     for (BoardCommentEntity boardCommentEntity : boardCommentEntities) {
-      BoardCommentVO dto = new BoardCommentVO(boardCommentEntity);
+      String displayName = boardCommentEntity.getUserId().equals(postWriterId) ? boardCommentEntity.getUserId() : "익명" + anonymousCount++;
+      BoardCommentVO dto = new BoardCommentVO(boardCommentEntity, displayName);
       list.add(dto);
     }
 
     return list;
   }
-  
 }
+

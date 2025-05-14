@@ -119,9 +119,10 @@ public class BoardController {
   // API: 게시글 댓글 불러오기 //
   @GetMapping("/{boardSequence}/comments")
   public ResponseEntity<? super GetBoardCommentResponseDto> getComment(
-    @PathVariable("boardSequence") Integer boardSequence
+    @PathVariable("boardSequence") Integer boardSequence,
+    @RequestParam("userId") String userId
   ) {
-    ResponseEntity<? super GetBoardCommentResponseDto> response = boardService.getCommentsByBoardSequence(boardSequence);
+    ResponseEntity<? super GetBoardCommentResponseDto> response = boardService.getCommentsByBoardSequence(boardSequence, userId);
     return response;
   }
 
