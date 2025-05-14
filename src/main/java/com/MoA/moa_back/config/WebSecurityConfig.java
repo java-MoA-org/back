@@ -47,7 +47,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST,"/api/v1/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/auth/**").authenticated()
                 .requestMatchers(HttpMethod.PATCH,"/api/v1/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/profile/file/**").permitAll()
 
