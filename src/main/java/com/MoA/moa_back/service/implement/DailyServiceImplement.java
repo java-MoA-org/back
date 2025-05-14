@@ -313,18 +313,17 @@ public class DailyServiceImplement implements DailyService {
       boolean exists = dailyRepository.existsByDailySequence(dailySequence);
       if (!exists) return ResponseDto.noExistDaily();
   
-      // 좋아요 누른 유저 리스트 조회
       List<DailyLikeEntity> likeEntities = dailyLikeRepository.findByDailySequence(dailySequence);
   
-      // 각 유저 정보 매핑
       List<LikedUserDto> likedUsers = likeEntities.stream()
         .map(like -> {
           UserEntity user = userRepository.findByUserId(like.getUserId());
           return new LikedUserDto(user.getUserId(), user.getProfileImage(), user.getUserNickname());
         })
         .toList();
-  
-      return GetLikedUserListResponseDto.success(likedUsers);
+
+      int likeCount = dailyLikeRepository.countByDailySequence(dailySequence);
+      return GetLikedUserListResponseDto.success(likedUsers, likeCount);
   
     } catch (Exception e) {
       e.printStackTrace();
