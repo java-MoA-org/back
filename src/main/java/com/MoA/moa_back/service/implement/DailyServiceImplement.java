@@ -137,7 +137,7 @@ public class DailyServiceImplement implements DailyService {
   
   // method: 일상 게시글 상세 조회 + 조회수 증가 //
   @Override
-  public ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer dailySequence) {
+  public ResponseEntity<? super GetDailyResponseDto> getDailyBoardDetail(Integer dailySequence, String userId) {
     try {
       DailyEntity dailyEntity = dailyRepository.findById(dailySequence).orElse(null);
       if (dailyEntity == null) return ResponseDto.noExistDaily();
@@ -146,6 +146,7 @@ public class DailyServiceImplement implements DailyService {
       dailyRepository.save(dailyEntity);
   
       int likeCount = dailyLikeRepository.countByDailySequence(dailySequence);
+      boolean liked = dailyLikeRepository.existsByDailySequenceAndUserId(dailySequence, userId);
   
       List<DailyCommentEntity> commentEntities = dailyCommentRepository.findByDailySequenceOrderByCreationDateDesc(dailySequence);
   
@@ -159,7 +160,7 @@ public class DailyServiceImplement implements DailyService {
       String writerId = dailyEntity.getUserId();
       UserEntity writer = userRepository.findByUserId(writerId);
   
-      return GetDailyResponseDto.success(dailyEntity, likeCount, commentList, writer);
+      return GetDailyResponseDto.success(dailyEntity, likeCount, commentList, writer, liked);
   
     } catch (Exception e) {
       e.printStackTrace();

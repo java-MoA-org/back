@@ -47,9 +47,10 @@ public class DailyController {
   // API: 일상 게시글 상세보기 + 조회수 증가 //
   @GetMapping("/{dailySequence}")
   public ResponseEntity<? super GetDailyResponseDto> getDailyDetail(
-    @PathVariable("dailySequence") Integer dailySequence
+    @PathVariable("dailySequence") Integer dailySequence,
+    @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<? super GetDailyResponseDto> response = dailyService.getDailyBoardDetail(dailySequence);
+    ResponseEntity<? super GetDailyResponseDto> response = dailyService.getDailyBoardDetail(dailySequence, userId);
     return response;
   }
 
