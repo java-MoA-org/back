@@ -159,11 +159,9 @@ public class UsedTradeServiceImplement implements UsedTradeService {
       UserEntity user = userRepository.findByUserId(entity.getUserId());
       int likeCount = usedTradeLikeRepository.countByTradeSequence(tradeSequence);
 
-      boolean hasChatRoom = false;
-
       boolean liked = usedTradeLikeRepository.existsByTradeSequenceAndUserId(tradeSequence, userId);
 
-      return GetUsedTradeResponseDto.success(entity, user, likeCount, hasChatRoom, liked);
+      return GetUsedTradeResponseDto.success(entity, user, likeCount, liked);
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();

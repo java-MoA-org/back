@@ -24,16 +24,13 @@ import com.MoA.moa_back.common.dto.response.auth.UserInfoResponseDto;
 import com.MoA.moa_back.service.AuthService;
 import com.MoA.moa_back.service.ImageService;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,6 +46,20 @@ public class AuthController {
     
     private final AuthService authService;
     private final ImageService imageService;
+
+    // 로그인
+    @PostMapping("/sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody, HttpServletResponse response) {
+        ResponseEntity<? super SignInResponseDto> responseEntity = authService.signIn(requestBody, response);
+        return responseEntity;
+    }
+    
+    // 회원가입
+    @PostMapping("/sign-up")
+    public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestBody) {
+        ResponseEntity<ResponseDto> response = authService.signUp(requestBody);
+        return response;
+    }
 
     // 아이디 중복 확인
     @PostMapping("/id/check")
@@ -101,19 +112,8 @@ public class AuthController {
         return url;
     }
     
-    // 회원가입
-    @PostMapping("/sign-up")
-    public ResponseEntity<ResponseDto> signUp(@RequestBody @Valid SignUpRequestDto requestBody) {
-        ResponseEntity<ResponseDto> response = authService.signUp(requestBody);
-        return response;
-    }
     
-    // 로그인
-    @PostMapping("/sign-in")
-    public ResponseEntity<? super SignInResponseDto> signIn(@RequestBody @Valid SignInRequestDto requestBody, HttpServletResponse response) {
-        ResponseEntity<? super SignInResponseDto> responseEntity = authService.signIn(requestBody, response);
-        return responseEntity;
-    }
+    
 
     // 로그아웃
     @PostMapping("/sign-out")
