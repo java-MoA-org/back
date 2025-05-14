@@ -1,7 +1,5 @@
 package com.MoA.moa_back.service;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 
 import com.MoA.moa_back.common.dto.request.usedtrade.PatchUsedTradeRequestDto;

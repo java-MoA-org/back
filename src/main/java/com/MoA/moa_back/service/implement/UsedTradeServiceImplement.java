@@ -1,9 +1,7 @@
 package com.MoA.moa_back.service.implement;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +25,6 @@ import com.MoA.moa_back.common.util.PageUtil;
 import com.MoA.moa_back.repository.UsedTradeLikeRepository;
 import com.MoA.moa_back.repository.UsedTradeRepository;
 import com.MoA.moa_back.repository.UserRepository;
-import com.MoA.moa_back.service.ImageUploadService;
 import com.MoA.moa_back.service.UsedTradeService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +36,6 @@ public class UsedTradeServiceImplement implements UsedTradeService {
   private final UsedTradeRepository usedTradeRepository;
   private final UsedTradeLikeRepository usedTradeLikeRepository;
   private final UserRepository userRepository;
-  private final ImageUploadService imageUploadService;
 
   // method: 중고거래글 작성 //
   @Override
