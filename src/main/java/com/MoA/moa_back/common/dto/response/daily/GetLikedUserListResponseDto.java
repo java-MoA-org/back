@@ -17,16 +17,18 @@ public class GetLikedUserListResponseDto extends ResponseDto {
     private String code;
     private String message;
     private List<LikedUserDto> likedUserList;
+    private Integer likeCount;
 
-    public GetLikedUserListResponseDto(String code, String message, List<LikedUserDto> likedUserList) {
-        this.code = code;
-        this.message = message;
-        this.likedUserList = likedUserList;
+    public GetLikedUserListResponseDto(String code, String message, List<LikedUserDto> likedUserList, Integer likeCount) {
+      this.code = code;
+      this.message = message;
+      this.likedUserList = likedUserList;
+      this.likeCount = likeCount;
     }
 
-    public static ResponseEntity<GetLikedUserListResponseDto> success(List<LikedUserDto> likedUserList) {
-        GetLikedUserListResponseDto body = new GetLikedUserListResponseDto(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, likedUserList);
-        return ResponseEntity.status(HttpStatus.OK).body(body);
+    public static ResponseEntity<GetLikedUserListResponseDto> success(List<LikedUserDto> likedUserList, Integer likeCount) {
+      GetLikedUserListResponseDto body = new GetLikedUserListResponseDto(ResponseCode.SUCCESS, ResponseMessage.SUCCESS, likedUserList, likeCount);
+      return ResponseEntity.status(HttpStatus.OK).body(body);
     }
     
 }

@@ -40,14 +40,12 @@ public class GetUsedTradeResponseDto extends ResponseDto {
   private List<String> images;
   private Integer likeCount;
   private Boolean liked;
-  private Boolean hasChatRoom;
   
 
   public static GetUsedTradeResponseDto of(
     UsedTradeEntity usedTrade,
     UserEntity user,
     int likeCount,
-    Boolean hasChatRoom,
     Boolean liked
   ) {
     return new GetUsedTradeResponseDto(
@@ -66,7 +64,6 @@ public class GetUsedTradeResponseDto extends ResponseDto {
       usedTrade.getTransactionStatus(),
       usedTrade.getImages(),
       likeCount,
-      hasChatRoom,
       liked 
     );
   }
@@ -75,10 +72,9 @@ public class GetUsedTradeResponseDto extends ResponseDto {
     UsedTradeEntity usedTrade,
     UserEntity user,
     int likeCount,
-    Boolean hasChatRoom,
     Boolean liked
   ) {
-    GetUsedTradeResponseDto body = GetUsedTradeResponseDto.of(usedTrade, user, likeCount, hasChatRoom, liked);
+    GetUsedTradeResponseDto body = GetUsedTradeResponseDto.of(usedTrade, user, likeCount, liked);
     return ResponseEntity.status(HttpStatus.OK).body(body);
   }
   
