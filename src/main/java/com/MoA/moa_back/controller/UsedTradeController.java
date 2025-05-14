@@ -99,8 +99,8 @@ public class UsedTradeController {
   // API: 중고거래 거래상태 변경 //
   @PatchMapping("/{tradeSequence}/status")
   public ResponseEntity<ResponseDto> patchTransactionStatus(
-    @PathVariable Integer tradeSequence,
-    @RequestBody String updateStatus,
+    @PathVariable("tradeSequence") Integer tradeSequence,
+    @RequestParam("updateStatus") String updateStatus,
     @AuthenticationPrincipal String userId
   ) {
     ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence,updateStatus);

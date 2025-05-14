@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.MoA.moa_back.common.dto.request.alert.CommentAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.FollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.request.alert.LikeAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.PostFollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.alert.GetAlertResponseDto;
 import com.MoA.moa_back.service.AlertService;
@@ -29,7 +31,7 @@ public class AlertController {
 
     // 유저 알림 가져오기
     @GetMapping("")
-    public ResponseEntity<? super GetAlertResponseDto> getMethodName(@AuthenticationPrincipal String userId) {
+    public ResponseEntity<? super GetAlertResponseDto> getAlerts(@AuthenticationPrincipal String userId) {
         ResponseEntity<? super GetAlertResponseDto> response = alertService.getAlert(userId);
         return response;
     }
@@ -38,6 +40,7 @@ public class AlertController {
     @PostMapping("/comment")
     public ResponseEntity<ResponseDto> commentAlert(@RequestBody CommentAlertRequestDto requestDto, @AuthenticationPrincipal String userId) {
         ResponseEntity<ResponseDto> response = alertService.commentAlertPost(requestDto, userId);
+        System.out.println(response);
         return response;
     }
 
@@ -47,6 +50,16 @@ public class AlertController {
         ResponseEntity<ResponseDto> response = alertService.likeAlertPost(requestDto, userId);
         return response;
     }
+
+    @PostMapping("/follow")
+    public ResponseEntity<ResponseDto> followAlert(@RequestBody PostFollowAlertRequestDto requestBody, @AuthenticationPrincipal String userId) {
+        String folloeeNickname = requestBody.getFolloeeNickname();
+        System.out.println(folloeeNickname);
+        FollowAlertRequestDto followAlertRequestDto = new FollowAlertRequestDto(userId, folloeeNickname);
+        ResponseEntity<ResponseDto> response = alertService.followAlertPost(followAlertRequestDto);
+        return response;
+    }
+    
     
     // 알림 읽기
     @PatchMapping("/read/{alertId}")

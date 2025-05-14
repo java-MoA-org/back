@@ -108,6 +108,7 @@ public class AuthController {
     public String upload(
         @RequestParam("file") MultipartFile file
     ) {
+        System.out.println(file);
         String url = imageService.uploadProfileImage(file);
         return url;
     }
