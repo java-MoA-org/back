@@ -2,7 +2,9 @@ package com.MoA.moa_back.service.implement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -158,14 +160,15 @@ public class BoardServiceImplement implements BoardService {
       int likeCount = boardLikeRepository.countByBoardSequence(boardSequence);
       boolean liked = boardLikeRepository.existsByBoardSequenceAndUserId(boardSequence, userId);
   
+      String postWriterId = boardEntity.getUserId();
+  
       List<BoardCommentEntity> commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
-      List<BoardCommentVO> commentList = commentEntities.stream()
-        .map(BoardCommentVO::new)
-        .toList();
+      List<BoardCommentVO> commentList = BoardCommentVO.getList(commentEntities, postWriterId);
   
       List<String> imageUrls = boardEntity.getImages();
   
       return GetBoardResponseDto.success(boardEntity, likeCount, commentList, imageUrls, liked);
+  
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseDto.databaseError();
@@ -336,23 +339,46 @@ public class BoardServiceImplement implements BoardService {
     }
   }
   
-  // method: 특정 게시글 댓글 불러오기 //
-  @Override
-  public ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence) {
+  public List<BoardCommentVO> generateAnonymousComments(List<BoardCommentEntity> commentEntities, String userId) {
+    Map<String, String> anonymousMap = new HashMap<>();
+    int anonymousCounter = 1;
 
-    List<BoardCommentEntity> commentEntities = new ArrayList<>();
+    List<BoardCommentVO> anonymousCommentList = new ArrayList<>();
 
-    try {
+    for (BoardCommentEntity comment : commentEntities) {
+      String writerId = comment.getUserId();
 
-      commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
+      if (writerId.equals(userId)) {
+        anonymousMap.put(writerId, "글쓴이");
+      } else if (!anonymousMap.containsKey(writerId)) {
+        anonymousMap.put(writerId, "익명 " + anonymousCounter++);
+      }
 
-    } catch (Exception exception) {
-      exception.printStackTrace();
-      return ResponseDto.databaseError();
+      String displayName = anonymousMap.get(writerId);
+      BoardCommentVO vo = new BoardCommentVO(comment, displayName);
+      anonymousCommentList.add(vo);
     }
 
-    return GetBoardCommentResponseDto.success(commentEntities);
+    return anonymousCommentList;
   }
+
+  // method: 특정 게시글 댓글 불러오기 //
+  @Override
+  public ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence, String userId) {
+  
+      List<BoardCommentEntity> commentEntities = new ArrayList<>();
+      try {
+          commentEntities = boardCommentRepository.findByBoardSequenceOrderByCreationDateDesc(boardSequence);
+      } catch (Exception exception) {
+          exception.printStackTrace();
+          return ResponseDto.databaseError();
+      }
+  
+      List<BoardCommentVO> anonymousCommentList = generateAnonymousComments(commentEntities, userId);
+
+      return GetBoardCommentResponseDto.success(HttpStatus.OK, anonymousCommentList);
+  }
+  
 
   // method: 게시글에 댓글 삭제 (글작성자, 댓글작성자만 가능) //
   @Override

@@ -31,7 +31,7 @@ public interface BoardService {
   // method: 특정 게시글 댓글 작성 //
   ResponseEntity<ResponseDto> postBoardComment(PostBoardCommentRequestDto dto, Integer boardSequence, String userId);
   // method: 특정 게시글 댓글 불러오기 //
-  ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence);
+  ResponseEntity<? super GetBoardCommentResponseDto> getCommentsByBoardSequence(Integer boardSequence, String userId);
   // method: 특정 게시글 댓글 삭제 (작성자만 가능) //
   ResponseEntity<ResponseDto> deleteBoardComment(Integer commentSequence, String userId);
 
