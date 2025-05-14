@@ -14,7 +14,7 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
-    // 🔹 공지사항 목록 조회 (페이징)
+    // 공지사항 목록 조회 (페이징)
     @GetMapping("/list")
     public ResponseEntity<?> getNoticeList(@RequestParam(value = "page", defaultValue = "0") int page) {
         return noticeService.getNoticeList(page);
