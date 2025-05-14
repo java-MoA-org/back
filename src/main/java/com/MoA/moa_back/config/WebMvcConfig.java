@@ -12,7 +12,7 @@ public class WebMvcConfig  implements WebMvcConfigurer{
         String basePath = os.contains("win")
             ? "file:///D:/upload/"
             : "file:/Users/seo._b2/upload/";
-
+        
         registry.addResourceHandler("/images/board/**")
                 .addResourceLocations(basePath + "board-images/");
 
@@ -20,7 +20,7 @@ public class WebMvcConfig  implements WebMvcConfigurer{
                 .addResourceLocations(basePath + "daily-images/");
 
         registry.addResourceHandler("/images/used-trade/**")
-              .addResourceLocations("file:///D:/upload/used-trade-images/");
+              .addResourceLocations("used-trade/");
 
         registry.addResourceHandler("/profile/file/**")
                 .addResourceLocations(basePath + "profile/");

@@ -60,7 +60,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/profile/file/**").permitAll()
 
                 .requestMatchers("/oauth2/**").permitAll()
-
+                    // 공지사항
                     .requestMatchers(HttpMethod.GET, "/api/v1/notice/**").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/notice").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/notice/**").hasAuthority("ADMIN")
@@ -68,9 +68,7 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/notice/**").hasAuthority("ADMIN")
                     .requestMatchers(HttpMethod.POST, "/api/message/read").authenticated()
                     
-                    
-                    
-                    
+                    // 익명 게시판 
                     .requestMatchers(HttpMethod.GET, "/api/v1/board").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/board/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"api/v1/board/**").authenticated()
@@ -78,6 +76,7 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.DELETE,"api/v1/board/**").authenticated()
                     .requestMatchers(HttpMethod.PUT,"/api/v1/board/*/likes").authenticated()
 
+                    // 일상 
                     .requestMatchers(HttpMethod.GET,"/api/v1/daily").permitAll()
                     .requestMatchers(HttpMethod.GET,"/api/v1/daily/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/v1/daily").authenticated()
@@ -86,23 +85,23 @@ public class WebSecurityConfig {
                     .requestMatchers(HttpMethod.DELETE,"api/v1/daily/**").authenticated()
                     .requestMatchers(HttpMethod.PUT, "api/v1/daily/*/likes").authenticated()
 
-
+                    // 중고거래 
                     .requestMatchers(HttpMethod.GET,"/api/v1/used-trade").permitAll()
                     .requestMatchers(HttpMethod.GET,"/api/v1/used-trade/**").permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/v1/used-trade").authenticated()
                     .requestMatchers(HttpMethod.PATCH,"/api/v1/used-trade/**").authenticated()
                     .requestMatchers(HttpMethod.DELETE,"/api/v1/used-trade/**").authenticated()
                     .requestMatchers(HttpMethod.PUT,"/api/v1/used-trade/**").authenticated()
+                    .requestMatchers("/usedtrade/**").permitAll()
+
 
                     .requestMatchers("/api/news/**").permitAll()
-
                     .requestMatchers("/api/v1/user-page/**").authenticated()
                     .requestMatchers("/api/v1/images/file/**").permitAll()
-
+                    
                     .requestMatchers("/api/v1/follow/**").authenticated()
 
                     .requestMatchers("/api/message/**").authenticated()
-
                     .requestMatchers(HttpMethod.DELETE, "/api/message/hide-room/**").authenticated()
 
                     
