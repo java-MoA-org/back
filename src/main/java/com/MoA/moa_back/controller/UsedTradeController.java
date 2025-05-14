@@ -102,7 +102,7 @@ public class UsedTradeController {
     @RequestBody String updateStatus,
     @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence);
+    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence,updateStatus);
     return response;
   }
 
