@@ -35,7 +35,6 @@ public class FollowServiceImplement implements FollowService{
   public ResponseEntity<ResponseDto> postFollow(String followerUserId, String followeeNickname) {
     try{
       UserEntity user = userRepository.findByUserNickname(followeeNickname);
-      UserEntity follower = userRepository.findByUserId(followerUserId);
 
       if(user.getUserId().equals(followerUserId)){
         return ResponseDto.validationFail();
@@ -47,15 +46,18 @@ public class FollowServiceImplement implements FollowService{
         followEntity = new FollowEntity(user.getUserId(), followerUserId);
         followRepository.save(followEntity);
 
-        alertService.followAlertPost(new FollowAlertRequestDto(user.getUserId(), follower.getUserNickname()));
+        return ResponseDto.success(HttpStatus.CREATED, "follow");
+        // alertService.followAlertPost(new FollowAlertRequestDto(user.getUserId(), follower.getUserNickname()));
       }else{
         followRepository.delete(followEntity);
+
+        return ResponseDto.success(HttpStatus.CREATED, "unfollow");
       }
     }catch(Exception e){
       e.printStackTrace();
       return ResponseDto.databaseError();
     }
-    return ResponseDto.success(HttpStatus.CREATED);
+    // return ResponseDto.success(HttpStatus.CREATED);
   }
 
   @Override
