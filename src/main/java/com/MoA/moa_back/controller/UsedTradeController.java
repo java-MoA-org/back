@@ -1,5 +1,7 @@
 package com.MoA.moa_back.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -97,11 +99,11 @@ public class UsedTradeController {
   // API: 중고거래 거래상태 변경 //
   @PatchMapping("/{tradeSequence}/status")
   public ResponseEntity<ResponseDto> patchTransactionStatus(
-    @PathVariable("tradeSequence") Integer tradeSequence,
-    @RequestParam("updateStatus") String updateStatus,
+    @PathVariable Integer tradeSequence,
+    @RequestBody String updateStatus,
     @AuthenticationPrincipal String userId
   ) {
-    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence, updateStatus);
+    ResponseEntity<ResponseDto> response = usedTradeService.patchTransactionStatus(tradeSequence,updateStatus);
     return response;
   }
 
