@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.MoA.moa_back.common.dto.request.alert.CommentAlertRequestDto;
 import com.MoA.moa_back.common.dto.request.alert.FollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.request.alert.LikeAlertRequestDto;
+import com.MoA.moa_back.common.dto.request.alert.PostFollowAlertRequestDto;
 import com.MoA.moa_back.common.dto.response.ResponseDto;
 import com.MoA.moa_back.common.dto.response.alert.GetAlertResponseDto;
 import com.MoA.moa_back.common.entity.AlertEntity;
@@ -52,6 +53,7 @@ public class AlertServiceImplement implements AlertService{
 
         try {
             alertEntities = alertRepository.findByUserId(userId);
+            alertEntities = alertEntities.reversed();
             for(AlertEntity alertEntity : alertEntities){
                 AlertVo alert = new AlertVo(alertEntity);
                 System.out.println(alert.toString());
@@ -133,9 +135,13 @@ public class AlertServiceImplement implements AlertService{
     }
 
     @Override
-    public ResponseEntity<ResponseDto> followAlertPost(FollowAlertRequestDto followAlertRequestDto) {
+    public ResponseEntity<ResponseDto> followAlertPost(PostFollowAlertRequestDto requestBody, String userId) {
         
         AlertEntity alertEntity = null;
+        String folloeeNickname = requestBody.getFolloeeNickname();
+        String followerId = userRepository.findByUserNickname(requestBody.getFolloeeNickname()).getUserId();
+        folloeeNickname = userRepository.findByUserId(userId).getUserNickname();
+        FollowAlertRequestDto followAlertRequestDto = new FollowAlertRequestDto(followerId, folloeeNickname);
         try {
             alertEntity = new AlertEntity(followAlertRequestDto);
             alertRepository.save(alertEntity);

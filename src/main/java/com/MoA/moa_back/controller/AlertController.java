@@ -53,10 +53,8 @@ public class AlertController {
 
     @PostMapping("/follow")
     public ResponseEntity<ResponseDto> followAlert(@RequestBody PostFollowAlertRequestDto requestBody, @AuthenticationPrincipal String userId) {
-        String folloeeNickname = requestBody.getFolloeeNickname();
-        System.out.println(folloeeNickname);
-        FollowAlertRequestDto followAlertRequestDto = new FollowAlertRequestDto(userId, folloeeNickname);
-        ResponseEntity<ResponseDto> response = alertService.followAlertPost(followAlertRequestDto);
+        
+        ResponseEntity<ResponseDto> response = alertService.followAlertPost(requestBody,userId);
         return response;
     }
     
