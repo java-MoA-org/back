@@ -31,7 +31,7 @@
             <a ></a>
         </td>
         <td align="center">
-            <a >auth,oAuth</p>실시간 알림</p>JWT</p>회원정보 관리</a>
+            <a >auth,oAuth</p>실시간 알림</p>JWT</p>회원정보 관리</p>이메일 인증</a>
         </td>
         <td align="center">
             <a ></a>
