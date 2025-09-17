@@ -28,16 +28,16 @@
     </thead>
     <tbody>
         <td align="center">
-            <a href=""></a>
+            <a ></a>
         </td>
         <td align="center">
-            <a href=""></a>
+            <a >auth,oAuth</p>실시간 알림</p>JWT</p>회원정보 관리</a>
         </td>
         <td align="center">
-            <a href=""></a>
+            <a ></a>
         </td>
         <td align="center">
-            <a href=""></a>
+            <a ></a>
         </td>
     </tbody>
 </table>
